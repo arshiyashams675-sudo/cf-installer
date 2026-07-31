@@ -132,7 +132,7 @@ export default {
         const panelURL=`https://${workerName}.${sub}${sub.includes('.')?'':'.workers.dev'}`;
         log(`آدرس: ${panelURL}`);
 
-        return R({success:true,logs,panelURL,workerName,panelType});
+        return R({success:true,logs,panelURL,workerName,panelType,uuid:vars.u||null});
       }catch(e){return R({success:false,logs:[`خطا: ${e.message}`],error:e.message})}
     }
 
