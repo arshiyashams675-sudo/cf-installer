@@ -73,10 +73,10 @@ export default {
         // Download source
         log('دانلود کد منبع...');
         const panels={
-          nahan:{repo:'itsyebekhe/nahan',file:'_worker.js',bindings:{d1:['IOT_DB'],kv:[]}},
-          edge:{repo:'cmliu/edgetunnel',file:'_worker.js',bindings:{d1:[],kv:['KV']}},
-          cfnew:{repo:'byjoey/cfnew',file:'明文源吗',bindings:{d1:[],kv:['C']}},
-          nova:{repo:'IRNova/Nova-Proxy',file:'worker.js',bindings:{d1:['DB'],kv:['KV']}}
+          nahan:{repo:'itsyebekhe/nahan',file:'_worker.js',bindings:{d1:['IOT_DB'],kv:[]},vars:{}},
+          edge:{repo:'cmliu/edgetunnel',file:'_worker.js',bindings:{d1:[],kv:['KV']},vars:{}},
+          cfnew:{repo:'byjoey/cfnew',file:'明文源吗',bindings:{d1:[],kv:['C']},vars:{u:crypto.randomUUID()}},
+          nova:{repo:'IRNova/Nova-Proxy',file:'worker.js',bindings:{d1:['DB'],kv:['KV']},vars:{}}
         };
         const p=panels[panelType];
         if(!p)return R({success:false,logs,error:'پنل نامعتبر'});
@@ -107,7 +107,15 @@ export default {
 
         // Deploy worker
         log('استقرار Worker...');
-        const md={main_module:'worker.js',compatibility_date:'2024-09-22',compatibility_flags:['nodejs_compat'],bindings};
+        const vars=p.vars||{};
+        const bindingsWithVars=[...bindings];
+        if(Object.keys(vars).length){
+          for(const [k,v] of Object.entries(vars)){
+            log(`تنظیم متغیر: ${k}...`);
+            bindingsWithVars.push({name:k,type:'secret_text',text:v});
+          }
+        }
+        const md={main_module:'worker.js',compatibility_date:'2024-09-22',compatibility_flags:['nodejs_compat'],bindings:bindingsWithVars};
         const form=new FormData();
         form.append('metadata',new Blob([JSON.stringify(md)],{type:'application/json'}));
         form.append('worker.js',new Blob([code],{type:'application/javascript+module'}),'worker.js');
