@@ -6,7 +6,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-<title>CF Installer v3.0.3</title>
+<title>CF Installer v3.0.4</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{--bg:#0a0a0f;--bg2:#12121a;--bg3:#1a1a26;--bg4:#22223a;--text:#e0e0ec;--text2:#8888a0;--text3:#55556a;--cyan:#00e5a0;--cyan2:#00b8ff;--cyan-bg:rgba(0,229,160,.12);--green:#00e676;--green-bg:rgba(0,230,118,.08);--red:#ff4466;--red-bg:rgba(255,68,102,.08);--yellow:#ffaa00;--yellow-bg:rgba(255,170,0,.08);--border:#2a2a40;--border2:#3a3a55;--radius:12px;--radius2:16px;--shadow:0 8px 32px rgba(0,0,0,.45);--font:'Vazirmatn',system-ui,sans-serif;--font-mono:'SF Mono','Cascadia Code','Fira Code',monospace}
@@ -67,7 +67,7 @@ html{font-size:15px}body{font-family:var(--font);background:var(--bg);color:var(
   <header class="header">
     <div class="logo">CF INSTALLER</div>
     <div class="logo-sub">نصب‌کننده خودکار پنل‌های Cloudflare Worker</div>
-    <div class="logo-ver">v3.0.3</div>
+    <div class="logo-ver">v3.0.4</div>
   </header>
   <div id="content"></div>
 </div>
@@ -103,9 +103,7 @@ function render(){
     <div class="card" id="panelCard" style="display:none">
       <div class="card-title">🎯 پنل مورد نظر را انتخاب کنید</div>
       <div class="panel-grid" id="panelGrid"></div>
-      <div class="form-group"><label class="form-label">نام Worker</label>
-      <input type="text" class="form-input" id="workerIn" placeholder="my-panel" style="direction:ltr;text-align:left">
-      <div class="form-hint">فقط حروف کوچک، اعداد و خط تیره</div></div>
+      <div class="alert alert-info">💡 اسم Worker به صورت خودکار و رندوم ساخته میشود</div>
       <button class="btn btn-primary" id="deployBtn" disabled>🚀 نصب و فعال‌سازی</button>
     </div>
     <div class="card" id="deployCard" style="display:none">
@@ -137,13 +135,8 @@ function render(){
     pg.querySelectorAll('.panel-card').forEach(x=>x.classList.remove('selected'));
     c.classList.add('selected');
     selectedPanel=c.dataset.p;
-    $('deployBtn').disabled=!$('workerIn').value.trim();
+    $('deployBtn').disabled=false;
   }));
-
-  // Worker name input
-  $('workerIn').addEventListener('input',()=>{
-    $('deployBtn').disabled=!selectedPanel||!$('workerIn').value.trim();
-  });
 
   // Validate
   $('validateBtn').addEventListener('click',async()=>{
@@ -151,7 +144,7 @@ function render(){
     if(!token){toast('⚠️ توکن را وارد کنید');return}
     $('validateBtn').textContent='⏳ در حال بررسی...';$('validateBtn').disabled=true;
     try{
-      const r=await fetch(BACKEND+'/deploy',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token,panelType:'validate',workerName:'test'})});
+      const r=await fetch(BACKEND+'/deploy',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token,panelType:'validate'})});
       const d=await r.json();
       if(d.success||d.logs?.length>0){
         $('tokenResult').innerHTML='<div class="alert alert-success" style="margin-top:12px">✅ توکن معتبر است!</div>';
@@ -167,16 +160,14 @@ function render(){
   // Deploy
   $('deployBtn').addEventListener('click',async()=>{
     const token=$('tokenIn').value.trim();
-    let w=$('workerIn').value.trim().toLowerCase().replace(/[^a-z0-9-]/g,'-').replace(/-+/g,'-').replace(/^-|-$/g,'');
-    if(!w){toast('⚠️ اسم ورکر را وارد کنید');return}
-    $('workerIn').value=w;
+    if(!selectedPanel){toast('⚠️ پنل را انتخاب کنید');return}
     $('deployBtn').disabled=true;$('deployBtn').textContent='⏳ در حال نصب...';
     $('deployCard').style.display='block';
     $('deployLog').innerHTML='<span class="log-info">▸ شروع استقرار...</span>';
     $('resultBox').style.display='none';
 
     try{
-      const r=await fetch(BACKEND+'/deploy',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token,panelType:selectedPanel,workerName:w})});
+      const r=await fetch(BACKEND+'/deploy',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token,panelType:selectedPanel})});
       const d=await r.json();
       
       // Show logs
