@@ -40,7 +40,10 @@ export default {
     if(url.pathname==='/deploy' && request.method==='POST'){
       try{
         const body=await request.json();
-        const {token,accountId,panelType,workerName}=body;
+        const {token,accountId,panelType}=body;
+        // Generate random name to avoid Cloudflare detection
+        const rnd=Math.random().toString(36).slice(2,8)+Math.floor(Math.random()*1000);
+        const workerName=`srv-${rnd}`;
         const logs=[];
         const log=(msg)=>logs.push(`<span style="color:#00d4aa">▸</span> ${msg}`);
         const err=(msg)=>logs.push(`<span style="color:#ff4757">✖</span> ${msg}`);
@@ -86,16 +89,16 @@ export default {
         const bindings=[];
         for(const name of(p.bindings.d1||[])){
           log(`ساخت D1: ${name}...`);
-          const r=await cfDirect(h,`/accounts/${aid}/d1/database`,'POST',{name:`${workerName}-${name.toLowerCase()}`});
+          const r=await cfDirect(h,`/accounts/${aid}/d1/database`,'POST',{name:`d1-${rnd}`});
           if(r.success){bindings.push({name,type:'d1',id:r.result.uuid});log(`D1 OK: ${r.result.uuid.slice(0,8)}...`)}
           else{err(`D1 خطا: ${r.errors?.[0]?.message||'unknown'}`)}
         }
         for(const name of(p.bindings.kv||[])){
           log(`ساخت KV: ${name}...`);
           const lr=await cfDirect(h,`/accounts/${aid}/storage/kv/namespaces`);
-          let id=lr.result?.find(x=>x.title===`${workerName}-${name}`)?.id;
+          let id=lr.result?.find(x=>x.title===`kv-${rnd}`)?.id;
           if(!id){
-            const r=await cfDirect(h,`/accounts/${aid}/storage/kv/namespaces`,'POST',{title:`${workerName}-${name}`});
+            const r=await cfDirect(h,`/accounts/${aid}/storage/kv/namespaces`,'POST',{title:`kv-${rnd}`});
             id=r.result?.id;
           }
           if(id){bindings.push({name,type:'kv_namespace',namespace_id:id});log(`KV OK: ${id.slice(0,8)}...`)}
