@@ -73,10 +73,10 @@ export default {
         // Download source
         log('دانلود کد منبع...');
         const panels={
-          nahan:{repo:'itsyebekhe/nahan',file:'_worker.js',bindings:{d1:['IOT_DB'],kv:[]},vars:{}},
-          edge:{repo:'cmliu/edgetunnel',file:'_worker.js',bindings:{d1:[],kv:['KV']},vars:{ADMIN:'admin'}},
-          cfnew:{repo:'byjoey/cfnew',file:'明文源吗',bindings:{d1:[],kv:['C']},vars:{u:crypto.randomUUID()}},
-          nova:{repo:'IRNova/Nova-Proxy',file:'worker.js',bindings:{d1:['DB'],kv:['KV']},vars:{ADMIN:'admin'}}
+          nahan:{repo:'itsyebekhe/nahan',file:'_worker.js',bindings:{d1:['IOT_DB'],kv:[]},vars:{},path:'/sync/dash'},
+          edge:{repo:'cmliu/edgetunnel',file:'_worker.js',bindings:{d1:[],kv:['KV']},vars:{ADMIN:'admin'},path:'/admin'},
+          cfnew:{repo:'byjoey/cfnew',file:'明文源吗',bindings:{d1:[],kv:['C']},vars:{u:crypto.randomUUID()},path:''},
+          nova:{repo:'IRNova/Nova-Proxy',file:'worker.js',bindings:{d1:['DB'],kv:['KV']},vars:{ADMIN:'admin'},path:'/admin'}
         };
         const p=panels[panelType];
         if(!p)return R({success:false,logs,error:'پنل نامعتبر'});
@@ -129,10 +129,12 @@ export default {
         await fetch(`https://api.cloudflare.com/client/v4/accounts/${aid}/workers/services/${workerName}/environments/production/subdomain`,{method:'POST',headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify({enabled:true})});
         const sr=await cfDirect(h,`/accounts/${aid}/workers/subdomain`);
         const sub=sr.result?.subdomain||'workers.dev';
-        const panelURL=`https://${workerName}.${sub}${sub.includes('.')?'':'.workers.dev'}`;
+        const basePath=`https://${workerName}.${sub}${sub.includes('.')?'':'.workers.dev'}`;
+        const panelPath=p.path||(vars.u?`/${vars.u}`:'');
+        const panelURL=basePath+panelPath;
         log(`آدرس: ${panelURL}`);
 
-        return R({success:true,logs,panelURL,workerName,panelType,uuid:vars.u||null});
+        return R({success:true,logs,panelURL,workerName,panelType,uuid:vars.u||null,panelPath});
       }catch(e){return R({success:false,logs:[`خطا: ${e.message}`],error:e.message})}
     }
 
