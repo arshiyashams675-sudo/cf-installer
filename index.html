@@ -580,7 +580,7 @@ function render(){
       if(d.logs)d.logs.forEach(l=>{$('deployLog').innerHTML+=l+'<br>'});
       
       if(d.success){
-        $('deployLog').innerHTML+='<br><span class="log-ok">✅ نصب با موفقیت انجام شد!</span>';
+        $('deployLog').innerHTML+='<br><span class="log-ok">✅ نصب با موفقیت انجام شد!</span><br><span class="log-info">⏳ چند دقیقه صبر کنید تا ورکر فعال شود</span>';
         $('resUrl').textContent=d.panelURL;$('resUrl').href=d.panelURL;
         $('resName').textContent=d.workerName;
         $('resPath').textContent=d.panelPath||'/';
