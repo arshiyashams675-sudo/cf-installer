@@ -76,7 +76,9 @@ export default {
           nahan:{repo:'itsyebekhe/nahan',file:'_worker.js',bindings:{d1:['IOT_DB'],kv:[]},vars:{},path:'/sync/dash'},
           edge:{repo:'cmliu/edgetunnel',file:'_worker.js',bindings:{d1:[],kv:['KV']},vars:{ADMIN:'admin'},path:'/admin'},
           cfnew:{repo:'byjoey/cfnew',file:'明文源吗',bindings:{d1:[],kv:['C']},vars:{u:crypto.randomUUID()},path:''},
-          nova:{repo:'IRNova/Nova-Proxy',file:'worker.js',bindings:{d1:['DB'],kv:['KV']},vars:{ADMIN:'admin'},path:'/admin'}
+          nova:{repo:'IRNova/Nova-Proxy',file:'worker.js',bindings:{d1:['DB'],kv:['KV']},vars:{ADMIN:'admin'},path:'/admin'},
+          edgtun:{repo:'6Kmfi6HP/EDtunnel',file:'_worker.js',bindings:{d1:[],kv:[]},vars:{UUID:crypto.randomUUID()},path:''},
+          zeus:{repo:'zeus-panel/ZEUS-PANEL',file:'Source.js',bindings:{d1:['DB'],kv:[]},vars:{},path:'/login'}
         };
         const p=panels[panelType];
         if(!p)return R({success:false,logs,error:'پنل نامعتبر'});
