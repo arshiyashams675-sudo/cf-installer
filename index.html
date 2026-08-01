@@ -524,10 +524,10 @@ function render(){
         <div class="result-box"><div class="result-label">رمز عبور پیش‌فرض</div><div class="result-value" style="color:var(--red)"><span>admin</span><button class="copy-btn" onclick="cpB(this,'admin')">کپی</button></div></div>
         <div class="alert alert-warn">⚠️ بلافاصله رمز عبور را تغییر دهید!</div>
         <div id="edgtunPaths" style="display:none">
-          <div class="result-box"><div class="result-label">🌐 VLESS کانفیگ</div><div class="result-value"><span id="edVless"></span><button class="copy-btn" id="copyEdVless">کپی</button></div></div>
-          <div class="result-box"><div class="result-label">🔗 VLESS لینک مستقیم</div><div class="result-value"><span id="edVlessLink" style="font-size:11px;word-break:break-all"></span><button class="copy-btn" id="copyEdVlessLink">کپی</button></div></div>
-          <div class="result-box"><div class="result-label"> socks5</div><div class="result-value"><span id="edSocks5" style="font-size:11px"></span><button class="copy-btn" id="copyEdSocks5">کپی</button></div></div>
-          <div class="result-box"><div class="result-label"> http</div><div class="result-value"><span id="edHttp" style="font-size:11px"></span><button class="copy-btn" id="copyEdHttp">کپی</button></div></div>
+          <div class="result-box"><div class="result-label">🌐 VLESS کانفیگ</div><div class="result-value"><a id="edVless" href="#" target="_blank" style="color:var(--cyan);text-decoration:none;word-break:break-all;font-size:13px"></a><button class="copy-btn" id="copyEdVless">کپی</button></div></div>
+          <div class="result-box"><div class="result-label">🔗 VLESS لینک مستقیم</div><div class="result-value"><a id="edVlessLink" href="#" target="_blank" style="color:var(--cyan);text-decoration:none;word-break:break-all;font-size:13px"></a><button class="copy-btn" id="copyEdVlessLink">کپی</button></div></div>
+          <div class="result-box"><div class="result-label"> socks5</div><div class="result-value"><a id="edSocks5" href="#" target="_blank" style="color:var(--cyan);text-decoration:none;word-break:break-all;font-size:13px"></a><button class="copy-btn" id="copyEdSocks5">کپی</button></div></div>
+          <div class="result-box"><div class="result-label"> http</div><div class="result-value"><a id="edHttp" href="#" target="_blank" style="color:var(--cyan);text-decoration:none;word-break:break-all;font-size:13px"></a><button class="copy-btn" id="copyEdHttp">کپی</button></div></div>
         </div>
         <div class="btn-group"><a id="openPanel" href="#" target="_blank" class="btn btn-primary">باز کردن پنل</a><button class="btn btn-secondary" onclick="render()">نصب جدید</button></div>
       </div>
@@ -605,14 +605,19 @@ function render(){
           $('edgtunPaths').style.display='block';
           const base=d.panelURL;
           const uuid=d.uuid;
-          $('edVless').textContent=base+'/'+uuid;
-          $('edVlessLink').textContent='vless://'+uuid+'@'+new URL(base).host+'?encryption=none&type=ws#CF-Worker';
-          $('edSocks5').textContent=base+'/socks5://user:pass@host:port';
-          $('edHttp').textContent=base+'/http://user:pass@host:port';
-          $('copyEdVless').addEventListener('click',function(){cpB(this,base+'/'+uuid)});
-          $('copyEdVlessLink').addEventListener('click',function(){cpB(this,'vless://'+uuid+'@'+new URL(base).host+'?encryption=none&type=ws#CF-Worker')});
-          $('copyEdSocks5').addEventListener('click',function(){cpB(this,base+'/socks5://user:pass@host:port')});
-          $('copyEdHttp').addEventListener('click',function(){cpB(this,base+'/http://user:pass@host:port')});
+          const host=new URL(base).host;
+          const vlessLink='vless://'+uuid+'@'+host+'?encryption=none&type=ws#CF-Worker';
+          const vlessUrl=base+'/'+uuid;
+          const socks5Url=base+'/socks5://user:pass@host:port';
+          const httpUrl=base+'/http://user:pass@host:port';
+          $('edVless').textContent=vlessUrl;$('edVless').href=vlessUrl;
+          $('edVlessLink').textContent=vlessLink;$('edVlessLink').href=vlessLink;
+          $('edSocks5').textContent=socks5Url;$('edSocks5').href=socks5Url;
+          $('edHttp').textContent=httpUrl;$('edHttp').href=httpUrl;
+          $('copyEdVless').addEventListener('click',function(){cpB(this,vlessUrl)});
+          $('copyEdVlessLink').addEventListener('click',function(){cpB(this,vlessLink)});
+          $('copyEdSocks5').addEventListener('click',function(){cpB(this,socks5Url)});
+          $('copyEdHttp').addEventListener('click',function(){cpB(this,httpUrl)});
         }
         $('copyUrl').addEventListener('click',function(){cpB(this,d.panelURL)});
         $('copyName').addEventListener('click',function(){cpB(this,d.workerName)});
