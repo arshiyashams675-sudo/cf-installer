@@ -79,13 +79,13 @@ export default {
           nova:{repo:'IRNova/Nova-Proxy',file:'worker.js',bindings:{d1:['DB'],kv:['KV']},vars:{ADMIN:'admin'},path:'/admin'},
           edgtun:{repo:'6Kmfi6HP/EDtunnel',file:'_worker.js',bindings:{d1:[],kv:[]},vars:{UUID:crypto.randomUUID()},path:''},
           zeus:{repo:'zeus-panel/ZEUS-PANEL',file:'Source.js',bindings:{d1:['DB'],kv:[]},vars:{},path:'/login'},
-          fox:{repo:'code3-dev/foxcloud',file:'worker.js',bindings:{d1:[],kv:[]},vars:{UUID:crypto.randomUUID(),PROXY_IP:'172.66.45.9:443'},path:'/sub'},
+          fox:{repo:'code3-dev/foxcloud',file:'worker.js',release:'v1.0.0',bindings:{d1:[],kv:[]},vars:{UUID:crypto.randomUUID(),PROXY_IP:'172.66.45.9:443'},path:'/sub'},
           amcf:{repo:'amclubs/am-cf-tunnel',file:'_worker.js',bindings:{d1:[],kv:['amclubs']},vars:{},path:'/'}
         };
         const p=panels[panelType];
         if(!p)return R({success:false,logs,error:'پنل نامعتبر'});
 
-        const code=await dlCode(p.repo,p.file);
+        const code=await dlCode(p.repo,p.file,p.release);
         if(!code)return R({success:false,logs,error:'کد منبع یافت نشد'});
         log(`کد دانلود شد: ${(code.length/1024).toFixed(0)}KB`);
 
@@ -157,12 +157,17 @@ async function cfDirect(h,path,method='GET',body=null){
   }catch(e){return{success:false,errors:[{message:e.message}]}}
 }
 
-async function dlCode(repo,file){
+async function dlCode(repo,file,release){
   const f=encodeURIComponent(file);
+  if(release){
+    const rUrl=`https://github.com/${repo}/releases/download/${release}/${f}`;
+    try{const r=await fetch(rUrl);if(r.ok){const t=await r.text();if(t.length>200)return t}}catch(e){}
+  }
   const urls=[
     `https://cdn.jsdelivr.net/gh/${repo}@main/${f}`,
     `https://cdn.jsdelivr.net/gh/${repo}@master/${f}`,
-    `https://raw.githubusercontent.com/${repo}/refs/heads/main/${f}`
+    `https://raw.githubusercontent.com/${repo}/refs/heads/main/${f}`,
+    `https://raw.githubusercontent.com/${repo}/refs/heads/master/${f}`
   ];
   for(const u of urls){
     try{const r=await fetch(u);if(r.ok){const t=await r.text();if(t.length>200)return t}}catch(e){}
