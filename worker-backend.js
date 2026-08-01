@@ -78,7 +78,9 @@ export default {
           cfnew:{repo:'byjoey/cfnew',file:'明文源吗',bindings:{d1:[],kv:['C']},vars:{u:crypto.randomUUID()},path:''},
           nova:{repo:'IRNova/Nova-Proxy',file:'worker.js',bindings:{d1:['DB'],kv:['KV']},vars:{ADMIN:'admin'},path:'/admin'},
           edgtun:{repo:'6Kmfi6HP/EDtunnel',file:'_worker.js',bindings:{d1:[],kv:[]},vars:{UUID:crypto.randomUUID()},path:''},
-          zeus:{repo:'zeus-panel/ZEUS-PANEL',file:'Source.js',bindings:{d1:['DB'],kv:[]},vars:{},path:'/login'}
+          zeus:{repo:'zeus-panel/ZEUS-PANEL',file:'Source.js',bindings:{d1:['DB'],kv:[]},vars:{},path:'/login'},
+          fox:{repo:'code3-dev/foxcloud',file:'worker.js',bindings:{d1:[],kv:[]},vars:{UUID:crypto.randomUUID(),PROXY_IP:'172.66.45.9:443'},path:'/sub'},
+          amcf:{repo:'amclubs/am-cf-tunnel',file:'_worker.js',bindings:{d1:[],kv:['amclubs']},vars:{},path:'/'}
         };
         const p=panels[panelType];
         if(!p)return R({success:false,logs,error:'پنل نامعتبر'});
@@ -136,7 +138,7 @@ export default {
         const panelURL=basePath+panelPath;
         log(`آدرس: ${panelURL}`);
 
-        return R({success:true,logs,panelURL,workerName,panelType,uuid:vars.u||null,panelPath});
+        return R({success:true,logs,panelURL,workerName,panelType,uuid:vars.u||vars.UUID||null,panelPath});
       }catch(e){return R({success:false,logs:[`خطا: ${e.message}`],error:e.message})}
     }
 
