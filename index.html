@@ -485,7 +485,9 @@ const PANELS={
   cfnew:{name:'Cfnew Panel',icon:'🆕',desc:'پنل مدرن با KV',key:'cfnew'},
   nova:{name:'Nova Proxy',icon:'🚀',desc:'پنل پیشرفته D1 + KV',key:'nova'},
   edgtun:{name:'EDtunnel',icon:'🌐',desc:'محبوب‌ترین VLESS/Trojan — 2.9k ⭐',key:'edgtun'},
-  zeus:{name:'Zeus Panel',icon:'⚡',desc:'حرفه‌ای با مدیریت کاربران — 813 ⭐',key:'zeus'}
+  zeus:{name:'Zeus Panel',icon:'⚡',desc:'حرفه‌ای با مدیریت کاربران — 813 ⭐',key:'zeus'},
+  fox:{name:'FoxCloud',icon:'🦊',desc:'VLESS سبک و سریع — 151 ⭐',key:'fox'},
+  amcf:{name:'am-cf-tunnel',icon:'🇨🇳',desc:'VLESS + Trojan با Subscription — 3.1k ⭐',key:'amcf'}
 };
 
 let selectedPanel=null;
@@ -528,6 +530,17 @@ function render(){
           <div class="result-box"><div class="result-label">🔗 VLESS لینک مستقیم</div><div class="result-value"><a id="edVlessLink" href="#" target="_blank" style="color:var(--cyan);text-decoration:none;word-break:break-all;font-size:13px"></a><button class="copy-btn" id="copyEdVlessLink">کپی</button></div></div>
           <div class="result-box"><div class="result-label"> socks5</div><div class="result-value"><a id="edSocks5" href="#" target="_blank" style="color:var(--cyan);text-decoration:none;word-break:break-all;font-size:13px"></a><button class="copy-btn" id="copyEdSocks5">کپی</button></div></div>
           <div class="result-box"><div class="result-label"> http</div><div class="result-value"><a id="edHttp" href="#" target="_blank" style="color:var(--cyan);text-decoration:none;word-break:break-all;font-size:13px"></a><button class="copy-btn" id="copyEdHttp">کپی</button></div></div>
+        </div>
+        <div id="foxPaths" style="display:none">
+          <div class="result-box"><div class="result-label">📊 صفحه وضعیت</div><div class="result-value"><a id="foxRoot" href="#" target="_blank" style="color:var(--cyan);text-decoration:none;word-break:break-all;font-size:13px"></a><button class="copy-btn" id="copyFoxRoot">کپی</button></div></div>
+          <div class="result-box"><div class="result-label">📑 صفحه اشتراک</div><div class="result-value"><a id="foxSub" href="#" target="_blank" style="color:var(--cyan);text-decoration:none;word-break:break-all;font-size:13px"></a><button class="copy-btn" id="copyFoxSub">کپی</button></div></div>
+          <div class="result-box"><div class="result-label">🔗 VLESS لینک مستقیم</div><div class="result-value"><a id="foxVless" href="#" target="_blank" style="color:var(--cyan);text-decoration:none;word-break:break-all;font-size:13px"></a><button class="copy-btn" id="copyFoxVless">کپی</button></div></div>
+        </div>
+        <div id="amcfPaths" style="display:none">
+          <div class="result-box"><div class="result-label">🔐 صفحه لاگین</div><div class="result-value"><a id="amcfRoot" href="#" target="_blank" style="color:var(--cyan);text-decoration:none;word-break:break-all;font-size:13px"></a><button class="copy-btn" id="copyAmcfRoot">کپی</button></div></div>
+          <div class="result-box"><div class="result-label">📑 صفحه اشتراک</div><div class="result-value"><a id="amcfSub" href="#" target="_blank" style="color:var(--cyan);text-decoration:none;word-break:break-all;font-size:13px"></a><button class="copy-btn" id="copyAmcfSub">کپی</button></div></div>
+          <div class="result-box"><div class="result-label">🔗 VLESS لینک مستقیم</div><div class="result-value"><a id="amcfVless" href="#" target="_blank" style="color:var(--cyan);text-decoration:none;word-break:break-all;font-size:13px"></a><button class="copy-btn" id="copyAmcfVless">کپی</button></div></div>
+          <div class="result-box"><div class="result-label">🔑 رمز لاگین (UUID)</div><div class="result-value" style="color:var(--red)"><span id="amcfUuid"></span><button class="copy-btn" id="copyAmcfUuid">کپی</button></div></div>
         </div>
         <div class="btn-group"><a id="openPanel" href="#" target="_blank" class="btn btn-primary">باز کردن پنل</a><button class="btn btn-secondary" onclick="render()">نصب جدید</button></div>
       </div>
@@ -618,6 +631,40 @@ function render(){
           $('copyEdVlessLink').addEventListener('click',function(){cpB(this,vlessLink)});
           $('copyEdSocks5').addEventListener('click',function(){cpB(this,socks5Url)});
           $('copyEdHttp').addEventListener('click',function(){cpB(this,httpUrl)});
+        }
+        // FoxCloud paths
+        if(d.panelType==='fox' && d.uuid){
+          $('foxPaths').style.display='block';
+          const base=d.panelURL;
+          const uuid=d.uuid;
+          const host=new URL(base).host;
+          const foxRoot=base;
+          const foxSub=base+'/sub';
+          const foxVless='vless://'+uuid+'@'+host+':443?encryption=none&security=tls&sni='+host+'&fp=chrome&type=ws&host='+host+'&path=/ws#CF-Worker';
+          $('foxRoot').textContent=foxRoot;$('foxRoot').href=foxRoot;
+          $('foxSub').textContent=foxSub;$('foxSub').href=foxSub;
+          $('foxVless').textContent=foxVless;$('foxVless').href=foxVless;
+          $('copyFoxRoot').addEventListener('click',function(){cpB(this,foxRoot)});
+          $('copyFoxSub').addEventListener('click',function(){cpB(this,foxSub)});
+          $('copyFoxVless').addEventListener('click',function(){cpB(this,foxVless)});
+        }
+        // am-cf-tunnel paths
+        if(d.panelType==='amcf' && d.uuid){
+          $('amcfPaths').style.display='block';
+          const base=d.panelURL;
+          const uuid=d.uuid;
+          const host=new URL(base).host;
+          const amcfRoot=base;
+          const amcfSub=base+'/sub';
+          const amcfVless='vless://'+uuid+'@'+host+':443?encryption=none&type=ws#CF-Worker';
+          $('amcfRoot').textContent=amcfRoot;$('amcfRoot').href=amcfRoot;
+          $('amcfSub').textContent=amcfSub;$('amcfSub').href=amcfSub;
+          $('amcfVless').textContent=amcfVless;$('amcfVless').href=amcfVless;
+          $('amcfUuid').textContent=uuid;
+          $('copyAmcfRoot').addEventListener('click',function(){cpB(this,amcfRoot)});
+          $('copyAmcfSub').addEventListener('click',function(){cpB(this,amcfSub)});
+          $('copyAmcfVless').addEventListener('click',function(){cpB(this,amcfVless)});
+          $('copyAmcfUuid').addEventListener('click',function(){cpB(this,uuid)});
         }
         $('copyUrl').addEventListener('click',function(){cpB(this,d.panelURL)});
         $('copyName').addEventListener('click',function(){cpB(this,d.workerName)});
