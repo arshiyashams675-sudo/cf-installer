@@ -523,6 +523,13 @@ function render(){
         <div class="result-box" id="uuidBox" style="display:none"><div class="result-label">UUID (Cfnew)</div><div class="result-value"><span id="resUuid"></span><button class="copy-btn" id="copyUuid">کپی</button></div></div>
         <div class="result-box"><div class="result-label">رمز عبور پیش‌فرض</div><div class="result-value" style="color:var(--red)"><span>admin</span><button class="copy-btn" onclick="cpB(this,'admin')">کپی</button></div></div>
         <div class="alert alert-warn">⚠️ بلافاصله رمز عبور را تغییر دهید!</div>
+        <div class="result-box" id="edgtunInfo" style="display:none"><div class="result-label">📌 مسیرهای EDtunnel</div><div class="result-value" style="font-size:12px;line-height:2;color:var(--text)">
+          <div>🌐 <b>/{UUID}</b> → لینک VLESS کانفیگ</div>
+          <div>🔗 <b>/vless://{UUID}</b> → لینک VLESS مستقیم</div>
+          <div> socks5://... → SOCKS5 proxy</div>
+          <div> http://... → HTTP proxy</div>
+          <div>/?proxyip=1.1.1.1 → تنظیم ProxyIP</div>
+        </div></div>
         <div class="btn-group"><a id="openPanel" href="#" target="_blank" class="btn btn-primary">باز کردن پنل</a><button class="btn btn-secondary" onclick="render()">نصب جدید</button></div>
       </div>
     </div>
@@ -593,6 +600,10 @@ function render(){
           $('uuidBox').style.display='block';
           $('resUuid').textContent=d.uuid;
           $('copyUuid').addEventListener('click',function(){cpB(this,d.uuid)});
+        }
+        // Show EDtunnel paths
+        if(d.panelType==='edgtun'){
+          $('edgtunInfo').style.display='block';
         }
         $('copyUrl').addEventListener('click',function(){cpB(this,d.panelURL)});
         $('copyName').addEventListener('click',function(){cpB(this,d.workerName)});
