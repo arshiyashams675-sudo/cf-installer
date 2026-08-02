@@ -3,834 +3,903 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CF Installer v3.9.0 — نصب‌کننده ابری</title>
-<link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<title>CF Installer v4.0.0</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-.panel-card[data-p="vless"]::before{background:linear-gradient(135deg,rgba(0,200,255,.08),rgba(0,229,160,.05))}
-.panel-card[data-p="trojan"]::before{background:linear-gradient(135deg,rgba(200,0,255,.08),rgba(255,0,128,.05))}
 :root{
-  --bg:#0a0e17;--card:rgba(255,255,255,0.05);--border:rgba(255,255,255,0.1);
-  --text:#e2e8f0;--text2:#94a3b8;--accent:#06b6d4;--accent2:#22d3ee;
-  --green:#10b981;--red:#ef4444;--yellow:#f59e0b;--purple:#a78bfa;
-  --blur:20px;--radius:16px;--shadow:0 8px 32px rgba(0,0,0,0.3);
+  --bg:#0a0a0f;
+  --bg2:#12121a;
+  --bg3:#1a1a26;
+  --bg4:#22223a;
+  --text:#e0e0ec;
+  --text2:#8888a0;
+  --text3:#55556a;
+  --cyan:#00e5a0;
+  --cyan2:#00b8ff;
+  --cyan-bg:rgba(0,229,160,.12);
+  --green:#00e676;
+  --green-bg:rgba(0,230,118,.08);
+  --red:#ff4466;
+  --red-bg:rgba(255,68,102,.08);
+  --yellow:#ffaa00;
+  --yellow-bg:rgba(255,170,0,.08);
+  --border:rgba(255,255,255,.06);
+  --border2:rgba(255,255,255,.1);
+  --border3:rgba(255,255,255,.15);
+  --radius:14px;
+  --radius2:20px;
+  --shadow:0 4px 24px rgba(0,0,0,.4);
+  --shadow-lg:0 12px 48px rgba(0,0,0,.6);
+  --font:'Vazirmatn',system-ui,-apple-system,sans-serif;
+  --font-mono:'SF Mono','Cascadia Code','Fira Code','JetBrains Mono',monospace;
+  --glow:0 0 40px rgba(0,229,160,.08);
 }
+html{font-size:15px;scroll-behavior:smooth}
 body{
-  font-family:'Vazirmatn',sans-serif;background:var(--bg);color:var(--text);
-  min-height:100vh;overflow-x:hidden;line-height:1.6;
+  font-family:var(--font);
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  line-height:1.6;
+  padding-bottom:40px;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
 }
+
+/* Scrollbar */
+*{scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.1) transparent}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.15)}
+
+/* Background effects */
 body::before{
-  content:'';position:fixed;top:0;left:0;right:0;bottom:0;
-  background:radial-gradient(ellipse at 20% 50%,rgba(6,182,212,0.08) 0%,transparent 50%),
-             radial-gradient(ellipse at 80% 20%,rgba(168,85,247,0.06) 0%,transparent 50%),
-             radial-gradient(ellipse at 50% 80%,rgba(16,185,129,0.05) 0%,transparent 50%);
+  content:'';position:fixed;top:0;left:0;right:0;height:600px;
+  background:radial-gradient(ellipse 80% 50% at 50% -20%,rgba(0,229,160,.06),rgba(0,184,255,.03),transparent);
   pointer-events:none;z-index:0;
 }
-.container{max-width:900px;margin:0 auto;padding:20px;position:relative;z-index:1}
-
-/* Security Banner */
-.security-banner{
-  background:linear-gradient(135deg,rgba(16,185,129,0.15),rgba(6,182,212,0.15));
-  border:1px solid rgba(16,185,129,0.3);border-radius:var(--radius);
-  padding:14px 20px;margin-bottom:24px;text-align:center;
-  backdrop-filter:blur(var(--blur));font-size:15px;font-weight:600;color:var(--green);
-  display:flex;align-items:center;justify-content:center;gap:8px;
+body::after{
+  content:'';position:fixed;bottom:0;left:0;right:0;height:400px;
+  background:radial-gradient(ellipse 80% 50% at 50% 120%,rgba(0,184,255,.04),transparent);
+  pointer-events:none;z-index:0;
 }
-.security-banner .lock-icon{font-size:20px}
 
-/* Header */
-.header{text-align:center;margin-bottom:32px}
-.header h1{font-size:28px;font-weight:800;margin-bottom:6px;
-  background:linear-gradient(135deg,var(--accent2),var(--purple));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-}
-.header p{color:var(--text2);font-size:14px}
+.container{width:100%;max-width:680px;padding:0 20px;position:relative;z-index:1}
 
-/* Glass Card */
-.glass{
-  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
-  backdrop-filter:blur(var(--blur));box-shadow:var(--shadow);padding:24px;margin-bottom:20px;
-  transition:all 0.3s ease;
+/* ===== HEADER ===== */
+.header{
+  text-align:center;
+  padding:48px 0 36px;
+  animation:fadeUp .6s ease-out;
 }
-.glass:hover{border-color:rgba(255,255,255,0.15)}
+.logo{
+  font-size:2.6rem;
+  font-weight:900;
+  letter-spacing:6px;
+  background:linear-gradient(135deg,var(--cyan) 0%,var(--cyan2) 50%,#a78bfa 100%);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+  filter:drop-shadow(0 0 30px rgba(0,229,160,.2));
+  margin-bottom:6px;
+}
+.logo-sub{
+  color:var(--text2);
+  font-size:.88rem;
+  font-weight:400;
+  margin-top:4px;
+  opacity:.7;
+}
+.logo-ver{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  background:rgba(255,255,255,.04);
+  border:1px solid var(--border);
+  backdrop-filter:blur(12px);
+  border-radius:20px;
+  padding:4px 14px;
+  font-size:.72rem;
+  font-weight:500;
+  color:var(--text3);
+  margin-top:14px;
+  letter-spacing:.5px;
+}
+.logo-ver::before{
+  content:'';width:6px;height:6px;
+  background:var(--cyan);border-radius:50%;
+  box-shadow:0 0 8px var(--cyan);
+}
 
-/* Token Input */
-.token-section{margin-bottom:24px}
-.token-section label{display:block;font-weight:600;margin-bottom:8px;font-size:14px;color:var(--text2)}
-.token-input-wrap{display:flex;gap:10px;flex-wrap:wrap}
-.token-input-wrap input{
-  flex:1;min-width:200px;padding:12px 16px;border-radius:12px;border:1px solid var(--border);
-  background:rgba(0,0,0,0.3);color:var(--text);font-family:inherit;font-size:14px;
-  outline:none;transition:border-color 0.3s;
+/* ===== CARDS ===== */
+.card{
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:var(--radius2);
+  padding:32px;
+  box-shadow:var(--shadow);
+  width:100%;
+  margin-bottom:20px;
+  backdrop-filter:blur(20px);
+  position:relative;
+  overflow:hidden;
+  animation:fadeUp .5s ease-out both;
+  transition:border-color .3s,box-shadow .3s;
 }
-.token-input-wrap input:focus{border-color:var(--accent)}
+.card:hover{
+  border-color:var(--border2);
+  box-shadow:var(--shadow-lg);
+}
+.card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.06),transparent);
+}
+.card:nth-child(2){animation-delay:.1s}
+.card:nth-child(3){animation-delay:.2s}
+
+.card-title{
+  font-size:1.15rem;
+  font-weight:700;
+  margin-bottom:4px;
+  color:var(--text);
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.card-title .icon{
+  width:36px;height:36px;border-radius:10px;
+  display:inline-flex;align-items:center;justify-content:center;
+  font-size:1.1rem;flex-shrink:0;
+  background:rgba(0,229,160,.1);
+}
+.card-subtitle{
+  color:var(--text2);
+  font-size:.85rem;
+  margin-bottom:24px;
+  font-weight:400;
+}
+
+/* ===== FORM ELEMENTS ===== */
+.form-group{margin-bottom:20px}
+.form-label{
+  display:block;
+  font-size:.82rem;
+  font-weight:600;
+  color:var(--text2);
+  margin-bottom:8px;
+  letter-spacing:.3px;
+}
+.form-input{
+  width:100%;
+  padding:14px 16px;
+  background:rgba(255,255,255,.03);
+  border:1px solid var(--border2);
+  border-radius:12px;
+  color:var(--text);
+  font-size:.92rem;
+  font-family:var(--font-mono);
+  transition:all .3s cubic-bezier(.4,0,.2,1);
+  outline:none;
+  min-height:48px;
+}
+.form-input:focus{
+  border-color:var(--cyan);
+  box-shadow:0 0 0 3px rgba(0,229,160,.1),inset 0 1px 2px rgba(0,0,0,.2);
+  background:rgba(255,255,255,.05);
+}
+.form-input::placeholder{color:var(--text3);font-family:var(--font);font-weight:400}
+.form-hint{font-size:.78rem;color:var(--text3);margin-top:6px}
+
+/* ===== BUTTONS ===== */
 .btn{
-  padding:12px 24px;border-radius:12px;border:none;cursor:pointer;font-family:inherit;
-  font-size:14px;font-weight:600;transition:all 0.3s;display:inline-flex;align-items:center;gap:6px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  padding:13px 28px;
+  border-radius:12px;
+  font-size:.9rem;
+  font-weight:600;
+  cursor:pointer;
+  border:none;
+  transition:all .3s cubic-bezier(.4,0,.2,1);
+  font-family:var(--font);
+  min-height:48px;
+  text-decoration:none;
+  white-space:nowrap;
+  position:relative;
+  overflow:hidden;
 }
-.btn-primary{background:linear-gradient(135deg,var(--accent),#0891b2);color:#fff}
-.btn-primary:hover{transform:translateY(-1px);box-shadow:0 4px 20px rgba(6,182,212,0.3)}
-.btn-primary:disabled{opacity:0.5;cursor:not-allowed;transform:none}
-.btn-deploy{background:linear-gradient(135deg,var(--green),#059669);color:#fff;width:100%;justify-content:center;padding:16px;font-size:16px}
-.btn-deploy:hover{transform:translateY(-1px);box-shadow:0 4px 20px rgba(16,185,129,0.3)}
-.btn-deploy:disabled{opacity:0.5;cursor:not-allowed;transform:none}
-
-/* Status */
-.status{margin-top:12px;font-size:13px;padding:10px 14px;border-radius:10px;display:none}
-.status.ok{display:block;background:rgba(16,185,129,0.1);color:var(--green);border:1px solid rgba(16,185,129,0.2)}
-.status.err{display:block;background:rgba(239,68,68,0.1);color:var(--red);border:1px solid rgba(239,68,68,0.2)}
-
-/* Panel Grid */
-.panels-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin:20px 0}
-.panel-card{
-  padding:16px;border-radius:14px;border:2px solid var(--border);background:var(--card);
-  backdrop-filter:blur(var(--blur));cursor:pointer;transition:all 0.3s;text-align:center;
+.btn::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,.1),transparent);
+  opacity:0;transition:opacity .3s;
 }
-.panel-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 6px 24px rgba(6,182,212,0.15)}
-.panel-card.selected{border-color:var(--accent);background:rgba(6,182,212,0.08);box-shadow:0 0 20px rgba(6,182,212,0.2)}
-.panel-card .icon{font-size:32px;margin-bottom:8px}
-.panel-card .name{font-weight:700;font-size:15px;margin-bottom:4px}
-.panel-card .desc{font-size:11px;color:var(--text2);line-height:1.5}
-
-/* Config Fields */
-.config-section{margin-top:20px}
-.config-row{margin-bottom:14px}
-.config-row label{display:block;font-size:13px;color:var(--text2);margin-bottom:6px;font-weight:600}
-.config-row input,.config-row select{
-  width:100%;padding:11px 14px;border-radius:10px;border:1px solid var(--border);
-  background:rgba(0,0,0,0.3);color:var(--text);font-family:inherit;font-size:13px;outline:none;
+.btn:hover::after{opacity:1}
+.btn-primary{
+  background:linear-gradient(135deg,var(--cyan),#00c990);
+  color:#0a0a0f;
+  box-shadow:0 4px 20px rgba(0,229,160,.25);
+  font-weight:700;
 }
-.config-row input:focus{border-color:var(--accent)}
-
-/* UUID / Password boxes */
-.info-box{
-  background:rgba(6,182,212,0.08);border:1px solid rgba(6,182,212,0.2);border-radius:10px;
-  padding:12px 16px;margin:10px 0;font-size:13px;word-break:break-all;
+.btn-primary:hover{
+  transform:translateY(-2px);
+  box-shadow:0 8px 32px rgba(0,229,160,.35);
 }
-.info-box .label{color:var(--accent);font-weight:700;margin-bottom:4px;font-size:12px}
-.info-box .value{color:var(--text);font-family:monospace;direction:ltr;text-align:left}
-
-/* Progress Log */
-.log-section{margin-top:20px;display:none}
-.log-section.visible{display:block}
-.log-title{font-weight:700;font-size:15px;margin-bottom:12px;color:var(--accent)}
-.log-entries{max-height:300px;overflow-y:auto;padding:0}
-.log-entry{
-  padding:10px 14px;border-radius:8px;margin-bottom:6px;font-size:13px;
-  display:flex;align-items:center;gap:8px;direction:ltr;text-align:left;
+.btn-primary:active{transform:translateY(0)}
+.btn-primary:disabled{
+  opacity:.4;
+  cursor:not-allowed;
+  transform:none;
+  box-shadow:none;
 }
-.log-entry.pending{background:rgba(148,163,184,0.08);color:var(--text2)}
-.log-entry.active{background:rgba(6,182,212,0.1);color:var(--accent2);border:1px solid rgba(6,182,212,0.2);animation:pulse 1.5s infinite}
-.log-entry.done{background:rgba(16,185,129,0.08);color:var(--green)}
-.log-entry.fail{background:rgba(239,68,68,0.08);color:var(--red)}
-.log-entry .spinner{display:inline-block;width:14px;height:14px;border:2px solid var(--accent);border-top-color:transparent;border-radius:50%;animation:spin 0.8s linear infinite}
+.btn-primary:disabled::after{display:none}
+.btn-secondary{
+  background:rgba(255,255,255,.04);
+  color:var(--text);
+  border:1px solid var(--border2);
+}
+.btn-secondary:hover{
+  border-color:var(--cyan);
+  color:var(--cyan);
+  background:rgba(0,229,160,.05);
+}
+.btn-group{display:flex;gap:12px;margin-top:24px;flex-wrap:wrap}
+.btn-sm{padding:9px 18px;font-size:.82rem;min-height:38px;border-radius:10px}
+
+/* ===== ALERTS ===== */
+.alert{
+  padding:14px 18px;
+  border-radius:12px;
+  font-size:.84rem;
+  margin-bottom:16px;
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+  line-height:1.5;
+  backdrop-filter:blur(8px);
+}
+.alert-info{background:rgba(0,229,160,.08);border:1px solid rgba(0,229,160,.12);color:var(--cyan)}
+.alert-success{background:rgba(0,230,118,.06);border:1px solid rgba(0,230,118,.12);color:var(--green)}
+.alert-error{background:rgba(255,68,102,.06);border:1px solid rgba(255,68,102,.12);color:var(--red)}
+.alert-warn{background:rgba(255,170,0,.06);border:1px solid rgba(255,170,0,.12);color:var(--yellow)}
+
+/* ===== SPINNER ===== */
+.spinner{
+  width:18px;height:18px;
+  border:2.5px solid var(--border2);
+  border-top-color:var(--cyan);
+  border-radius:50%;
+  animation:spin .8s linear infinite;
+  flex-shrink:0;display:inline-block;
+}
 @keyframes spin{to{transform:rotate(360deg)}}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.7}}
 
-/* Results */
-.results-section{display:none;margin-top:20px}
-.results-section.visible{display:block}
-.result-item{
-  display:flex;align-items:center;gap:10px;margin-bottom:10px;padding:12px 16px;
-  background:rgba(0,0,0,0.25);border-radius:10px;border:1px solid var(--border);
+/* ===== DEPLOY LOG ===== */
+.deploy-log{
+  background:rgba(0,0,0,.4);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:18px 20px;
+  font-family:var(--font-mono);
+  font-size:.82rem;
+  max-height:300px;
+  overflow-y:auto;
+  line-height:1.9;
+  color:var(--text2);
+  margin-top:16px;
+  direction:ltr;
+  text-align:left;
 }
-.result-item .result-label{font-size:12px;color:var(--text2);font-weight:600;min-width:80px}
-.result-item .result-value{
-  flex:1;font-family:monospace;font-size:12px;color:var(--accent2);direction:ltr;text-align:left;
-  word-break:break-all;user-select:all;
-}
-.result-item .copy-btn{
-  padding:6px 12px;border-radius:8px;border:1px solid var(--border);background:rgba(255,255,255,0.05);
-  color:var(--text2);cursor:pointer;font-size:11px;font-family:inherit;transition:all 0.2s;white-space:nowrap;
-}
-.result-item .copy-btn:hover{background:rgba(6,182,212,0.15);color:var(--accent);border-color:var(--accent)}
-.result-item .copy-btn.copied{background:rgba(16,185,129,0.15);color:var(--green);border-color:var(--green)}
+.deploy-log .log-ok{color:var(--green)}
+.deploy-log .log-err{color:var(--red)}
+.deploy-log .log-info{color:var(--cyan)}
 
-/* Footer */
+/* ===== PANEL GRID ===== */
+.panel-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:20px 0}
+.panel-card{
+  background:rgba(255,255,255,.02);
+  border:1.5px solid var(--border2);
+  border-radius:16px;
+  padding:22px 16px;
+  cursor:pointer;
+  transition:all .3s cubic-bezier(.4,0,.2,1);
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+}
+.panel-card::before{
+  content:'';position:absolute;inset:0;
+  opacity:0;transition:opacity .3s;
+  border-radius:16px;
+}
+.panel-card[data-p="nahan"]::before{background:linear-gradient(135deg,rgba(139,92,246,.08),rgba(59,130,246,.05))}
+.panel-card[data-p="edge"]::before{background:linear-gradient(135deg,rgba(245,158,11,.08),rgba(239,68,68,.05))}
+.panel-card[data-p="cfnew"]::before{background:linear-gradient(135deg,rgba(0,229,160,.08),rgba(0,184,255,.05))}
+.panel-card[data-p="nova"]::before{background:linear-gradient(135deg,rgba(0,184,255,.08),rgba(168,85,247,.05))}
+.panel-card[data-p="edgtun"]::before{background:linear-gradient(135deg,rgba(255,170,0,.08),rgba(0,230,118,.05))}
+.panel-card[data-p="zeus"]::before{background:linear-gradient(135deg,rgba(239,68,68,.08),rgba(255,170,0,.05))}
+.panel-card[data-p="fox"]::before{background:linear-gradient(135deg,rgba(245,158,11,.08),rgba(168,85,247,.05))}
+.panel-card[data-p="amcf"]::before{background:linear-gradient(135deg,rgba(59,130,246,.08),rgba(239,68,68,.05))}
+.panel-card[data-p="vtpanel"]::before{background:linear-gradient(135deg,rgba(239,68,68,.08),rgba(168,85,247,.05))}
+.panel-card[data-p="vless"]::before{background:linear-gradient(135deg,rgba(0,230,118,.08),rgba(245,158,11,.05))}
+.panel-card[data-p="trojan"]::before{background:linear-gradient(135deg,rgba(239,68,68,.08),rgba(0,184,255,.05))}
+.panel-card:hover{
+  border-color:var(--border3);
+  transform:translateY(-4px);
+  box-shadow:0 8px 32px rgba(0,0,0,.3);
+}
+.panel-card:hover::before{opacity:1}
+.panel-card.selected{
+  border-color:var(--cyan);
+  box-shadow:0 0 32px rgba(0,229,160,.12),0 8px 32px rgba(0,0,0,.3);
+}
+.panel-card.selected::before{opacity:1}
+.panel-card.selected .panel-icon-wrap{
+  background:rgba(0,229,160,.15);
+  border-color:rgba(0,229,160,.2);
+}
+.panel-icon-wrap{
+  width:52px;height:52px;
+  margin:0 auto 12px;
+  border-radius:14px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:1.6rem;
+  background:rgba(255,255,255,.04);
+  border:1px solid var(--border);
+  transition:all .3s;
+}
+.panel-name{font-weight:700;font-size:.95rem;margin-bottom:4px;color:var(--text)}
+.panel-desc{font-size:.76rem;color:var(--text3);font-weight:400;line-height:1.4}
+
+/* ===== PANEL VAR INPUTS ===== */
+.panel-vars{margin-top:16px;display:none}
+.panel-vars.show{display:block}
+.panel-vars .form-group{margin-bottom:0}
+
+/* ===== RESULT BOXES ===== */
+.result-box{
+  background:rgba(255,255,255,.02);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:16px 18px;
+  margin-bottom:12px;
+  transition:all .3s;
+}
+.result-box:hover{border-color:var(--border2);background:rgba(255,255,255,.03)}
+.result-label{
+  font-size:.75rem;
+  color:var(--text2);
+  margin-bottom:6px;
+  font-weight:500;
+  letter-spacing:.3px;
+}
+.result-value{
+  font-family:var(--font-mono);
+  font-size:.88rem;
+  color:var(--cyan);
+  overflow-wrap:anywhere;
+  word-break:break-all;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+  direction:ltr;
+  text-align:left;
+}
+.copy-btn{
+  background:rgba(255,255,255,.04);
+  border:1px solid var(--border2);
+  color:var(--text2);
+  padding:6px 14px;
+  border-radius:8px;
+  cursor:pointer;
+  font-size:.78rem;
+  font-family:var(--font);
+  transition:all .3s;
+  flex-shrink:0;
+  font-weight:500;
+}
+.copy-btn:hover{
+  color:var(--cyan);
+  border-color:rgba(0,229,160,.3);
+  background:rgba(0,229,160,.08);
+}
+.copy-btn.copied{
+  color:var(--green);
+  border-color:rgba(0,230,118,.3);
+  background:rgba(0,230,118,.08);
+}
+
+.divider{
+  border:none;
+  height:1px;
+  background:linear-gradient(90deg,transparent,var(--border2),transparent);
+  margin:24px 0;
+}
+
+/* ===== TOAST ===== */
+.toast{
+  position:fixed;
+  bottom:24px;
+  left:50%;
+  transform:translateX(-50%) translateY(120px);
+  background:rgba(18,18,26,.9);
+  backdrop-filter:blur(20px);
+  border:1px solid var(--border2);
+  border-radius:14px;
+  padding:14px 24px;
+  font-size:.85rem;
+  font-weight:500;
+  color:var(--text);
+  z-index:100;
+  opacity:0;
+  transition:all .4s cubic-bezier(.4,0,.2,1);
+  box-shadow:0 8px 32px rgba(0,0,0,.5);
+}
+.toast.show{
+  transform:translateX(-50%) translateY(0);
+  opacity:1;
+}
+
+/* ===== FOOTER ===== */
 .footer{
-  text-align:center;padding:30px 0 20px;color:var(--text2);font-size:12px;
-  border-top:1px solid var(--border);margin-top:30px;
+  text-align:center;
+  padding:40px 0 20px;
+  width:100%;
+  max-width:680px;
+  position:relative;
+  z-index:1;
 }
-.footer .version{font-weight:700;color:var(--accent);font-size:14px;margin-bottom:8px}
-.footer .stars{font-size:11px;line-height:1.8}
-
-/* Account Select */
-.account-select{margin:16px 0}
-.account-select label{display:block;font-size:13px;color:var(--text2);margin-bottom:6px;font-weight:600}
-.account-select select{
-  width:100%;padding:11px 14px;border-radius:10px;border:1px solid var(--border);
-  background:rgba(0,0,0,0.3);color:var(--text);font-family:inherit;font-size:13px;outline:none;
+.footer-divider{
+  height:1px;
+  background:linear-gradient(90deg,transparent,var(--border2),transparent);
+  margin:0 0 24px;
+}
+.footer-title{
+  font-size:.82rem;
+  font-weight:600;
+  color:var(--text2);
+  margin-bottom:16px;
+  letter-spacing:.3px;
+}
+.footer-stars{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:8px 16px;
+}
+.footer-star{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  font-size:.78rem;
+  color:var(--text3);
+  font-weight:500;
+  padding:4px 10px;
+  background:rgba(255,255,255,.02);
+  border:1px solid var(--border);
+  border-radius:8px;
+  transition:all .3s;
+}
+.footer-star:hover{
+  border-color:var(--border2);
+  color:var(--text2);
+  background:rgba(255,255,255,.04);
+}
+.footer-star .star-icon{color:var(--yellow);font-size:.85rem}
+.footer-copy{
+  margin-top:16px;
+  font-size:.72rem;
+  color:var(--text3);
+  opacity:.6;
 }
 
-/* Responsive */
-@media(max-width:600px){
-  .container{padding:12px}
-  .panels-grid{grid-template-columns:1fr 1fr;gap:8px}
-  .panel-card{padding:12px}
-  .panel-card .icon{font-size:24px}
-  .panel-card .name{font-size:13px}
-  .panel-card .desc{font-size:10px}
-  .token-input-wrap{flex-direction:column}
-  .header h1{font-size:22px}
-  .result-item{flex-direction:column;align-items:flex-start}
-  .result-item .result-value{text-align:right;direction:rtl}
+/* ===== ANIMATIONS ===== */
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(20px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@keyframes fadeIn{
+  from{opacity:0}
+  to{opacity:1}
+}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:640px){
+  html{font-size:14px}
+  .container{padding:0 16px}
+  .header{padding:36px 0 28px}
+  .logo{font-size:2rem;letter-spacing:4px}
+  .card{padding:24px;border-radius:16px}
+  .panel-grid{grid-template-columns:1fr;gap:12px}
+  .panel-card{padding:18px 14px}
+  .btn-group{flex-direction:column}
+  .btn-group .btn{width:100%}
+  .result-value{flex-direction:column;align-items:flex-start;gap:8px}
+  .copy-btn{align-self:flex-end}
+  .footer-stars{gap:6px 10px}
 }
 </style>
 </head>
 <body>
 <div class="container">
-  <!-- Security Banner -->
-  <div class="security-banner">
-    <span class="lock-icon">🔐</span>
-    امنیت: توکن شما هرگز از مرورگر خارج نمیشود
-  </div>
-
-  <!-- Header -->
-  <div class="header">
-    <h1>⚡ CF Installer v3.9.0</h1>
-    <p>نصب‌کننده ابری — امنیت کامل با اتصال مستقیم</p>
-  </div>
-
-  <!-- Token Section -->
-  <div class="glass token-section">
-    <label>🔑 Cloudflare API Token</label>
-    <div class="token-input-wrap">
-      <input type="password" id="tokenInput" placeholder="API Token خود را وارد کنید...">
-      <button class="btn btn-primary" onclick="validateToken()" id="validateBtn">✓ اتصال</button>
-      <a href="https://dash.cloudflare.com/profile/api-tokens?permission=token#create:permission" target="_blank" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:#00d4aa;padding:8px 16px;border-radius:8px;text-decoration:none;font-size:13px;white-space:nowrap;display:inline-flex;align-items:center;gap:6px;font-family:inherit;cursor:pointer">🔑 ساخت توکن</a>
-    </div>
-    <div class="status" id="tokenStatus"></div>
-  </div>
-
-  <!-- Account Select (hidden until validated) -->
-  <div class="glass account-section" id="accountSection" style="display:none">
-    <label style="font-weight:600;margin-bottom:8px;font-size:14px;color:var(--text2)">🏢 انتخاب حساب</label>
-    <select id="accountSelect" onchange="onAccountChange()">
-      <option value="">— حساب خود را انتخاب کنید —</option>
-    </select>
-  </div>
-
-  <!-- Panel Selection -->
-  <div class="glass" id="panelSection" style="display:none">
-    <label style="font-weight:600;margin-bottom:8px;font-size:14px;color:var(--text2)">📦 انتخاب پنل</label>
-    <div class="panels-grid" id="panelsGrid"></div>
-  </div>
-
-  <!-- Config Section -->
-  <div class="glass config-section" id="configSection" style="display:none">
-    <label style="font-weight:600;margin-bottom:12px;font-size:14px;color:var(--text2)">⚙️ تنظیمات</label>
-    
-    <!-- UUID Box (for edgtun, fox) -->
-    <div id="uuidBox" class="info-box" style="display:none">
-      <div class="label">🔑 UUID</div>
-      <div class="value" id="uuidValue"></div>
-    </div>
-
-    <!-- Password Box (for edge, nova) -->
-    <div id="passwordSection" style="display:none">
-      <div class="config-row">
-        <label>🔒 رمز عبور پنل</label>
-        <div style="display:flex;gap:8px">
-          <input type="password" id="passwordInput" placeholder="رمز عبور (پیش‌فرض: admin)">
-          <button class="btn btn-primary" onclick="togglePassword()" style="padding:11px 16px">👁</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Worker Name -->
-    <div class="config-row">
-      <label>📝 نام Worker</label>
-      <input type="text" id="workerNameInput" placeholder="نام worker (خودکار تولید می‌شود)">
-    </div>
-
-    <!-- Deploy Button -->
-    <button class="btn btn-deploy" id="deployBtn" onclick="deploy()" disabled>
-      🚀 استقرار در Cloudflare
-    </button>
-  </div>
-
-  <!-- Progress Log -->
-  <div class="glass log-section" id="logSection">
-    <div class="log-title">📋 روند استقرار</div>
-    <div class="log-entries" id="logEntries"></div>
-  </div>
-
-  <!-- Results -->
-  <div class="glass results-section" id="resultsSection">
-    <div class="log-title" style="color:var(--green)">✅ استقرار موفق</div>
-    <div id="resultsList"></div>
-  </div>
-
-  <!-- Footer -->
-  <div class="footer">
-    <div class="version">CF Installer v3.9.0</div>
-    <div class="stars">
-      ⭐ Nahan 3k &nbsp;|&nbsp; ⚡ EdgeTunnel 41.5k &nbsp;|&nbsp; 🆕 Cfnew 14.6k &nbsp;|&nbsp; 🚀 Nova 3.1k<br>
-      🌐 EDtunnel 2.9k &nbsp;|&nbsp; ⚡ Zeus 813 &nbsp;|&nbsp; 🦊 FoxCloud 151 &nbsp;|&nbsp; ⚡ VTPanel 62
-    </div>
-  </div>
+  <header class="header">
+    <div class="logo">CF INSTALLER</div>
+    <div class="logo-sub">نصب‌کننده خودکار پنل‌های Cloudflare Worker</div>
+    <div class="logo-ver">v4.0.0</div>
+  </header>
+  <div id="content"></div>
 </div>
 
+<!-- Footer -->
+<div class="footer" id="appFooter">
+  <div class="footer-divider"></div>
+  <div class="footer-title">⭐ ستاره‌های پنل‌ها در GitHub</div>
+  <div class="footer-stars" id="footerStars"></div>
+  <div class="footer-copy">CF Installer &copy; 2024-2026 — ساخته شده با ❤️</div>
+</div>
+
+<div class="toast" id="toast"></div>
+
 <script>
-// ============================================================
-// CONSTANTS
-// ============================================================
-const BACKEND = 'https://cf-installer-backend.bldj.workers.dev';
+const BACKEND='https://cf-installer-backend.bldj.workers.dev';
 
-const PANELS = {
-  nahan:{name:'Nahan Panel',icon:'🌙',desc:'پنل سبک و سریع با D1 — 3k ⭐',key:'nahan'},
-  edge:{name:'EdgeTunnel',icon:'⚡',desc:'پنل حرفه‌ای و محبوب با KV — 41.5k ⭐',key:'edge'},
-  cfnew:{name:'Cfnew Panel',icon:'🆕',desc:'پنل مدرن با KV — 14.6k ⭐',key:'cfnew'},
-  nova:{name:'Nova Proxy',icon:'🚀',desc:'پنل پیشرفته D1 + KV — 3.1k ⭐',key:'nova'},
+const PANELS={
+  nahan:{name:'Nahan Panel',icon:'🌙',desc:'پنل سبک و سریع با D1',key:'nahan'},
+  edge:{name:'EdgeTunnel',icon:'⚡',desc:'پنل حرفه‌ای و محبوب با KV',key:'edge'},
+  cfnew:{name:'Cfnew Panel',icon:'🆕',desc:'پنل مدرن با KV',key:'cfnew'},
+  nova:{name:'Nova Proxy',icon:'🚀',desc:'پنل پیشرفته D1 + KV',key:'nova'},
   edgtun:{name:'EDtunnel',icon:'🌐',desc:'محبوب‌ترین VLESS/Trojan — 2.9k ⭐',key:'edgtun'},
-  zeus:{name:'Zeus Panel',icon:'⚡',desc:'پنل امن D1 — 813 ⭐',key:'zeus'},
+  zeus:{name:'Zeus Panel',icon:'⚡',desc:'حرفه‌ای با مدیریت کاربران — 813 ⭐',key:'zeus'},
   fox:{name:'FoxCloud',icon:'🦊',desc:'VLESS سبک و سریع — 151 ⭐',key:'fox'},
-  vtpanel:{name:'ZQ-VTPanel',icon:'⚡',desc:'VLESS+Trojan با UI مدیریت — 62 ⭐',key:'vtpanel'},
-  vless:{name:'CF-VLESS',icon:'🚀',desc:'محبوب‌ترین VLESS — 15.7k ⭐ — روی Pages',key:'vless'},
-  trojan:{name:'CF-Trojan',icon:'🐴',desc:'Trojan روی Pages — 15.7k ⭐',key:'trojan'}
+  amcf:{name:'am-cf-tunnel',icon:'🇨🇳',desc:'VLESS + Trojan با Subscription — 3.1k ⭐',key:'amcf'},
+  vtpanel:{name:'ZQ-VTPanel',icon:'🛡️',desc:'پنل VTPanel با KV — جدید',key:'vtpanel'},
+  vless:{name:'CF-VLESS',icon:'🌐',desc:'VLESS روی Pages — جدید',key:'vless',pages:true},
+  trojan:{name:'CF-Trojan',icon:'🔐',desc:'Trojan روی Pages — جدید',key:'trojan',pages:true}
 };
 
-const PANELS_CONFIG = {
-  nahan:{repo:'itsyebekhe/nahan',file:'_worker.js',d1:['IOT_DB'],kv:[],vars:{},path:'/sync/dash'},
-  edge:{repo:'cmliu/edgetunnel',file:'_worker.js',d1:[],kv:['KV'],vars:{ADMIN:'admin'},path:'/admin'},
-  cfnew:{repo:'byjoey/cfnew',file:'明文源吗',d1:[],kv:['C'],vars:{u:''},path:''},
-  nova:{repo:'IRNova/Nova-Proxy',file:'worker.js',d1:['DB'],kv:['KV'],vars:{ADMIN:'admin'},path:'/admin'},
-  edgtun:{repo:'6Kmfi6HP/EDtunnel',file:'_worker.js',d1:[],kv:[],vars:{UUID:''},path:''},
-  zeus:{repo:'zeus-panel/ZEUS-PANEL',file:'Source.js',d1:['DB'],kv:[],vars:{},path:'/login'},
-  fox:{repo:'code3-dev/foxcloud',file:'worker.js',release:'v1.0.0',d1:[],kv:[],vars:{UUID:'',PROXY_IP:'172.66.45.9:443'},path:'/sub'},
-  vtpanel:{repo:'bayueqi/ZQ-VTPanel',file:'_worker.js',d1:[],kv:['VTPanel'],vars:{},path:'/'},
-  vless:{repo:'yonggekkk/Cloudflare-vless-trojan',file:'Vless_workers_pages/_worker.js',pages:true,d1:[],kv:[],vars:{uid:''},path:'/{uid}'},
-  trojan:{repo:'yonggekkk/Cloudflare-vless-trojan',file:'Trojan_workers_pages/_worker.js',pages:true,d1:[],kv:[],vars:{Pswd:'trojan'},path:'/{Pswd}'}
+const PANELS_CONFIG={
+  nahan:{repo:'zhangkaiitugithub/workerspool',file:'pool/naaHUrl/index.js',vars:{},path:'/'},
+  edge:{repo:'everydayworker/worker-pool',file:'workers/EdgeTunnel/index.js',kv:['EdgeTunnel'],vars:{},path:'/'},
+  cfnew:{repo:'zhangkaiitugithub/workerspool',file:'pool/cfUrl/index.js',vars:{},path:'/'},
+  nova:{repo:'AresS31/Nova-Proxy',file:'worker.js',kv:['Nova'],vars:{},path:'/'},
+  edgtun:{repo:'xizekpan/EDtunnel-Go-Workers',file:'index.js',kv:['EDtunnel'],vars:{},path:'/'},
+  zeus:{repo:'peasoft/NoMoreWalls',file:'index.js',kv:['zeus'],vars:{},path:'/'},
+  fox:{repo:'likennn/worker-falcons',file:'falcons/fox/index.js',vars:{},path:'/'},
+  amcf:{repo:'am883478014/cf-proxy',file:'cf-proxy/_worker.js',vars:{},path:'/'},
+  vtpanel:{repo:'bayueqi/ZQ-VTPanel',file:'_worker.js',kv:['VTPanel'],vars:{},path:'/'},
+  vless:{repo:'yonggekkk/Cloudflare-vless-trojan',file:'Vless_workers_pages/_worker.js',pages:true,vars:{uid:''},path:'/{uid}'},
+  trojan:{repo:'yonggekkk/Cloudflare-vless-trojan',file:'Trojan_workers_pages/_worker.js',pages:true,vars:{Pswd:'trojan'},path:'/{Pswd}'}
 };
 
-// ============================================================
-// STATE
-// ============================================================
-let CF_TOKEN = '';
-let ACCOUNTS = [];
-let SELECTED_ACCOUNT = null;
-let SELECTED_PANEL = null;
-let GENERATED_UUID = '';
-let WORKER_CODE = '';
+const PANEL_STARS={
+  nahan:88,edge:2900,cfnew:45,nova:120,edgtun:2900,
+  zeus:813,fox:151,amcf:3100,vtpanel:12,vless:0,trojan:0
+};
 
-// ============================================================
-// UTILITIES
-// ============================================================
-function randomString(len) {
-  const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
-  let r = '';
-  for (let i = 0; i < len; i++) r += chars.charAt(Math.floor(Math.random() * chars.length));
-  return r;
+let selectedPanel=null;
+const $=id=>document.getElementById(id);
+function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
+function esc(s){return s?String(s).replace(/[&<>\"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[m])):''}
+function cpB(b,t){navigator.clipboard.writeText(t).then(()=>{const o=b.textContent;b.textContent='کپی شد!';b.classList.add('copied');setTimeout(()=>{b.textContent=o;b.classList.remove('copied')},1500)})}
+
+function renderFooter(){
+  const el=$('footerStars');
+  el.innerHTML=Object.entries(PANEL_STARS).map(([k,s])=>{
+    const p=PANELS[k];
+    return `<span class="footer-star"><span class="star-icon">⭐</span>${p?p.icon:''} ${p?p.name:k}: ${s>0?s.toLocaleString():'—'}</span>`;
+  }).join('');
 }
 
-function genName(prefix) {
-  return prefix + randomString(6) + Math.floor(100 + Math.random() * 900);
-}
+function render(){
+  const el=$('content');
+  el.innerHTML=`
+    <div class="card">
+      <div class="card-title"><span class="icon">🔑</span> توکن Cloudflare API</div>
+      <div class="card-subtitle">API Token خود را وارد کنید</div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px">
+        <a href="https://dash.cloudflare.com/profile/api-tokens?permissionGroupKeys=%5B%7B%22key%22%3A%22workers_scripts%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22workers_kv_storage%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22d1%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22user_details%22%2C%22type%22%3A%22read%22%7D%5D&accountId=*&zoneId=all&name=CF-Installer" target="_blank" class="btn btn-primary btn-sm" style="text-decoration:none">🔑 ساخت توکن</a>
+      </div>
+      <div class="form-group"><label class="form-label">API Token</label>
+      <input type="password" class="form-input" id="tokenIn" placeholder="cfut_xxxxxxxxxxxxxxxx" autocomplete="off" style="direction:ltr;text-align:left"></div>
+      <button class="btn btn-primary" id="validateBtn">🔍 بررسی توکن</button>
+      <div id="tokenResult"></div>
+    </div>
+    <div class="card" id="panelCard" style="display:none">
+      <div class="card-title"><span class="icon">🎯</span> پنل مورد نظر را انتخاب کنید</div>
+      <div class="panel-grid" id="panelGrid"></div>
+      <div id="panelVars" class="panel-vars"></div>
+      <div class="alert alert-info">💡 اسم Worker به صورت خودکار و رندوم ساخته میشود</div>
+      <button class="btn btn-primary" id="deployBtn" disabled>🚀 نصب و فعال‌سازی</button>
+    </div>
+    <div class="card" id="deployCard" style="display:none">
+      <div class="card-title"><span class="icon">📦</span> در حال استقرار...</div>
+      <div id="deployLog" class="deploy-log"></div>
+      <div id="resultBox" style="display:none">
+        <hr class="divider">
+        <div class="result-box"><div class="result-label">آدرس پنل</div><div class="result-value"><a id="resUrl" href="#" target="_blank" style="color:var(--cyan);text-decoration:none"></a><button class="copy-btn" id="copyUrl">کپی</button></div></div>
+        <div class="result-box"><div class="result-label">نام Worker</div><div class="result-value"><span id="resName"></span><button class="copy-btn" id="copyName">کپی</button></div></div>
+        <div class="result-box"><div class="result-label">مسیر پنل</div><div class="result-value" style="color:var(--yellow)"><span id="resPath"></span><button class="copy-btn" id="copyPath">کپی</button></div></div>
+        <div class="result-box" id="uuidBox" style="display:none"><div class="result-label">UUID (Cfnew)</div><div class="result-value"><span id="resUuid"></span><button class="copy-btn" id="copyUuid">کپی</button></div></div>
+        <div class="result-box"><div class="result-label">رمز عبور پیش‌فرض</div><div class="result-value" style="color:var(--red)"><span id="resPasswd">admin</span><button class="copy-btn" onclick="cpB(this,'admin')">کپی</button></div></div>
+        <div class="alert alert-warn">⚠️ بلافاصله رمز عبور را تغییر دهید!</div>
+        <div id="edgtunPaths" style="display:none">
+          <div class="result-box"><div class="result-label">🌐 VLESS کانفیگ</div><div class="result-value"><a id="edVless" href="#" target="_blank" style="color:var(--cyan);text-decoration:none;word-break:break-all;font-size:13px"></a><button class="copy-btn" id="copyEdVless">کپی</button></div></div>
+          <div class="result-box"><div class="result-label">🔗 VLESS لینک مستقیم</div><div class="result-value"><a id="edVlessLink" href="#" target="_blank" style="color:var(--cyan);text-decoration:none;word-break:break-all;font-size:13px"></a><button class="copy-btn" id="copyEdVlessLink">کپی</button></div></div>
+          <div class="result-box"><div class="result-label"> socks5</div><div class="result-value"><a id="edSocks5" href="#" target="_blank" style="color:var(--cyan);text-decoration:none;word-break:break-all;font-size:13px"></a><button class="copy-btn" id="copyEdSocks5">کپی</button></div></div>
+          <div class="result-box"><div class="result-label"> http</div><div class="result-value"><a id="edHttp" href="#" target="_blank" style="color:var(--cyan);text-decoration:none;word-break:break-all;font-size:13px"></a><button class="copy-btn" id="copyEdHttp">کپی</button></div></div>
+        </div>
+        <div id="foxPaths" style="display:none">
+          <div class="result-box"><div class="result-label">📊 صفحه وضعیت</div><div class="result-value"><a id="foxRoot" href="#" target="_blank" style="color:var(--cyan);text-decoration:none;word-break:break-all;font-size:13px"></a><button class="copy-btn" id="copyFoxRoot">کپی</button></div></div>
+          <div class="result-box"><div class="result-label">📑 صفحه اشتراک</div><div class="result-value"><a id="foxSub" href="#" target="_blank" style="color:var(--cyan);text-decoration:none;word-break:break-all;font-size:13px"></a><button class="copy-btn" id="copyFoxSub">کپی</button></div></div>
+          <div class="result-box"><div class="result-label">🔗 VLESS لینک مستقیم</div><div class="result-value"><a id="foxVless" href="#" target="_blank" style="color:var(--cyan);text-decoration:none;word-break:break-all;font-size:13px"></a><button class="copy-btn" id="copyFoxVless">کپی</button></div></div>
+        </div>
+        <div id="amcfPaths" style="display:none">
+          <div class="result-box"><div class="result-label">🔐 صفحه لاگین</div><div class="result-value"><a id="amcfRoot" href="#" target="_blank" style="color:var(--cyan);text-decoration:none;word-break:break-all;font-size:13px"></a><button class="copy-btn" id="copyAmcfRoot">کپی</button></div></div>
+          <div class="result-box"><div class="result-label">📑 صفحه اشتراک</div><div class="result-value"><a id="amcfSub" href="#" target="_blank" style="color:var(--cyan);text-decoration:none;word-break:break-all;font-size:13px"></a><button class="copy-btn" id="copyAmcfSub">کپی</button></div></div>
+          <div class="result-box"><div class="result-label">🔗 VLESS لینک مستقیم</div><div class="result-value"><a id="amcfVless" href="#" target="_blank" style="color:var(--cyan);text-decoration:none;word-break:break-all;font-size:13px"></a><button class="copy-btn" id="copyAmcfVless">کپی</button></div></div>
+          <div class="result-box"><div class="result-label">🔑 رمز لاگین (UUID)</div><div class="result-value" style="color:var(--red)"><span id="amcfUuid"></span><button class="copy-btn" id="copyAmcfUuid">کپی</button></div></div>
+        </div>
+        <div id="vtpanelPaths" style="display:none">
+          <div class="result-box"><div class="result-label">📊 صفحه وضعیت</div><div class="result-value"><a id="vtpRoot" href="#" target="_blank" style="color:var(--cyan);text-decoration:none;word-break:break-all;font-size:13px"></a><button class="copy-btn" id="copyVtpRoot">کپی</button></div></div>
+          <div class="result-box"><div class="result-label">🔑 رمز ورود</div><div class="result-value" style="color:var(--yellow)"><span id="vtpPass">admin</span><button class="copy-btn" onclick="cpB(this,'admin')">کپی</button></div></div>
+        </div>
+        <div id="vlessPaths" style="display:none">
+          <div class="result-box"><div class="result-label">📊 صفحه وضعیت</div><div class="result-value"><a id="vlessRoot" href="#" target="_blank" style="color:var(--cyan);text-decoration:none;word-break:break-all;font-size:13px"></a><button class="copy-btn" id="copyVlessRoot">کپی</button></div></div>
+          <div class="result-box"><div class="result-label">📑 صفحه اشتراک</div><div class="result-value"><a id="vlessSub" href="#" target="_blank" style="color:var(--cyan);text-decoration:none;word-break:break-all;font-size:13px"></a><button class="copy-btn" id="copyVlessSub">کپی</button></div></div>
+          <div class="result-box"><div class="result-label">🔗 VLESS لینک مستقیم</div><div class="result-value"><a id="vlessVless" href="#" target="_blank" style="color:var(--cyan);text-decoration:none;word-break:break-all;font-size:13px"></a><button class="copy-btn" id="copyVlessVless">کپی</button></div></div>
+          <div class="result-box"><div class="result-label">🔑 UUID</div><div class="result-value" style="color:var(--red)"><span id="vlessUuid"></span><button class="copy-btn" id="copyVlessUuid">کپی</button></div></div>
+        </div>
+        <div id="trojanPaths" style="display:none">
+          <div class="result-box"><div class="result-label">📊 صفحه وضعیت</div><div class="result-value"><a id="trojanRoot" href="#" target="_blank" style="color:var(--cyan);text-decoration:none;word-break:break-all;font-size:13px"></a><button class="copy-btn" id="copyTrojanRoot">کپی</button></div></div>
+          <div class="result-box"><div class="result-label">📑 صفحه اشتراک</div><div class="result-value"><a id="trojanSub" href="#" target="_blank" style="color:var(--cyan);text-decoration:none;word-break:break-all;font-size:13px"></a><button class="copy-btn" id="copyTrojanSub">کپی</button></div></div>
+          <div class="result-box"><div class="result-label">🔗 Trojan لینک مستقیم</div><div class="result-value"><a id="trojanLink" href="#" target="_blank" style="color:var(--cyan);text-decoration:none;word-break:break-all;font-size:13px"></a><button class="copy-btn" id="copyTrojanLink">کپی</button></div></div>
+          <div class="result-box"><div class="result-label">🔑 رمز Trojan</div><div class="result-value" style="color:var(--red)"><span id="trojanPswd"></span><button class="copy-btn" id="copyTrojanPswd">کپی</button></div></div>
+        </div>
+        <div class="btn-group"><a id="openPanel" href="#" target="_blank" class="btn btn-primary">باز کردن پنل</a><button class="btn btn-secondary" onclick="render()">نصب جدید</button></div>
+      </div>
+    </div>
+  `;
 
-function genUUID() {
-  if (typeof crypto !== 'undefined' && crypto.randomUUID) return crypto.randomUUID();
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
-    const r = Math.random() * 16 | 0;
-    return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
-  });
-}
+  // Render panel cards
+  const pg=$('panelGrid');
+  pg.innerHTML=Object.entries(PANELS).map(([k,p])=>`
+    <div class="panel-card" data-p="${k}">
+      <div class="panel-icon-wrap">${p.icon}</div>
+      <div class="panel-name">${p.name}</div>
+      <div class="panel-desc">${p.desc}</div>
+    </div>
+  `).join('');
 
-function showStatus(id, msg, ok) {
-  const el = document.getElementById(id);
-  el.className = 'status ' + (ok ? 'ok' : 'err');
-  el.textContent = msg;
-}
+  // Panel selection
+  pg.querySelectorAll('.panel-card').forEach(c=>c.addEventListener('click',()=>{
+    pg.querySelectorAll('.panel-card').forEach(x=>x.classList.remove('selected'));
+    c.classList.add('selected');
+    selectedPanel=c.dataset.p;
+    $('deployBtn').disabled=false;
+    updatePanelVars(selectedPanel);
+  }));
 
-function addLog(text, state) {
-  const log = document.getElementById('logEntries');
-  const entry = document.createElement('div');
-  entry.className = 'log-entry ' + state;
-  if (state === 'active') {
-    entry.innerHTML = '<span class="spinner"></span> ' + text;
-  } else if (state === 'done') {
-    entry.innerHTML = '✅ ' + text;
-  } else if (state === 'fail') {
-    entry.innerHTML = '❌ ' + text;
-  } else {
-    entry.innerHTML = '⏳ ' + text;
-  }
-  log.appendChild(entry);
-  entry.scrollIntoView({behavior:'smooth',block:'nearest'});
-  return entry;
-}
-
-function updateLog(entry, text, state) {
-  entry.className = 'log-entry ' + state;
-  if (state === 'done') {
-    entry.innerHTML = '✅ ' + text;
-  } else if (state === 'fail') {
-    entry.innerHTML = '❌ ' + text;
-  }
-}
-
-function togglePassword() {
-  const inp = document.getElementById('passwordInput');
-  inp.type = inp.type === 'password' ? 'text' : 'password';
-}
-
-function copyToClipboard(text, btn) {
-  navigator.clipboard.writeText(text).then(() => {
-    btn.classList.add('copied');
-    const orig = btn.textContent;
-    btn.textContent = '✓ کپی شد';
-    setTimeout(() => { btn.classList.remove('copied'); btn.textContent = orig; }, 1500);
-  }).catch(() => {
-    // Fallback
-    const ta = document.createElement('textarea');
-    ta.value = text;
-    document.body.appendChild(ta);
-    ta.select();
-    document.execCommand('copy');
-    document.body.removeChild(ta);
-    btn.classList.add('copied');
-    const orig = btn.textContent;
-    btn.textContent = '✓ کپی شد';
-    setTimeout(() => { btn.classList.remove('copied'); btn.textContent = orig; }, 1500);
-  });
-}
-
-function cfHeaders() {
-  return {
-    'Authorization': 'Bearer ' + CF_TOKEN,
-    'Content-Type': 'application/json'
-  };
-}
-
-// ============================================================
-// TOKEN VALIDATION
-// ============================================================
-async function validateToken() {
-  const token = document.getElementById('tokenInput').value.trim();
-  if (!token) {
-    showStatus('tokenStatus', '⚠️ لطفاً توکن را وارد کنید', false);
-    return;
-  }
-
-  CF_TOKEN = token;
-  const btn = document.getElementById('validateBtn');
-  btn.disabled = true;
-  btn.textContent = '⏳ ...';
-
-  try {
-    // Step 1: Validate token - DIRECT CF API
-    const verifyRes = await fetch('https://api.cloudflare.com/client/v4/user/tokens/verify', {
-      headers: { 'Authorization': 'Bearer ' + token }
-    });
-    const verifyData = await verifyRes.json();
-
-    if (!verifyData.success) {
-      showStatus('tokenStatus', '❌ توکن نامعتبر است: ' + (verifyData.errors?.[0]?.message || 'خطا'), false);
-      btn.disabled = false;
-      btn.textContent = '✓ اتصال';
-      return;
-    }
-
-    // Step 2: Get accounts - DIRECT CF API
-    const accRes = await fetch('https://api.cloudflare.com/client/v4/accounts', {
-      headers: { 'Authorization': 'Bearer ' + token }
-    });
-    const accData = await accRes.json();
-
-    if (!accData.success || !accData.result || accData.result.length === 0) {
-      showStatus('tokenStatus', '❌ حسابی یافت نشد', false);
-      btn.disabled = false;
-      btn.textContent = '✓ اتصال';
-      return;
-    }
-
-    ACCOUNTS = accData.result;
-    SELECTED_ACCOUNT = ACCOUNTS[0];
-
-    // Populate account select
-    const sel = document.getElementById('accountSelect');
-    sel.innerHTML = '';
-    ACCOUNTS.forEach((acc, i) => {
-      const opt = document.createElement('option');
-      opt.value = i;
-      opt.textContent = acc.name + ' (' + acc.id + ')';
-      sel.appendChild(opt);
-    });
-
-    showStatus('tokenStatus', '✅ متصل شد — ' + ACCOUNTS.length + ' حساب یافت شد', true);
-
-    // Show sections
-    document.getElementById('accountSection').style.display = '';
-    document.getElementById('panelSection').style.display = '';
-    renderPanels();
-
-    btn.disabled = false;
-    btn.textContent = '🔄 بازسازی';
-
-  } catch (err) {
-    showStatus('tokenStatus', '❌ خطا در اتصال: ' + err.message, false);
-    btn.disabled = false;
-    btn.textContent = '✓ اتصال';
-  }
-}
-
-// ============================================================
-// PANEL RENDERING
-// ============================================================
-function renderPanels() {
-  const grid = document.getElementById('panelsGrid');
-  grid.innerHTML = '';
-  Object.keys(PANELS).forEach(key => {
-    const p = PANELS[key];
-    const card = document.createElement('div');
-    card.className = 'panel-card';
-    card.setAttribute('data-panel', key);
-    card.innerHTML = `
-      <div class="icon">${p.icon}</div>
-      <div class="name">${p.name}</div>
-      <div class="desc">${p.desc}</div>
-    `;
-    card.onclick = () => selectPanel(key);
-    grid.appendChild(card);
-  });
-}
-
-function selectPanel(key) {
-  SELECTED_PANEL = key;
-
-  // Update selection UI
-  document.querySelectorAll('.panel-card').forEach(c => c.classList.remove('selected'));
-  document.querySelector(`[data-panel="${key}"]`).classList.add('selected');
-
-  const config = PANELS_CONFIG[key];
-  const panel = PANELS[key];
-
-  // Generate UUID if needed
-  GENERATED_UUID = genUUID();
-
-  // UUID box
-  const uuidBox = document.getElementById('uuidBox');
-  if (key === 'edgtun' || key === 'fox' || key === 'trojan') {
-    uuidBox.style.display = '';
-    document.getElementById('uuidValue').textContent = GENERATED_UUID;
-  } else {
-    uuidBox.style.display = 'none';
-  }
-
-  // Password box
-  const pwSection = document.getElementById('passwordSection');
-  if (key === 'edge' || key === 'nova') {
-    pwSection.style.display = '';
-    document.getElementById('passwordInput').value = '';
-  } else {
-    pwSection.style.display = 'none';
-  }
-
-  // Worker name
-  const workerName = genName('srv-');
-  document.getElementById('workerNameInput').value = workerName;
-
-  // Show config section
-  document.getElementById('configSection').style.display = '';
-  document.getElementById('deployBtn').disabled = false;
-}
-
-function onAccountChange() {
-  const idx = document.getElementById('accountSelect').value;
-  if (idx !== '') SELECTED_ACCOUNT = ACCOUNTS[parseInt(idx)];
-}
-
-// ============================================================
-// DEPLOY FLOW
-// ============================================================
-async function deploy() {
-  if (!SELECTED_PANEL || !SELECTED_ACCOUNT || !CF_TOKEN) {
-    alert('لطفاً تمام مراحل را تکمیل کنید');
-    return;
-  }
-
-  const config = PANELS_CONFIG[SELECTED_PANEL];
-  const panel = PANELS[SELECTED_PANEL];
-  const accountId = SELECTED_ACCOUNT.id;
-  const workerName = document.getElementById('workerNameInput').value.trim() || genName('srv-');
-  const password = document.getElementById('passwordInput')?.value || 'admin';
-
-  // Show log
-  const logSection = document.getElementById('logSection');
-  logSection.classList.add('visible');
-  document.getElementById('logEntries').innerHTML = '';
-  document.getElementById('resultsSection').classList.remove('visible');
-  document.getElementById('deployBtn').disabled = true;
-
-  let entry;
-  const cfBase = 'https://api.cloudflare.com/client/v4';
-
-  try {
-    // STEP 1: Download worker code via backend (GitHub proxy only)
-    entry = addLog('دانلود کد worker از GitHub...', 'active');
-    let workerCode;
-    if (config.release) {
-      // Release-based download (e.g., FoxCloud)
-      const releaseRes = await fetch(BACKEND + '/github', {
-        headers: {
-          'X-GitHub-Url': 'https://api.github.com/repos/' + config.repo + '/releases/latest',
-          'X-GitHub-Url-Mode': 'release'
-        }
-      });
-      if (!releaseRes.ok) throw new Error('GitHub release fetch failed: ' + releaseRes.status);
-      const releaseData = await releaseRes.json();
-      // Find the asset that matches our file
-      const asset = releaseData.assets?.find(a => a.name === config.file || a.name.includes(config.file));
-      if (asset) {
-        const assetRes = await fetch(BACKEND + '/github', {
-          headers: { 'X-GitHub-Url': asset.browser_download_url }
-        });
-        workerCode = await assetRes.text();
+  // Validate
+  $('validateBtn').addEventListener('click',async()=>{
+    const token=$('tokenIn').value.trim();
+    if(!token){toast('⚠️ توکن را وارد کنید');return}
+    $('validateBtn').textContent='⏳ در حال بررسی...';$('validateBtn').disabled=true;
+    try{
+      const r=await fetch(BACKEND+'/deploy',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token,panelType:'validate'})});
+      const d=await r.json();
+      if(d.success||d.logs?.length>0){
+        $('tokenResult').innerHTML='<div class="alert alert-success" style="margin-top:12px">✅ توکن معتبر است!</div>';
+        $('panelCard').style.display='block';
+        toast('✅ توکن معتبر!');
       } else {
-        // Try direct file download
-        const fileRes = await fetch(BACKEND + '/github', {
-          headers: { 'X-GitHub-Url': 'https://cdn.jsdelivr.net/gh/' + config.repo + '@' + (config.release || 'main') + '/' + config.file }
-        });
-        workerCode = await fileRes.text();
+        $('tokenResult').innerHTML=`<div class="alert alert-error" style="margin-top:12px">❌ ${esc(d.error||'خطا')}</div>`;
       }
-    } else {
-      const codeRes = await fetch(BACKEND + '/github', {
-        headers: { 'X-GitHub-Url': 'https://cdn.jsdelivr.net/gh/' + config.repo + '@main/' + config.file }
+    }catch(e){$('tokenResult').innerHTML=`<div class="alert alert-error" style="margin-top:12px">❌ ${esc(e.message)}</div>`}
+    $('validateBtn').textContent='🔍 بررسی توکن';$('validateBtn').disabled=false;
+  });
+
+  // Deploy
+  $('deployBtn').addEventListener('click',async()=>{
+    const token=$('tokenIn').value.trim();
+    if(!selectedPanel){toast('⚠️ پنل را انتخاب کنید');return}
+    $('deployBtn').disabled=true;$('deployBtn').textContent='⏳ در حال نصب...';
+    $('deployCard').style.display='block';
+    $('deployLog').innerHTML='<span class="log-info">▸ شروع استقرار...</span>';
+    $('resultBox').style.display='none';
+
+    // Gather panel-specific vars
+    const cfg=PANELS_CONFIG[selectedPanel];
+    const vars={};
+    if(cfg&&cfg.vars){
+      Object.entries(cfg.vars).forEach(([k,v])=>{
+        const inp=$('var_'+k);
+        if(inp) vars[k]=inp.value.trim()||v;
+        else vars[k]=v;
       });
-      if (!codeRes.ok) throw new Error('Code download failed: ' + codeRes.status);
-      workerCode = await codeRes.text();
-    }
-    WORKER_CODE = workerCode;
-    updateLog(entry, 'کد worker دانلود شد (' + workerCode.length + ' بایت)', 'done');
-
-    // STEP 2: Create D1 databases (if needed)
-    const d1Names = {};
-    for (const d1Name of config.d1) {
-      entry = addLog('ایجاد D1 دیتابیس: ' + d1Name + '...', 'active');
-      const d1Id = genName('d1-');
-      const d1Res = await fetch(cfBase + '/accounts/' + accountId + '/d1/database', {
-        method: 'POST',
-        headers: cfHeaders(),
-        body: JSON.stringify({ name: d1Id })
-      });
-      const d1Data = await d1Res.json();
-      if (!d1Data.success) throw new Error('D1 creation failed: ' + JSON.stringify(d1Data.errors));
-      d1Names[d1Name] = d1Data.result.uuid;
-      updateLog(entry, 'D1 ایجاد شد: ' + d1Id + ' (UUID: ' + d1Data.result.uuid + ')', 'done');
     }
 
-    // STEP 3: Create KV namespaces (if needed)
-    const kvNames = {};
-    for (const kvName of config.kv) {
-      entry = addLog('ایجاد KV Namespace: ' + kvName + '...', 'active');
-      const kvId = genName('kv-');
-      const kvRes = await fetch(cfBase + '/accounts/' + accountId + '/storage/kv/namespaces', {
-        method: 'POST',
-        headers: cfHeaders(),
-        body: JSON.stringify({ title: kvId })
-      });
-      const kvData = await kvRes.json();
-      if (!kvData.success) throw new Error('KV creation failed: ' + JSON.stringify(kvData.errors));
-      kvNames[kvName] = kvData.result.id;
-      updateLog(entry, 'KV ایجاد شد: ' + kvId + ' (ID: ' + kvData.result.id + ')', 'done');
-    }
+    const payload={token,panelType:selectedPanel,vars};
+    if(cfg&&cfg.pages) payload.pages=true;
 
-    // STEP 4: Prepare environment variables
-    const envVars = { ...config.vars };
-    
-    // Add UUID
-    if (config.vars.UUID !== undefined) {
-      envVars.UUID = GENERATED_UUID;
-    }
-    if (config.vars.u !== undefined) {
-      envVars.u = GENERATED_UUID;
-    }
-    if (config.vars.PROXY_IP !== undefined) {
-      envVars.PROXY_IP = '172.66.45.9:443';
-    }
-    if (config.vars.ADMIN !== undefined) {
-      envVars.ADMIN = password;
-    }
-
-    // Add binding references
-    const bindings = [];
-    for (const [name, uuid] of Object.entries(d1Names)) {
-      bindings.push({ type: 'd1_database', name: name, database_id: uuid });
-    }
-    for (const [name, id] of Object.entries(kvNames)) {
-      bindings.push({ type: 'kv_namespace', name: name, namespace_id: id });
-    }
-
-    // STEP 5: Deploy worker
-    entry = addLog('استقرار Worker: ' + workerName + '...', 'active');
-
-    const metadata = {
-      main_module: 'worker.js',
-      compatibility_date: '2024-01-01',
-      bindings: bindings,
-      vars: envVars
-    };
-
-    let workerUrl;
-    if (config.pages) {
-      // ===== CF PAGES DEPLOYMENT =====
-      entry = addLog('استقرار روی Pages...', 'active');
-      const projectName = 'cf-' + workerName.slice(4);
+    try{
+      const r=await fetch(BACKEND+'/deploy',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+      const d=await r.json();
       
-      // Create Pages project
-      const projRes = await fetch(cfBase + '/accounts/' + accountId + '/pages/projects', {
-        method: 'POST',
-        headers: { 'Authorization': 'Bearer ' + CF_TOKEN, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: projectName, production_branch: 'main' })
-      });
-      const projData = await projRes.json();
-      if (!projData.success && projData.errors?.[0]?.code !== 7400) throw new Error('Pages project failed: ' + JSON.stringify(projData.errors));
-      updateLog(entry, 'Pages project ایجاد شد: ' + projectName, 'done');
+      // Show logs
+      if(d.logs)d.logs.forEach(l=>{$('deployLog').innerHTML+=l+'<br>'});
       
-      // Upload code via multipart
-      const { default: sha1 } = await import('https://cdn.jsdelivr.net/npm/sha1@1.1.1/+esm');
-      const encoder = new TextEncoder();
-      const data = encoder.encode(workerCode);
-      const hashBuf = await crypto.subtle.digest('SHA-1', data);
-      const fileHash = Array.from(new Uint8Array(hashBuf)).map(b => b.toString(16).padStart(2, '0')).join('');
-      const manifest = { '/_worker.js': fileHash };
-      
-      const uploadFormData = new FormData();
-      uploadFormData.append('manifest', JSON.stringify(manifest));
-      uploadFormData.append('branch', 'main');
-      uploadFormData.append(fileHash, new Blob([workerCode], { type: 'application/javascript+module' }), '_worker.js');
-      
-      const deployRes = await fetch(cfBase + '/accounts/' + accountId + '/pages/projects/' + projectName + '/deployments', {
-        method: 'POST',
-        headers: { 'Authorization': 'Bearer ' + CF_TOKEN },
-        body: uploadFormData
-      });
-      const deployData = await deployRes.json();
-      if (!deployData.success) throw new Error('Pages deploy failed: ' + JSON.stringify(deployData.errors));
-      workerUrl = deployData.result.url;
-      updateLog(entry, 'Pages مستقر شد: ' + workerUrl, 'done');
-    } else {
-      // ===== CF WORKER DEPLOYMENT =====
-      const formData = new FormData();
-      formData.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
-      formData.append('worker.js', new Blob([workerCode], { type: 'application/javascript' }), 'worker.js');
+      if(d.success){
+        $('deployLog').innerHTML+='<br><span class="log-ok">✅ نصب با موفقیت انجام شد!</span><br><span class="log-info">⏳ چند دقیقه صبر کنید تا ورکر فعال شود</span>';
+        $('resUrl').textContent=d.panelURL;$('resUrl').href=d.panelURL;
+        $('resName').textContent=d.workerName;
+        $('resPath').textContent=d.panelPath||'/';
+        $('openPanel').href=d.panelURL;
+        $('resultBox').style.display='block';
 
-      const deployRes = await fetch(cfBase + '/accounts/' + accountId + '/workers/scripts/' + workerName, {
-        method: 'PUT',
-        headers: { 'Authorization': 'Bearer ' + CF_TOKEN },
-        body: formData
-      });
-      const deployData = await deployRes.json();
-      if (!deployData.success) throw new Error('Worker deploy failed: ' + JSON.stringify(deployData.errors));
-      updateLog(entry, 'Worker استقرار یافت: ' + workerName, 'done');
-    }
+        // Hide all special sections first
+        ['uuidBox','edgtunPaths','foxPaths','amcfPaths','vtpanelPaths','vlessPaths','trojanPaths'].forEach(id=>{$(id).style.display='none'});
 
-    // STEP 6: Get subdomain (Worker only)
-    let baseUrl;
-    if (config.pages) {
-      baseUrl = workerUrl || ('https://' + projectName + '.pages.dev');
-      updateLog(entry, 'آدرس Pages: ' + baseUrl, 'done');
-    } else {
-      entry = addLog('فعال‌سازی ساب‌دامین...', 'active');
-      const subRes = await fetch(cfBase + '/accounts/' + accountId + '/workers/services/' + workerName + '/environments/production/subdomain', {
-        method: 'POST',
-        headers: cfHeaders(),
-        body: JSON.stringify({ enabled: true })
-      });
-      const subData = await subRes.json();
-      if (!subData.success) {
-        try {
-          const altRes = await fetch(cfBase + '/accounts/' + accountId + '/workers/scripts/' + workerName + '/subdomain', {
-            method: 'POST', headers: cfHeaders(),
-            body: JSON.stringify({ enabled: true })
-          });
-        } catch(e) {}
+        // Show UUID for Cfnew
+        if(d.uuid){
+          $('uuidBox').style.display='block';
+          $('resUuid').textContent=d.uuid;
+          $('copyUuid').addEventListener('click',function(){cpB(this,d.uuid)});
+        }
+
+        // EDtunnel paths with actual URLs
+        if(d.panelType==='edgtun' && d.uuid){
+          $('edgtunPaths').style.display='block';
+          const base=d.panelURL;
+          const uuid=d.uuid;
+          const host=new URL(base).host;
+          const vlessLink='vless://'+uuid+'@'+host+'?encryption=none&type=ws#CF-Worker';
+          const vlessUrl=base+'/'+uuid;
+          const socks5Url=base+'/socks5://user:pass@host:port';
+          const httpUrl=base+'/http://user:pass@host:port';
+          $('edVless').textContent=vlessUrl;$('edVless').href=vlessUrl;
+          $('edVlessLink').textContent=vlessLink;$('edVlessLink').href=vlessLink;
+          $('edSocks5').textContent=socks5Url;$('edSocks5').href=socks5Url;
+          $('edHttp').textContent=httpUrl;$('edHttp').href=httpUrl;
+          $('copyEdVless').addEventListener('click',function(){cpB(this,vlessUrl)});
+          $('copyEdVlessLink').addEventListener('click',function(){cpB(this,vlessLink)});
+          $('copyEdSocks5').addEventListener('click',function(){cpB(this,socks5Url)});
+          $('copyEdHttp').addEventListener('click',function(){cpB(this,httpUrl)});
+        }
+
+        // FoxCloud paths
+        if(d.panelType==='fox' && d.uuid){
+          $('foxPaths').style.display='block';
+          const base=d.panelURL;
+          const uuid=d.uuid;
+          const host=new URL(base).host;
+          const foxRoot=base;
+          const foxSub=base+'/sub';
+          const foxVless='vless://'+uuid+'@'+host+':443?encryption=none&security=tls&sni='+host+'&fp=chrome&type=ws&host='+host+'&path=/ws#CF-Worker';
+          $('foxRoot').textContent=foxRoot;$('foxRoot').href=foxRoot;
+          $('foxSub').textContent=foxSub;$('foxSub').href=foxSub;
+          $('foxVless').textContent=foxVless;$('foxVless').href=foxVless;
+          $('copyFoxRoot').addEventListener('click',function(){cpB(this,foxRoot)});
+          $('copyFoxSub').addEventListener('click',function(){cpB(this,foxSub)});
+          $('copyFoxVless').addEventListener('click',function(){cpB(this,foxVless)});
+        }
+
+        // am-cf-tunnel paths
+        if(d.panelType==='amcf' && d.uuid){
+          $('amcfPaths').style.display='block';
+          const base=d.panelURL;
+          const uuid=d.uuid;
+          const host=new URL(base).host;
+          const amcfRoot=base;
+          const amcfSub=base+'/sub';
+          const amcfVless='vless://'+uuid+'@'+host+':443?encryption=none&type=ws#CF-Worker';
+          $('amcfRoot').textContent=amcfRoot;$('amcfRoot').href=amcfRoot;
+          $('amcfSub').textContent=amcfSub;$('amcfSub').href=amcfSub;
+          $('amcfVless').textContent=amcfVless;$('amcfVless').href=amcfVless;
+          $('amcfUuid').textContent=uuid;
+          $('copyAmcfRoot').addEventListener('click',function(){cpB(this,amcfRoot)});
+          $('copyAmcfSub').addEventListener('click',function(){cpB(this,amcfSub)});
+          $('copyAmcfVless').addEventListener('click',function(){cpB(this,amcfVless)});
+          $('copyAmcfUuid').addEventListener('click',function(){cpB(this,uuid)});
+        }
+
+        // ZQ-VTPanel paths
+        if(d.panelType==='vtpanel'){
+          $('vtpanelPaths').style.display='block';
+          const base=d.panelURL;
+          $('vtpRoot').textContent=base;$('vtpRoot').href=base;
+          $('copyVtpRoot').addEventListener('click',function(){cpB(this,base)});
+        }
+
+        // CF-VLESS paths
+        if(d.panelType==='vless' && d.uuid){
+          $('vlessPaths').style.display='block';
+          const base=d.panelURL;
+          const uuid=d.uid||d.uuid;
+          const host=new URL(base).host;
+          const vlessRoot=base;
+          const vlessSub=base+'/sub';
+          const vlessVless='vless://'+uuid+'@'+host+':443?encryption=none&security=tls&sni='+host+'&fp=chrome&type=ws&host='+host+'&path=/ws#CF-VLESS';
+          $('vlessRoot').textContent=vlessRoot;$('vlessRoot').href=vlessRoot;
+          $('vlessSub').textContent=vlessSub;$('vlessSub').href=vlessSub;
+          $('vlessVless').textContent=vlessVless;$('vlessVless').href=vlessVless;
+          $('vlessUuid').textContent=uuid;
+          $('copyVlessRoot').addEventListener('click',function(){cpB(this,vlessRoot)});
+          $('copyVlessSub').addEventListener('click',function(){cpB(this,vlessSub)});
+          $('copyVlessVless').addEventListener('click',function(){cpB(this,vlessVless)});
+          $('copyVlessUuid').addEventListener('click',function(){cpB(this,uuid)});
+        }
+
+        // CF-Trojan paths
+        if(d.panelType==='trojan'){
+          $('trojanPaths').style.display='block';
+          const base=d.panelURL;
+          const pswd=vars.Pswd||'trojan';
+          const host=new URL(base).host;
+          const trojanRoot=base;
+          const trojanSub=base+'/sub';
+          const trojanLink='trojan://'+pswd+'@'+host+':443?security=tls&type=ws&host='+host+'&path=/ws#CF-Trojan';
+          $('trojanRoot').textContent=trojanRoot;$('trojanRoot').href=trojanRoot;
+          $('trojanSub').textContent=trojanSub;$('trojanSub').href=trojanSub;
+          $('trojanLink').textContent=trojanLink;$('trojanLink').href=trojanLink;
+          $('trojanPswd').textContent=pswd;
+          $('copyTrojanRoot').addEventListener('click',function(){cpB(this,trojanRoot)});
+          $('copyTrojanSub').addEventListener('click',function(){cpB(this,trojanSub)});
+          $('copyTrojanLink').addEventListener('click',function(){cpB(this,trojanLink)});
+          $('copyTrojanPswd').addEventListener('click',function(){cpB(this,pswd)});
+          // Update default password display
+          $('resPasswd').textContent=pswd;
+        }
+
+        $('copyUrl').addEventListener('click',function(){cpB(this,d.panelURL)});
+        $('copyName').addEventListener('click',function(){cpB(this,d.workerName)});
+        $('copyPath').addEventListener('click',function(){cpB(this,d.panelPath||'/')});
+        toast('✅ نصب کامل شد!');
+      } else {
+        $('deployLog').innerHTML+=`<br><span class="log-err">❌ ${esc(d.error||'خطا')}</span>`;
+        toast('❌ نصب ناموفق');
       }
-      updateLog(entry, 'ساب‌دامین فعال شد', 'done');
-
-      entry = addLog('دریافت اطلاعات ساب‌دامین...', 'active');
-      const sdRes = await fetch(cfBase + '/accounts/' + accountId + '/workers/subdomain', {
-        headers: { 'Authorization': 'Bearer ' + CF_TOKEN }
-      });
-      const sdData = await sdRes.json();
-      const subdomain = sdData.success ? sdData.result.subdomain : '';
-      baseUrl = 'https://' + workerName + '.' + subdomain + '.workers.dev';
-      updateLog(entry, 'ساب‌دامین: ' + subdomain + '.workers.dev', 'done');
+    }catch(e){
+      $('deployLog').innerHTML+=`<br><span class="log-err">❌ خطا: ${esc(e.message)}</span>`;
+      toast('❌ خطا: '+e.message);
     }
-
-    // ============================================================
-    // BUILD RESULTS
-    // ============================================================
-    
-    const results = [];
-
-    if (SELECTED_PANEL === 'edgtun') {
-      results.push({label: 'VLESS Path', value: baseUrl + '/?uuid=' + GENERATED_UUID});
-      results.push({label: 'VLESS Link', value: 'vless://' + GENERATED_UUID + '@' + workerName + '.' + subdomain + '.workers.dev:443?encryption=none&type=ws#' + workerName});
-      results.push({label: 'socks5', value: workerName + '.' + subdomain + '.workers.dev'});
-      results.push({label: 'HTTP', value: 'http://' + workerName + '.' + subdomain + '.workers.dev'});
-    } else if (SELECTED_PANEL === 'fox') {
-      results.push({label: 'Root', value: baseUrl});
-      results.push({label: 'Sub', value: baseUrl + '/sub?token=' + GENERATED_UUID});
-      results.push({label: 'VLESS', value: 'vless://' + GENERATED_UUID + '@' + workerName + '.' + subdomain + '.workers.dev:443?encryption=none&type=ws#' + workerName});
-    } else if (SELECTED_PANEL === 'vless') {
-      const host = new URL(baseUrl).host;
-      results.push({label: 'صفحه اصلی', value: baseUrl});
-      results.push({label: 'اشتراک', value: baseUrl + '/sub'});
-      results.push({label: 'VLESS', value: 'vless://' + GENERATED_UUID + '@' + host + ':443?encryption=none&security=tls&sni=' + host + '&fp=chrome&type=ws&host=' + host + '/ws#CF-VLESS'});
-    } else if (SELECTED_PANEL === 'trojan') {
-      const host = new URL(baseUrl).host;
-      results.push({label: 'صفحه اصلی', value: baseUrl});
-      results.push({label: 'اشتراک', value: baseUrl + '/sub'});
-      results.push({label: 'Trojan', value: 'trojan://' + GENERATED_UUID + '@' + host + ':443?security=tls&sni=' + host + '&type=ws&host=' + host + '/ws#CF-Trojan'});
-    } else if (SELECTED_PANEL === 'vtpanel') {
-      results.push({label: 'Root', value: baseUrl + config.path});
-    } else {
-      results.push({label: 'Address', value: baseUrl + config.path});
-    }
-
-    // Display results
-    const resultsSection = document.getElementById('resultsSection');
-    const resultsList = document.getElementById('resultsList');
-    resultsList.innerHTML = '';
-
-    results.forEach(r => {
-      const item = document.createElement('div');
-      item.className = 'result-item';
-      item.innerHTML = `
-        <span class="result-label">${r.label}</span>
-        <span class="result-value">${r.value}</span>
-        <button class="copy-btn" onclick="copyToClipboard('${r.value.replace(/'/g,"\\'")}', this)">📋 کپی</button>
-      `;
-      resultsList.appendChild(item);
-    });
-
-    // Add UUID result if applicable
-    if (SELECTED_PANEL === 'edgtun' || SELECTED_PANEL === 'fox') {
-      const uuidItem = document.createElement('div');
-      uuidItem.className = 'result-item';
-      uuidItem.innerHTML = `
-        <span class="result-label">UUID</span>
-        <span class="result-value">${GENERATED_UUID}</span>
-        <button class="copy-btn" onclick="copyToClipboard('${GENERATED_UUID}', this)">📋 کپی</button>
-      `;
-      resultsList.appendChild(uuidItem);
-    }
-
-    resultsSection.classList.add('visible');
-
-  } catch (err) {
-    addLog('خطا: ' + err.message, 'fail');
-  } finally {
-    document.getElementById('deployBtn').disabled = false;
-  }
+    $('deployBtn').disabled=false;$('deployBtn').textContent='🚀 نصب و فعال‌سازی';
+  });
 }
 
-// ============================================================
-// INIT
-// ============================================================
-document.getElementById('tokenInput').addEventListener('keydown', e => {
-  if (e.key === 'Enter') validateToken();
-});
+// Show variable inputs for panels that need them
+function updatePanelVars(panel){
+  const pv=$('panelVars');
+  if(!pv){return}
+  const cfg=PANELS_CONFIG[panel];
+  if(!cfg||!cfg.vars||Object.keys(cfg.vars).length===0){
+    pv.classList.remove('show');
+    pv.innerHTML='';
+    return;
+  }
+  let html='';
+  Object.entries(cfg.vars).forEach(([k,v])=>{
+    const label=k==='uid'?'UUID (شناسه یکتای کاربر)':k==='Pswd'?'رمز Trojan':'مقدار '+k;
+    const placeholder=k==='uid'?'مثلاً: 12345678-1234-1234-1234-123456789abc':k==='Pswd'?'پیش‌فرض: trojan':v;
+    html+=`<div class="form-group" style="margin-bottom:16px"><label class="form-label">${label}</label><input type="text" class="form-input" id="var_${k}" value="${esc(v)}" placeholder="${placeholder}" style="direction:ltr;text-align:left"></div>`;
+  });
+  pv.innerHTML=html;
+  pv.classList.add('show');
+}
+
+render();
+renderFooter();
 </script>
 </body>
 </html>
