@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CF Installer v3.6.0 — نصب‌کننده ابری</title>
+<title>CF Installer v3.7.0 — نصب‌کننده ابری</title>
 <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -185,7 +185,7 @@ body::before{
 
   <!-- Header -->
   <div class="header">
-    <h1>⚡ CF Installer v3.6.0</h1>
+    <h1>⚡ CF Installer v3.7.0</h1>
     <p>نصب‌کننده ابری — امنیت کامل با اتصال مستقیم</p>
   </div>
 
@@ -261,7 +261,7 @@ body::before{
 
   <!-- Footer -->
   <div class="footer">
-    <div class="version">CF Installer v3.6.0</div>
+    <div class="version">CF Installer v3.7.0</div>
     <div class="stars">
       ⭐ Nahan 3k &nbsp;|&nbsp; ⚡ EdgeTunnel 41.5k &nbsp;|&nbsp; 🆕 Cfnew 14.6k &nbsp;|&nbsp; 🚀 Nova 3.1k<br>
       🌐 EDtunnel 2.9k &nbsp;|&nbsp; ⚡ Zeus 813 &nbsp;|&nbsp; 🦊 FoxCloud 151 &nbsp;|&nbsp; ⚡ VTPanel 62
@@ -664,54 +664,97 @@ async function deploy() {
       vars: envVars
     };
 
-    const formData = new FormData();
-    formData.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
-    formData.append('worker.js', new Blob([workerCode], { type: 'application/javascript' }), 'worker.js');
+    let workerUrl;
+    if (config.pages) {
+      // ===== CF PAGES DEPLOYMENT =====
+      entry = addLog('استقرار روی Pages...', 'active');
+      const projectName = 'cf-' + workerName.slice(4);
+      
+      // Create Pages project
+      const projRes = await fetch(cfBase + '/accounts/' + accountId + '/pages/projects', {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + CF_TOKEN, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: projectName, production_branch: 'main' })
+      });
+      const projData = await projRes.json();
+      if (!projData.success && projData.errors?.[0]?.code !== 7400) throw new Error('Pages project failed: ' + JSON.stringify(projData.errors));
+      updateLog(entry, 'Pages project ایجاد شد: ' + projectName, 'done');
+      
+      // Upload code via multipart
+      const { default: sha1 } = await import('https://cdn.jsdelivr.net/npm/sha1@1.1.1/+esm');
+      const encoder = new TextEncoder();
+      const data = encoder.encode(workerCode);
+      const hashBuf = await crypto.subtle.digest('SHA-1', data);
+      const fileHash = Array.from(new Uint8Array(hashBuf)).map(b => b.toString(16).padStart(2, '0')).join('');
+      const manifest = { '/_worker.js': fileHash };
+      
+      const uploadFormData = new FormData();
+      uploadFormData.append('manifest', JSON.stringify(manifest));
+      uploadFormData.append('branch', 'main');
+      uploadFormData.append(fileHash, new Blob([workerCode], { type: 'application/javascript+module' }), '_worker.js');
+      
+      const deployRes = await fetch(cfBase + '/accounts/' + accountId + '/pages/projects/' + projectName + '/deployments', {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + CF_TOKEN },
+        body: uploadFormData
+      });
+      const deployData = await deployRes.json();
+      if (!deployData.success) throw new Error('Pages deploy failed: ' + JSON.stringify(deployData.errors));
+      workerUrl = deployData.result.url;
+      updateLog(entry, 'Pages مستقر شد: ' + workerUrl, 'done');
+    } else {
+      // ===== CF WORKER DEPLOYMENT =====
+      const formData = new FormData();
+      formData.append('metadata', new Blob([JSON.stringify(metadata)], { type: 'application/json' }));
+      formData.append('worker.js', new Blob([workerCode], { type: 'application/javascript' }), 'worker.js');
 
-    const deployRes = await fetch(cfBase + '/accounts/' + accountId + '/workers/scripts/' + workerName, {
-      method: 'PUT',
-      headers: { 'Authorization': 'Bearer ' + CF_TOKEN },
-      body: formData
-    });
-    const deployData = await deployRes.json();
-    if (!deployData.success) throw new Error('Worker deploy failed: ' + JSON.stringify(deployData.errors));
-    updateLog(entry, 'Worker استقرار یافت: ' + workerName, 'done');
-
-    // STEP 6: Enable subdomain
-    entry = addLog('فعال‌سازی ساب‌دامین...', 'active');
-    const subRes = await fetch(cfBase + '/accounts/' + accountId + '/workers/services/' + workerName + '/environments/production/subdomain', {
-      method: 'POST',
-      headers: cfHeaders(),
-      body: JSON.stringify({ enabled: true })
-    });
-    const subData = await subRes.json();
-    if (!subData.success) {
-      // Try alternative endpoint
-      try {
-        const altRes = await fetch(cfBase + '/accounts/' + accountId + '/workers/scripts/' + workerName + '/subdomain', {
-          method: 'POST',
-          headers: cfHeaders(),
-          body: JSON.stringify({ enabled: true })
-        });
-        const altData = await altRes.json();
-        if (!altData.success) console.warn('Subdomain enable warning:', altData);
-      } catch(e) { /* continue */ }
+      const deployRes = await fetch(cfBase + '/accounts/' + accountId + '/workers/scripts/' + workerName, {
+        method: 'PUT',
+        headers: { 'Authorization': 'Bearer ' + CF_TOKEN },
+        body: formData
+      });
+      const deployData = await deployRes.json();
+      if (!deployData.success) throw new Error('Worker deploy failed: ' + JSON.stringify(deployData.errors));
+      updateLog(entry, 'Worker استقرار یافت: ' + workerName, 'done');
     }
-    updateLog(entry, 'ساب‌دامین فعال شد', 'done');
 
-    // STEP 7: Get subdomain info
-    entry = addLog('دریافت اطلاعات ساب‌دامین...', 'active');
-    const sdRes = await fetch(cfBase + '/accounts/' + accountId + '/workers/subdomain', {
-      headers: { 'Authorization': 'Bearer ' + CF_TOKEN }
-    });
-    const sdData = await sdRes.json();
-    const subdomain = sdData.success ? sdData.result.subdomain : '';
-    updateLog(entry, 'ساب‌دامین: ' + subdomain + '.workers.dev', 'done');
+    // STEP 6: Get subdomain (Worker only)
+    let baseUrl;
+    if (config.pages) {
+      baseUrl = workerUrl || ('https://' + projectName + '.pages.dev');
+      updateLog(entry, 'آدرس Pages: ' + baseUrl, 'done');
+    } else {
+      entry = addLog('فعال‌سازی ساب‌دامین...', 'active');
+      const subRes = await fetch(cfBase + '/accounts/' + accountId + '/workers/services/' + workerName + '/environments/production/subdomain', {
+        method: 'POST',
+        headers: cfHeaders(),
+        body: JSON.stringify({ enabled: true })
+      });
+      const subData = await subRes.json();
+      if (!subData.success) {
+        try {
+          const altRes = await fetch(cfBase + '/accounts/' + accountId + '/workers/scripts/' + workerName + '/subdomain', {
+            method: 'POST', headers: cfHeaders(),
+            body: JSON.stringify({ enabled: true })
+          });
+        } catch(e) {}
+      }
+      updateLog(entry, 'ساب‌دامین فعال شد', 'done');
+
+      entry = addLog('دریافت اطلاعات ساب‌دامین...', 'active');
+      const sdRes = await fetch(cfBase + '/accounts/' + accountId + '/workers/subdomain', {
+        headers: { 'Authorization': 'Bearer ' + CF_TOKEN }
+      });
+      const sdData = await sdRes.json();
+      const subdomain = sdData.success ? sdData.result.subdomain : '';
+      baseUrl = 'https://' + workerName + '.' + subdomain + '.workers.dev';
+      updateLog(entry, 'ساب‌دامین: ' + subdomain + '.workers.dev', 'done');
+    }
 
     // ============================================================
     // BUILD RESULTS
     // ============================================================
-    const baseUrl = 'https://' + workerName + '.' + subdomain + '.workers.dev';
+    
     const results = [];
 
     if (SELECTED_PANEL === 'edgtun') {
@@ -723,6 +766,11 @@ async function deploy() {
       results.push({label: 'Root', value: baseUrl});
       results.push({label: 'Sub', value: baseUrl + '/sub?token=' + GENERATED_UUID});
       results.push({label: 'VLESS', value: 'vless://' + GENERATED_UUID + '@' + workerName + '.' + subdomain + '.workers.dev:443?encryption=none&type=ws#' + workerName});
+    } else if (SELECTED_PANEL === 'vless') {
+      const host = new URL(baseUrl).host;
+      results.push({label: 'صفحه اصلی', value: baseUrl});
+      results.push({label: 'اشتراک', value: baseUrl + '/sub'});
+      results.push({label: 'VLESS', value: 'vless://' + GENERATED_UUID + '@' + host + ':443?encryption=none&security=tls&sni=' + host + '&fp=chrome&type=ws&host=' + host + '/ws#CF-Worker'});
     } else if (SELECTED_PANEL === 'vtpanel') {
       results.push({label: 'Root', value: baseUrl + config.path});
     } else {
