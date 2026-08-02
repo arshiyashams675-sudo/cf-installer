@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CF Installer v3.7.0 — نصب‌کننده ابری</title>
+<title>CF Installer v3.8.0 — نصب‌کننده ابری</title>
 <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -185,7 +185,7 @@ body::before{
 
   <!-- Header -->
   <div class="header">
-    <h1>⚡ CF Installer v3.7.0</h1>
+    <h1>⚡ CF Installer v3.8.0</h1>
     <p>نصب‌کننده ابری — امنیت کامل با اتصال مستقیم</p>
   </div>
 
@@ -261,7 +261,7 @@ body::before{
 
   <!-- Footer -->
   <div class="footer">
-    <div class="version">CF Installer v3.7.0</div>
+    <div class="version">CF Installer v3.8.0</div>
     <div class="stars">
       ⭐ Nahan 3k &nbsp;|&nbsp; ⚡ EdgeTunnel 41.5k &nbsp;|&nbsp; 🆕 Cfnew 14.6k &nbsp;|&nbsp; 🚀 Nova 3.1k<br>
       🌐 EDtunnel 2.9k &nbsp;|&nbsp; ⚡ Zeus 813 &nbsp;|&nbsp; 🦊 FoxCloud 151 &nbsp;|&nbsp; ⚡ VTPanel 62
@@ -503,7 +503,7 @@ function selectPanel(key) {
 
   // UUID box
   const uuidBox = document.getElementById('uuidBox');
-  if (key === 'edgtun' || key === 'fox') {
+  if (key === 'edgtun' || key === 'fox' || key === 'trojan') {
     uuidBox.style.display = '';
     document.getElementById('uuidValue').textContent = GENERATED_UUID;
   } else {
@@ -770,7 +770,12 @@ async function deploy() {
       const host = new URL(baseUrl).host;
       results.push({label: 'صفحه اصلی', value: baseUrl});
       results.push({label: 'اشتراک', value: baseUrl + '/sub'});
-      results.push({label: 'VLESS', value: 'vless://' + GENERATED_UUID + '@' + host + ':443?encryption=none&security=tls&sni=' + host + '&fp=chrome&type=ws&host=' + host + '/ws#CF-Worker'});
+      results.push({label: 'VLESS', value: 'vless://' + GENERATED_UUID + '@' + host + ':443?encryption=none&security=tls&sni=' + host + '&fp=chrome&type=ws&host=' + host + '/ws#CF-VLESS'});
+    } else if (SELECTED_PANEL === 'trojan') {
+      const host = new URL(baseUrl).host;
+      results.push({label: 'صفحه اصلی', value: baseUrl});
+      results.push({label: 'اشتراک', value: baseUrl + '/sub'});
+      results.push({label: 'Trojan', value: 'trojan://' + GENERATED_UUID + '@' + host + ':443?security=tls&sni=' + host + '&type=ws&host=' + host + '/ws#CF-Trojan'});
     } else if (SELECTED_PANEL === 'vtpanel') {
       results.push({label: 'Root', value: baseUrl + config.path});
     } else {
