@@ -716,7 +716,7 @@ async function deploy() {
     if (SELECTED_PANEL === 'edgtun') {
       results.push({label: 'VLESS Path', value: baseUrl + '/?uuid=' + GENERATED_UUID});
       results.push({label: 'VLESS Link', value: 'vless://' + GENERATED_UUID + '@' + workerName + '.' + subdomain + '.workers.dev:443?encryption=none&type=ws#' + workerName});
-      results.push({label: 'Socks5', value: workerName + '.' + subdomain + '.workers.dev'});
+      results.push({label: 'socks5', value: workerName + '.' + subdomain + '.workers.dev'});
       results.push({label: 'HTTP', value: 'http://' + workerName + '.' + subdomain + '.workers.dev'});
     } else if (SELECTED_PANEL === 'fox') {
       results.push({label: 'Root', value: baseUrl});
