@@ -3,10 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CF Installer v3.8.0 — نصب‌کننده ابری</title>
+<title>CF Installer v3.9.0 — نصب‌کننده ابری</title>
 <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+.panel-card[data-p="vless"]::before{background:linear-gradient(135deg,rgba(0,200,255,.08),rgba(0,229,160,.05))}
+.panel-card[data-p="trojan"]::before{background:linear-gradient(135deg,rgba(200,0,255,.08),rgba(255,0,128,.05))}
 :root{
   --bg:#0a0e17;--card:rgba(255,255,255,0.05);--border:rgba(255,255,255,0.1);
   --text:#e2e8f0;--text2:#94a3b8;--accent:#06b6d4;--accent2:#22d3ee;
@@ -185,7 +187,7 @@ body::before{
 
   <!-- Header -->
   <div class="header">
-    <h1>⚡ CF Installer v3.8.0</h1>
+    <h1>⚡ CF Installer v3.9.0</h1>
     <p>نصب‌کننده ابری — امنیت کامل با اتصال مستقیم</p>
   </div>
 
@@ -261,7 +263,7 @@ body::before{
 
   <!-- Footer -->
   <div class="footer">
-    <div class="version">CF Installer v3.8.0</div>
+    <div class="version">CF Installer v3.9.0</div>
     <div class="stars">
       ⭐ Nahan 3k &nbsp;|&nbsp; ⚡ EdgeTunnel 41.5k &nbsp;|&nbsp; 🆕 Cfnew 14.6k &nbsp;|&nbsp; 🚀 Nova 3.1k<br>
       🌐 EDtunnel 2.9k &nbsp;|&nbsp; ⚡ Zeus 813 &nbsp;|&nbsp; 🦊 FoxCloud 151 &nbsp;|&nbsp; ⚡ VTPanel 62
@@ -283,7 +285,9 @@ const PANELS = {
   edgtun:{name:'EDtunnel',icon:'🌐',desc:'محبوب‌ترین VLESS/Trojan — 2.9k ⭐',key:'edgtun'},
   zeus:{name:'Zeus Panel',icon:'⚡',desc:'پنل امن D1 — 813 ⭐',key:'zeus'},
   fox:{name:'FoxCloud',icon:'🦊',desc:'VLESS سبک و سریع — 151 ⭐',key:'fox'},
-  vtpanel:{name:'ZQ-VTPanel',icon:'⚡',desc:'VLESS+Trojan با UI مدیریت — 62 ⭐',key:'vtpanel'}
+  vtpanel:{name:'ZQ-VTPanel',icon:'⚡',desc:'VLESS+Trojan با UI مدیریت — 62 ⭐',key:'vtpanel'},
+  vless:{name:'CF-VLESS',icon:'🚀',desc:'محبوب‌ترین VLESS — 15.7k ⭐ — روی Pages',key:'vless'},
+  trojan:{name:'CF-Trojan',icon:'🐴',desc:'Trojan روی Pages — 15.7k ⭐',key:'trojan'}
 };
 
 const PANELS_CONFIG = {
@@ -294,7 +298,9 @@ const PANELS_CONFIG = {
   edgtun:{repo:'6Kmfi6HP/EDtunnel',file:'_worker.js',d1:[],kv:[],vars:{UUID:''},path:''},
   zeus:{repo:'zeus-panel/ZEUS-PANEL',file:'Source.js',d1:['DB'],kv:[],vars:{},path:'/login'},
   fox:{repo:'code3-dev/foxcloud',file:'worker.js',release:'v1.0.0',d1:[],kv:[],vars:{UUID:'',PROXY_IP:'172.66.45.9:443'},path:'/sub'},
-  vtpanel:{repo:'bayueqi/ZQ-VTPanel',file:'_worker.js',d1:[],kv:['VTPanel'],vars:{},path:'/'}
+  vtpanel:{repo:'bayueqi/ZQ-VTPanel',file:'_worker.js',d1:[],kv:['VTPanel'],vars:{},path:'/'},
+  vless:{repo:'yonggekkk/Cloudflare-vless-trojan',file:'Vless_workers_pages/_worker.js',pages:true,d1:[],kv:[],vars:{uid:''},path:'/{uid}'},
+  trojan:{repo:'yonggekkk/Cloudflare-vless-trojan',file:'Trojan_workers_pages/_worker.js',pages:true,d1:[],kv:[],vars:{Pswd:'trojan'},path:'/{Pswd}'}
 };
 
 // ============================================================
