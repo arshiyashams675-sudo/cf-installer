@@ -1,11 +1,18 @@
 export default {
   async fetch(request, env) {
-    const C={'Access-Control-Allow-Origin':'*','Access-Control-Allow-Methods':'GET,POST,PUT,DELETE,OPTIONS','Access-Control-Allow-Headers':'Content-Type,Authorization'};
+    const C={'Access-Control-Allow-Origin':'*','Access-Control-Allow-Methods':'GET,POST,PUT,DELETE,OPTIONS','Access-Control-Allow-Headers':'Content-Type,Authorization,X-Secret'};
     if(request.method==='OPTIONS')return new Response(null,{status:204,headers:C});
     const url=new URL(request.url);
 
-    // Health check
+    // Health check (no auth needed)
     if(url.pathname==='/health')return R({ok:true,ts:Date.now()});
+
+    // Security: validate origin + secret key for all other endpoints
+    const origin=request.headers.get('Origin')||request.headers.get('Referer')||'';
+    const secret=request.headers.get('X-Secret')||'';
+    const allowedOrigins=['arshiyashams675-sudo.github.io','idvdjd8388.github.io','localhost','127.0.0.1'];
+    const isAllowed=allowedOrigins.some(o=>origin.includes(o));
+    if(!isAllowed||secret!==env.BACKEND_SECRET)return R({error:'Unauthorized'},403);
 
     // GitHub proxy - download source code
     if(url.pathname==='/github'){

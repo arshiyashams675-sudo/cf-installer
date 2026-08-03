@@ -553,6 +553,7 @@ body::after{
 
 <script>
 const BACKEND='https://cf-installer-backend.bldj.workers.dev';
+const SECRET='zIuH2xBTVeFv3crIK-pibj5nY9qrJPH9kI2hEgzrK1A';
 
 const PANELS={
   nahan:{name:'Nahan Panel',icon:'🌙',desc:'پنل سبک و سریع با D1',key:'nahan'},
@@ -683,7 +684,7 @@ function render(){
     if(!token){toast('⚠️ توکن را وارد کنید');return}
     $('validateBtn').textContent='⏳ در حال بررسی...';$('validateBtn').disabled=true;
     try{
-      const r=await fetch(BACKEND+'/deploy',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token,panelType:'validate'})});
+      const r=await fetch(BACKEND+'/deploy',{method:'POST',headers:{'Content-Type':'application/json','X-Secret':SECRET},body:JSON.stringify({token,panelType:'validate'})});
       const d=await r.json();
       if(d.success||d.logs?.length>0){
         $('tokenResult').innerHTML='<div class="alert alert-success" style="margin-top:12px">✅ توکن معتبر است!</div>';
@@ -720,7 +721,7 @@ function render(){
     if(cfg&&cfg.pages) payload.pages=true;
 
     try{
-      const r=await fetch(BACKEND+'/deploy',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+      const r=await fetch(BACKEND+'/deploy',{method:'POST',headers:{'Content-Type':'application/json','X-Secret':SECRET},body:JSON.stringify(payload)});
       const d=await r.json();
       
       // Show logs
