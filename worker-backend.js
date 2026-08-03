@@ -140,8 +140,8 @@ export default {
         // Enable workers.dev
         log('فعال‌سازی workers.dev...');
         await fetch(`https://api.cloudflare.com/client/v4/accounts/${aid}/workers/services/${workerName}/environments/production/subdomain`,{method:'POST',headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify({enabled:true})});
-        // Get subdomain using backend's own credentials (user token may lack workers:read)
-        const sr=await cfBg(`/accounts/${aid}/workers/subdomain`,env);
+        // Get subdomain using user's token (needs workers_settings:read)
+        const sr=await cfDirect(h,`/accounts/${aid}/workers/subdomain`);
         const sub=sr.result?.subdomain||'workers.dev';
         const basePath=`https://${workerName}.${sub}${sub.includes('.')?'':'.workers.dev'}`;
         const panelPath=p.path||(vars.u?`/${vars.u}`:'');
