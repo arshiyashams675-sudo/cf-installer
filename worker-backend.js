@@ -123,7 +123,7 @@ export default {
         const md={main_module:'worker.js',compatibility_date:'2024-09-22',compatibility_flags:['nodejs_compat'],bindings:bindingsWithVars};
         const form=new FormData();
         form.append('metadata',new Blob([JSON.stringify(md)],{type:'application/json'}));
-        form.append('worker.js',new Blob([code],{type:'application/javascript+module'}),'worker.js');
+        form.append('worker.js',new Blob([code],{type:'application/javascript'}),'worker.js');
         const dr=await fetch(`https://api.cloudflare.com/client/v4/accounts/${aid}/workers/scripts/${workerName}`,{method:'PUT',headers:{Authorization:'Bearer '+token},body:form});
         const dd=await dr.json();
         if(!dd.success)return R({success:false,logs,error:'خطای استقرار: '+(dd.errors?.[0]?.message||'unknown')});
