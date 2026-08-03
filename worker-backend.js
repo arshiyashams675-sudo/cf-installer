@@ -95,7 +95,6 @@ export default {
           cfnew:{repo:'byjoey/cfnew',file:'明文源吗',bindings:{d1:[],kv:['C']},vars:{u:crypto.randomUUID()},path:''},
           nova:{repo:'IRNova/Nova-Proxy',file:'worker.js',bindings:{d1:['DB'],kv:['KV']},vars:{ADMIN:'admin'},path:'/admin'},
           edgtun:{repo:'6Kmfi6HP/EDtunnel',file:'_worker.js',bindings:{d1:[],kv:[]},vars:{UUID:crypto.randomUUID()},path:''},
-          zeus:{repo:'zeus-panel/ZEUS-PANEL',file:'Source.js',bindings:{d1:['DB'],kv:[]},vars:{},path:'/login'},
           fox:{repo:'code3-dev/foxcloud',file:'worker.js',release:'v1.0.0',bindings:{d1:[],kv:[]},vars:{UUID:crypto.randomUUID(),PROXY_IP:'172.66.45.9:443'},path:'/sub'},
           amcf:{repo:'amclubs/am-cf-tunnel',file:'_worker.js',bindings:{d1:[],kv:['amclubs']},vars:{UUID:crypto.randomUUID()},path:'/'},
           vtpanel:{repo:'bayueqi/ZQ-VTPanel',file:'_worker.js',bindings:{d1:[],kv:['VTPanel']},vars:{},path:'/'},
