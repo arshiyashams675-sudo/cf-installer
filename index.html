@@ -329,8 +329,7 @@ body::after{
 .panel-card[data-p="fox"]::before{background:linear-gradient(135deg,rgba(245,158,11,.08),rgba(168,85,247,.05))}
 .panel-card[data-p="amcf"]::before{background:linear-gradient(135deg,rgba(59,130,246,.08),rgba(239,68,68,.05))}
 .panel-card[data-p="vtpanel"]::before{background:linear-gradient(135deg,rgba(239,68,68,.08),rgba(168,85,247,.05))}
-.panel-card[data-p="vless"]::before{background:linear-gradient(135deg,rgba(0,230,118,.08),rgba(245,158,11,.05))}
-.panel-card[data-p="trojan"]::before{background:linear-gradient(135deg,rgba(239,68,68,.08),rgba(0,184,255,.05))}
+
 .panel-card:hover{
   border-color:var(--border3);
   transform:translateY(-4px);
@@ -565,8 +564,7 @@ const PANELS={
   fox:{name:'FoxCloud',icon:'🦊',desc:'VLESS سبک و سریع — 151 ⭐',key:'fox'},
   amcf:{name:'am-cf-tunnel',icon:'🇨🇳',desc:'VLESS + Trojan با Subscription — 3.1k ⭐',key:'amcf'},
   vtpanel:{name:'ZQ-VTPanel',icon:'🛡️',desc:'پنل VTPanel با KV — جدید',key:'vtpanel'},
-  vless:{name:'CF-VLESS',icon:'🌐',desc:'VLESS روی Pages — جدید',key:'vless',pages:true},
-  trojan:{name:'CF-Trojan',icon:'🔐',desc:'Trojan روی Pages — جدید',key:'trojan',pages:true}
+
 };
 
 const PANELS_CONFIG={
@@ -579,13 +577,12 @@ const PANELS_CONFIG={
   fox:{repo:'likennn/worker-falcons',file:'falcons/fox/index.js',vars:{},path:'/'},
   amcf:{repo:'am883478014/cf-proxy',file:'cf-proxy/_worker.js',vars:{},path:'/'},
   vtpanel:{repo:'bayueqi/ZQ-VTPanel',file:'_worker.js',kv:['VTPanel'],vars:{},path:'/'},
-  vless:{repo:'yonggekkk/Cloudflare-vless-trojan',file:'Vless_workers_pages/_worker.js',pages:true,vars:{uid:''},path:'/{uid}'},
-  trojan:{repo:'yonggekkk/Cloudflare-vless-trojan',file:'Trojan_workers_pages/_worker.js',pages:true,vars:{Pswd:'trojan'},path:'/{Pswd}'}
+
 };
 
 const PANEL_STARS={
   nahan:3082,edge:41735,cfnew:14694,nova:3207,edgtun:2989,
-  zeus:813,fox:151,amcf:3126,vtpanel:62,vless:15806,trojan:15806
+  zeus:813,fox:151,amcf:3126,vtpanel:62
 };
 
 let selectedPanel=null;
@@ -654,18 +651,8 @@ function render(){
           <div class="result-box"><div class="result-label">📊 صفحه وضعیت</div><div class="result-value"><a id="vtpRoot" href="#" target="_blank" style="color:var(--cyan);text-decoration:none;word-break:break-all;font-size:13px"></a><button class="copy-btn" id="copyVtpRoot">کپی</button></div></div>
           <div class="result-box"><div class="result-label">🔑 رمز ورود</div><div class="result-value" style="color:var(--yellow)"><span id="vtpPass">admin</span><button class="copy-btn" onclick="cpB(this,'admin')">کپی</button></div></div>
         </div>
-        <div id="vlessPaths" style="display:none">
-          <div class="result-box"><div class="result-label">📊 صفحه وضعیت</div><div class="result-value"><a id="vlessRoot" href="#" target="_blank" style="color:var(--cyan);text-decoration:none;word-break:break-all;font-size:13px"></a><button class="copy-btn" id="copyVlessRoot">کپی</button></div></div>
-          <div class="result-box"><div class="result-label">📑 صفحه اشتراک</div><div class="result-value"><a id="vlessSub" href="#" target="_blank" style="color:var(--cyan);text-decoration:none;word-break:break-all;font-size:13px"></a><button class="copy-btn" id="copyVlessSub">کپی</button></div></div>
-          <div class="result-box"><div class="result-label">🔗 VLESS لینک مستقیم</div><div class="result-value"><a id="vlessVless" href="#" target="_blank" style="color:var(--cyan);text-decoration:none;word-break:break-all;font-size:13px"></a><button class="copy-btn" id="copyVlessVless">کپی</button></div></div>
-          <div class="result-box"><div class="result-label">🔑 UUID</div><div class="result-value" style="color:var(--red)"><span id="vlessUuid"></span><button class="copy-btn" id="copyVlessUuid">کپی</button></div></div>
-        </div>
-        <div id="trojanPaths" style="display:none">
-          <div class="result-box"><div class="result-label">📊 صفحه وضعیت</div><div class="result-value"><a id="trojanRoot" href="#" target="_blank" style="color:var(--cyan);text-decoration:none;word-break:break-all;font-size:13px"></a><button class="copy-btn" id="copyTrojanRoot">کپی</button></div></div>
-          <div class="result-box"><div class="result-label">📑 صفحه اشتراک</div><div class="result-value"><a id="trojanSub" href="#" target="_blank" style="color:var(--cyan);text-decoration:none;word-break:break-all;font-size:13px"></a><button class="copy-btn" id="copyTrojanSub">کپی</button></div></div>
-          <div class="result-box"><div class="result-label">🔗 Trojan لینک مستقیم</div><div class="result-value"><a id="trojanLink" href="#" target="_blank" style="color:var(--cyan);text-decoration:none;word-break:break-all;font-size:13px"></a><button class="copy-btn" id="copyTrojanLink">کپی</button></div></div>
-          <div class="result-box"><div class="result-label">🔑 رمز Trojan</div><div class="result-value" style="color:var(--red)"><span id="trojanPswd"></span><button class="copy-btn" id="copyTrojanPswd">کپی</button></div></div>
-        </div>
+
+
         <div class="btn-group"><a id="openPanel" href="#" target="_blank" class="btn btn-primary">باز کردن پنل</a><button class="btn btn-secondary" onclick="render()">نصب جدید</button></div>
       </div>
     </div>
@@ -748,7 +735,7 @@ function render(){
         $('resultBox').style.display='block';
 
         // Hide all special sections first
-        ['uuidBox','edgtunPaths','foxPaths','amcfPaths','vtpanelPaths','vlessPaths','trojanPaths'].forEach(id=>{$(id).style.display='none'});
+        ['uuidBox','edgtunPaths','foxPaths','amcfPaths','vtpanelPaths'].forEach(id=>{$(id).style.display='none'});
 
         // Show UUID for Cfnew
         if(d.uuid){
@@ -818,42 +805,9 @@ function render(){
           $('copyVtpRoot').addEventListener('click',function(){cpB(this,base)});
         }
 
-        // CF-VLESS paths
-        if(d.panelType==='vless' && d.uuid){
-          $('vlessPaths').style.display='block';
-          const base=d.panelURL;
-          const uuid=d.uid||d.uuid;
-          const host=new URL(base).host;
-          const vlessRoot=base;
-          const vlessSub=base+'/sub';
-          const vlessVless='vless://'+uuid+'@'+host+':443?encryption=none&security=tls&sni='+host+'&fp=chrome&type=ws&host='+host+'&path=/ws#CF-VLESS';
-          $('vlessRoot').textContent=vlessRoot;$('vlessRoot').href=vlessRoot;
-          $('vlessSub').textContent=vlessSub;$('vlessSub').href=vlessSub;
-          $('vlessVless').textContent=vlessVless;$('vlessVless').href=vlessVless;
-          $('vlessUuid').textContent=uuid;
-          $('copyVlessRoot').addEventListener('click',function(){cpB(this,vlessRoot)});
-          $('copyVlessSub').addEventListener('click',function(){cpB(this,vlessSub)});
-          $('copyVlessVless').addEventListener('click',function(){cpB(this,vlessVless)});
-          $('copyVlessUuid').addEventListener('click',function(){cpB(this,uuid)});
-        }
 
-        // CF-Trojan paths
-        if(d.panelType==='trojan'){
-          $('trojanPaths').style.display='block';
-          const base=d.panelURL;
-          const pswd=vars.Pswd||'trojan';
-          const host=new URL(base).host;
-          const trojanRoot=base;
-          const trojanSub=base+'/sub';
-          const trojanLink='trojan://'+pswd+'@'+host+':443?security=tls&type=ws&host='+host+'&path=/ws#CF-Trojan';
-          $('trojanRoot').textContent=trojanRoot;$('trojanRoot').href=trojanRoot;
-          $('trojanSub').textContent=trojanSub;$('trojanSub').href=trojanSub;
-          $('trojanLink').textContent=trojanLink;$('trojanLink').href=trojanLink;
-          $('trojanPswd').textContent=pswd;
-          $('copyTrojanRoot').addEventListener('click',function(){cpB(this,trojanRoot)});
-          $('copyTrojanSub').addEventListener('click',function(){cpB(this,trojanSub)});
-          $('copyTrojanLink').addEventListener('click',function(){cpB(this,trojanLink)});
-          $('copyTrojanPswd').addEventListener('click',function(){cpB(this,pswd)});
+
+
           // Update default password display
           $('resPasswd').textContent=pswd;
         }
