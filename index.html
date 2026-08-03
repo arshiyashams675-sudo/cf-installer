@@ -7,6 +7,11 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <title>CF Installer v4.0.0</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0a0a0f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚀</text></svg>">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -529,6 +534,35 @@ body::after{
   .copy-btn{align-self:flex-end}
   .footer-stars{gap:6px 10px}
 }
+/* Progress bar */
+.progress-steps{display:flex;gap:0;margin:16px 0;direction:rtl}
+.progress-step{flex:1;text-align:center;position:relative;padding:8px 4px;font-size:11px;color:var(--text3);transition:all .3s}
+.progress-step::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:28px;height:28px;border-radius:50%;background:var(--bg3);border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:13px;z-index:1;transition:all .3s}
+.progress-step:nth-child(1)::before{content:'🔑'}
+.progress-step:nth-child(2)::before{content:'📥'}
+.progress-step:nth-child(3)::before{content:'🚀'}
+.progress-step.active{color:var(--cyan)}
+.progress-step.active::before{background:var(--cyan-bg);border-color:var(--cyan);box-shadow:0 0 12px rgba(0,229,160,.3)}
+.progress-step.done{color:var(--green)}
+.progress-step.done::before{background:var(--green);border-color:var(--green);content:'✅';font-size:12px}
+.progress-step::after{content:'';position:absolute;top:14px;width:100%;height:2px;background:var(--border2);z-index:0}
+.progress-step:first-child::after{left:50%;width:50%}
+.progress-step:last-child::after{right:50%;width:50%}
+.progress-step.done::after{background:var(--green)}
+.progress-step.active::after{background:linear-gradient(to left,var(--green),var(--cyan))}
+
+/* Panel badges */
+.panel-badges{display:flex;gap:4px;margin-top:6px;flex-wrap:wrap}
+.proto-badge{font-size:10px;padding:2px 6px;border-radius:4px;font-weight:600;letter-spacing:.5px}
+.proto-vless{background:rgba(0,229,160,.15);color:var(--cyan)}
+.proto-trojan{background:rgba(255,68,102,.15);color:var(--red)}
+.proto-sub{background:rgba(0,184,255,.15);color:var(--cyan2)}
+
+/* Tooltip */
+.panel-card{position:relative}
+.tooltip{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:var(--bg4);color:var(--text);border:1px solid var(--border2);border-radius:8px;padding:8px 12px;font-size:12px;line-height:1.5;white-space:nowrap;opacity:0;visibility:hidden;transition:all .2s;z-index:100;pointer-events:none;max-width:250px;white-space:normal;text-align:center}
+.tooltip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:var(--bg4)}
+.panel-card:hover .tooltip,.panel-card:active .tooltip{opacity:1;visibility:visible}
 </style>
 </head>
 <body>
@@ -555,15 +589,15 @@ body::after{
 const BACKEND='https://cf-installer-backend.cf-installer.workers.dev';
 
 const PANELS={
-  nahan:{name:'Nahan Panel',icon:'🌙',desc:'پنل سبک و سریع با D1',key:'nahan'},
-  edge:{name:'EdgeTunnel',icon:'⚡',desc:'پنل حرفه‌ای و محبوب با KV',key:'edge'},
-  cfnew:{name:'Cfnew Panel',icon:'🆕',desc:'پنل مدرن با KV',key:'cfnew'},
-  nova:{name:'Nova Proxy',icon:'🚀',desc:'پنل پیشرفته D1 + KV',key:'nova'},
-  edgtun:{name:'EDtunnel',icon:'🌐',desc:'محبوب‌ترین VLESS/Trojan — 2.9k ⭐',key:'edgtun'},
-  zeus:{name:'Zeus Panel',icon:'⚡',desc:'حرفه‌ای با مدیریت کاربران — 813 ⭐',key:'zeus'},
-  fox:{name:'FoxCloud',icon:'🦊',desc:'VLESS سبک و سریع — 151 ⭐',key:'fox'},
-  amcf:{name:'am-cf-tunnel',icon:'🇨🇳',desc:'VLESS + Trojan با Subscription — 3.1k ⭐',key:'amcf'},
-  vtpanel:{name:'ZQ-VTPanel',icon:'🛡️',desc:'پنل VTPanel با KV — جدید',key:'vtpanel'},
+  nahan:{name:'Nahan Panel',icon:'🌙',desc:'پنل سبک و سریع با D1',key:'nahan',proto:['VLESS'],tip:'پنل سبک با D1 Database — مناسب شروع'},
+  edge:{name:'EdgeTunnel',icon:'⚡',desc:'پنل حرفه‌ای و محبوب با KV',key:'edge',proto:['VLESS','Trojan'],tip:'محبوب‌ترین پنل — 41k+ ستاره — پشتیبانی KV'},
+  cfnew:{name:'Cfnew Panel',icon:'🆕',desc:'پنل مدرن با KV',key:'cfnew',proto:['VLESS'],tip:'پنل مدرن با UUID خودکار — KV Storage'},
+  nova:{name:'Nova Proxy',icon:'🚀',desc:'پنل پیشرفته D1 + KV',key:'nova',proto:['VLESS'],tip:'پنل پیشرفته با D1 + KV — مدیریت کاربران'},
+  edgtun:{name:'EDtunnel',icon:'🌐',desc:'محبوب‌ترین VLESS/Trojan — 2.9k ⭐',key:'edgtun',proto:['VLESS'],tip:'VLESS مستقیم — بدون نیاز به دیتابیس — UUID خودکار'},
+  zeus:{name:'Zeus Panel',icon:'⚡',desc:'حرفه‌ای با مدیریت کاربران — 813 ⭐',key:'zeus',proto:['VLESS','Trojan'],tip:'مدیریت کاربران — D1 Database — رابط مدیریتی'},
+  fox:{name:'FoxCloud',icon:'🦊',desc:'VLESS سبک و سریع — 151 ⭐',key:'fox',proto:['VLESS'],tip:'VLESS سبک و سریع — صفحه اشتراک — UUID خودکار'},
+  amcf:{name:'am-cf-tunnel',icon:'🇨🇳',desc:'VLESS + Trojan با Subscription — 3.1k ⭐',key:'amcf',proto:['VLESS','Trojan'],tip:'VLESS + Trojan — Subscription — KV Storage'},
+  vtpanel:{name:'ZQ-VTPanel',icon:'🛡️',desc:'پنل VTPanel با KV — جدید',key:'vtpanel',proto:['VLESS','Trojan'],tip:'VLESS + Trojan — UI مدیریتی — UUID در KV'},
 
 };
 
@@ -590,6 +624,7 @@ const $=id=>document.getElementById(id);
 function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
 function esc(s){return s?String(s).replace(/[&<>\"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[m])):''}
 function cpB(b,t){navigator.clipboard.writeText(t).then(()=>{const o=b.textContent;b.textContent='کپی شد!';b.classList.add('copied');setTimeout(()=>{b.textContent=o;b.classList.remove('copied')},1500)})}
+function setStep(n){[1,2,3].forEach(i=>{const el=$('step'+i);if(!el)return;el.classList.remove('active','done');if(i<n)el.classList.add('done');else if(i===n)el.classList.add('active')})}
 
 function renderFooter(){
   const el=$('footerStars');
@@ -622,6 +657,11 @@ function render(){
     </div>
     <div class="card" id="deployCard" style="display:none">
       <div class="card-title"><span class="icon">📦</span> در حال استقرار...</div>
+      <div class="progress-steps" id="progressSteps">
+        <div class="progress-step active" id="step1">بررسی توکن</div>
+        <div class="progress-step" id="step2">دانلود کد</div>
+        <div class="progress-step" id="step3">استقرار Worker</div>
+      </div>
       <div id="deployLog" class="deploy-log"></div>
       <div id="resultBox" style="display:none">
         <hr class="divider">
@@ -660,13 +700,16 @@ function render(){
 
   // Render panel cards
   const pg=$('panelGrid');
-  pg.innerHTML=Object.entries(PANELS).map(([k,p])=>`
-    <div class="panel-card" data-p="${k}">
+  pg.innerHTML=Object.entries(PANELS).map(([k,p])=>{
+    const badges=(p.proto||[]).map(pr=>`<span class="proto-badge proto-${pr.toLowerCase()}">${pr}</span>`).join('');
+    return `<div class="panel-card" data-p="${k}">
+      <div class="tooltip">${p.tip||''}</div>
       <div class="panel-icon-wrap">${p.icon}</div>
       <div class="panel-name">${p.name}</div>
       <div class="panel-desc">${p.desc}</div>
-    </div>
-  `).join('');
+      <div class="panel-badges">${badges}</div>
+    </div>`;
+  }).join('');
 
   // Panel selection
   pg.querySelectorAll('.panel-card').forEach(c=>c.addEventListener('click',()=>{
@@ -703,7 +746,7 @@ function render(){
     if(!selectedPanel){toast('⚠️ پنل را انتخاب کنید');return}
     $('deployBtn').disabled=true;$('deployBtn').textContent='⏳ در حال نصب...';
     $('deployCard').style.display='block';
-    $('deployLog').innerHTML='<span class="log-info">▸ شروع استقرار...</span>';
+    $('deployLog').innerHTML='<span class="log-info">▸ شروع استقرار...</span>';setStep(1);
     $('resultBox').style.display='none';
 
     // Gather panel-specific vars
@@ -725,10 +768,16 @@ function render(){
       const d=await r.json();
       
       // Show logs
-      if(d.logs)d.logs.forEach(l=>{$('deployLog').innerHTML+=l+'<br>'});
+      if(d.logs)d.logs.forEach(l=>{
+        $('deployLog').innerHTML+=l+'<br>';
+        if(l.includes('اعتبارسنجی توکن')||l.includes('حساب'))setStep(2);
+        if(l.includes('دانلود کد')||l.includes('کد دانلود'))setStep(2);
+        if(l.includes('استقرار Worker'))setStep(3);
+        if(l.includes('مستقر شد'))[1,2,3].forEach(i=>{const e=$('step'+i);if(e){e.classList.remove('active');e.classList.add('done')}});
+      });
       
       if(d.success){
-        $('deployLog').innerHTML+='<br><span class="log-ok">✅ نصب با موفقیت انجام شد!</span><br><span class="log-info">⏳ چند دقیقه صبر کنید تا ورکر فعال شود</span>';
+        [1,2,3].forEach(i=>{const e=$('step'+i);if(e){e.classList.remove('active');e.classList.add('done')}});$('deployLog').innerHTML+='<br><span class="log-ok">✅ نصب با موفقیت انجام شد!</span><br><span class="log-info">⏳ چند دقیقه صبر کنید تا ورکر فعال شود</span>';
         $('resUrl').textContent=d.panelURL;$('resUrl').href=d.panelURL;
         $('resName').textContent=d.workerName;
         $('resPath').textContent=d.panelPath||'/';
