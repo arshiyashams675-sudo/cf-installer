@@ -553,7 +553,6 @@ body::after{
 
 <script>
 const BACKEND='https://cf-installer-backend.cf-installer.workers.dev';
-const SECRET='zIuH2xBTVeFv3crIK-pibj5nY9qrJPH9kI2hEgzrK1A';
 
 const PANELS={
   nahan:{name:'Nahan Panel',icon:'🌙',desc:'پنل سبک و سریع با D1',key:'nahan'},
@@ -683,8 +682,9 @@ function render(){
     const token=$('tokenIn').value.trim();
     if(!token){toast('⚠️ توکن را وارد کنید');return}
     $('validateBtn').textContent='⏳ در حال بررسی...';$('validateBtn').disabled=true;
+    if(!token.startsWith('cfut_')){$('tokenResult').innerHTML='<div class="alert alert-error" style="margin-top:12px">❌ فرمت توکن نامعتبر است. توکن باید با cfut_ شروع شود</div>';$('validateBtn').textContent='🔍 بررسی توکن';$('validateBtn').disabled=false;return}
     try{
-      const r=await fetch(BACKEND+'/deploy',{method:'POST',headers:{'Content-Type':'application/json','X-Secret':SECRET},body:JSON.stringify({token,panelType:'validate'})});
+      const r=await fetch(BACKEND+'/deploy',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token,panelType:'validate'})});
       const d=await r.json();
       if(d.success||d.logs?.length>0){
         $('tokenResult').innerHTML='<div class="alert alert-success" style="margin-top:12px">✅ توکن معتبر است!</div>';
@@ -721,7 +721,7 @@ function render(){
     if(cfg&&cfg.pages) payload.pages=true;
 
     try{
-      const r=await fetch(BACKEND+'/deploy',{method:'POST',headers:{'Content-Type':'application/json','X-Secret':SECRET},body:JSON.stringify(payload)});
+      const r=await fetch(BACKEND+'/deploy',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
       const d=await r.json();
       
       // Show logs
@@ -810,6 +810,7 @@ function render(){
         $('copyName').addEventListener('click',function(){cpB(this,d.workerName)});
         $('copyPath').addEventListener('click',function(){cpB(this,d.panelPath||'/')});
         toast('✅ نصب کامل شد!');
+        $('tokenIn').value='';
       } else {
         $('deployLog').innerHTML+=`<br><span class="log-err">❌ ${esc(d.error||'خطا')}</span>`;
         toast('❌ نصب ناموفق');
