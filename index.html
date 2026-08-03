@@ -584,8 +584,8 @@ const PANELS_CONFIG={
 };
 
 const PANEL_STARS={
-  nahan:88,edge:2900,cfnew:45,nova:120,edgtun:2900,
-  zeus:813,fox:151,amcf:3100,vtpanel:12,vless:0,trojan:0
+  nahan:3082,edge:41735,cfnew:14694,nova:3207,edgtun:2989,
+  zeus:813,fox:151,amcf:3126,vtpanel:62,vless:15806,trojan:15806
 };
 
 let selectedPanel=null;
@@ -637,8 +637,7 @@ function render(){
         <div id="edgtunPaths" style="display:none">
           <div class="result-box"><div class="result-label">🌐 VLESS کانفیگ</div><div class="result-value"><a id="edVless" href="#" target="_blank" style="color:var(--cyan);text-decoration:none;word-break:break-all;font-size:13px"></a><button class="copy-btn" id="copyEdVless">کپی</button></div></div>
           <div class="result-box"><div class="result-label">🔗 VLESS لینک مستقیم</div><div class="result-value"><a id="edVlessLink" href="#" target="_blank" style="color:var(--cyan);text-decoration:none;word-break:break-all;font-size:13px"></a><button class="copy-btn" id="copyEdVlessLink">کپی</button></div></div>
-          <div class="result-box"><div class="result-label"> socks5</div><div class="result-value"><a id="edSocks5" href="#" target="_blank" style="color:var(--cyan);text-decoration:none;word-break:break-all;font-size:13px"></a><button class="copy-btn" id="copyEdSocks5">کپی</button></div></div>
-          <div class="result-box"><div class="result-label"> http</div><div class="result-value"><a id="edHttp" href="#" target="_blank" style="color:var(--cyan);text-decoration:none;word-break:break-all;font-size:13px"></a><button class="copy-btn" id="copyEdHttp">کپی</button></div></div>
+
         </div>
         <div id="foxPaths" style="display:none">
           <div class="result-box"><div class="result-label">📊 صفحه وضعیت</div><div class="result-value"><a id="foxRoot" href="#" target="_blank" style="color:var(--cyan);text-decoration:none;word-break:break-all;font-size:13px"></a><button class="copy-btn" id="copyFoxRoot">کپی</button></div></div>
@@ -766,16 +765,13 @@ function render(){
           const host=new URL(base).host;
           const vlessLink='vless://'+uuid+'@'+host+'?encryption=none&type=ws#CF-Worker';
           const vlessUrl=base+'/'+uuid;
-          const socks5Url=base+'/socks5://user:pass@host:port';
-          const httpUrl=base+'/http://user:pass@host:port';
+
           $('edVless').textContent=vlessUrl;$('edVless').href=vlessUrl;
           $('edVlessLink').textContent=vlessLink;$('edVlessLink').href=vlessLink;
-          $('edSocks5').textContent=socks5Url;$('edSocks5').href=socks5Url;
-          $('edHttp').textContent=httpUrl;$('edHttp').href=httpUrl;
+
           $('copyEdVless').addEventListener('click',function(){cpB(this,vlessUrl)});
           $('copyEdVlessLink').addEventListener('click',function(){cpB(this,vlessLink)});
-          $('copyEdSocks5').addEventListener('click',function(){cpB(this,socks5Url)});
-          $('copyEdHttp').addEventListener('click',function(){cpB(this,httpUrl)});
+
         }
 
         // FoxCloud paths
