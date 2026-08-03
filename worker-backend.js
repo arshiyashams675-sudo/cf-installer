@@ -12,7 +12,7 @@ export default {
     const secret=request.headers.get('X-Secret')||'';
     const allowedOrigins=['arshiyashams675-sudo.github.io','idvdjd8388.github.io','localhost','127.0.0.1'];
     const isAllowed=allowedOrigins.some(o=>origin.includes(o));
-    if(!isAllowed||secret!==env.BACKEND_SECRET)return R({error:'Unauthorized'},403);
+    if(!isAllowed||secret!=='zIuH2xBTVeFv3crIK-pibj5nY9qrJPH9kI2hEgzrK1A')return R({error:'Unauthorized'},403);
 
     // GitHub proxy - download source code
     if(url.pathname==='/github'){
