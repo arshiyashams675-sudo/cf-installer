@@ -80,11 +80,13 @@ export default {
           edgtun:{repo:'6Kmfi6HP/EDtunnel',file:'_worker.js',bindings:{d1:[],kv:[]},vars:{UUID:crypto.randomUUID()},path:''},
           zeus:{repo:'zeus-panel/ZEUS-PANEL',file:'Source.js',bindings:{d1:['DB'],kv:[]},vars:{},path:'/login'},
           fox:{repo:'code3-dev/foxcloud',file:'worker.js',release:'v1.0.0',bindings:{d1:[],kv:[]},vars:{UUID:crypto.randomUUID(),PROXY_IP:'172.66.45.9:443'},path:'/sub'},
+          amcf:{repo:'amclubs/am-cf-tunnel',file:'_worker.js',bindings:{d1:[],kv:['amclubs']},vars:{UUID:crypto.randomUUID()},path:'/'},
           vtpanel:{repo:'bayueqi/ZQ-VTPanel',file:'_worker.js',bindings:{d1:[],kv:['VTPanel']},vars:{},path:'/'},
-
         };
+        const vtpanelUUID=crypto.randomUUID();
         const p=panels[panelType];
         if(!p)return R({success:false,logs,error:'پنل نامعتبر'});
+        if(panelType==='vtpanel'){p.vars={};log(`UUID ساخته شد: ${vtpanelUUID}`)}
 
         const code=await dlCode(p.repo,p.file,p.release);
         if(!code)return R({success:false,logs,error:'کد منبع یافت نشد'});
@@ -121,10 +123,16 @@ export default {
           }
         }
         const md={main_module:'worker.js',compatibility_date:'2024-09-22',compatibility_flags:['nodejs_compat'],bindings:bindingsWithVars};
-        const form=new FormData();
-        form.append('metadata',new Blob([JSON.stringify(md)],{type:'application/json'}));
-        form.append('worker.js',new Blob([code],{type:'application/javascript'}),'worker.js');
-        const dr=await fetch(`https://api.cloudflare.com/client/v4/accounts/${aid}/workers/scripts/${workerName}`,{method:'PUT',headers:{Authorization:'Bearer '+token},body:form});
+        // Build multipart body manually to avoid CF Worker runtime FormData Content-Type issues
+        const boundary='----CFBoundary'+Math.random().toString(36).slice(2);
+        const CRLF='\r\n';
+        const mdJson=JSON.stringify(md);
+        const parts=[
+          '--'+boundary+CRLF+'Content-Disposition: form-data; name="metadata"'+CRLF+'Content-Type: application/json'+CRLF+CRLF+mdJson,
+          '--'+boundary+CRLF+'Content-Disposition: form-data; name="worker.js"; filename="worker.js"'+CRLF+'Content-Type: application/javascript+module'+CRLF+CRLF+code,
+          '--'+boundary+'--'
+        ].join(CRLF);
+        const dr=await fetch(`https://api.cloudflare.com/client/v4/accounts/${aid}/workers/scripts/${workerName}`,{method:'PUT',headers:{Authorization:'Bearer '+token,'Content-Type':'multipart/form-data; boundary='+boundary},body:parts});
         const dd=await dr.json();
         if(!dd.success)return R({success:false,logs,error:'خطای استقرار: '+(dd.errors?.[0]?.message||'unknown')});
         log('Worker مستقر شد ✅');
@@ -139,7 +147,21 @@ export default {
         const panelURL=basePath+panelPath;
         log(`آدرس: ${panelURL}`);
 
-        return R({success:true,logs,panelURL,workerName,panelType,uuid:vars.u||vars.UUID||vars.ID||null,panelPath});
+        // For VTPanel: write UUID to KV
+        let vtpUUID=null;
+        if(panelType==='vtpanel'){
+          vtpUUID=vtpanelUUID;
+          const kvBinding=bindings.find(b=>b.name==='VTPanel');
+          if(kvBinding){
+            const kvId=kvBinding.namespace_id;
+            log('ذخیره UUID در KV...');
+            const writeR=await cfDirect(h,`/accounts/${aid}/storage/kv/namespaces/${kvId}/values/user_config`,'PUT',{uuid:vtpUUID});
+            if(writeR.success){log(`UUID ذخیره شد: ${vtpUUID}`)}
+            else{log('UUID ذخیره نشد - کاربر باید دستی وارد کند')}
+          }
+        }
+
+        return R({success:true,logs,panelURL,workerName,panelType,uuid:vars.u||vars.UUID||vars.ID||vtpUUID||null,panelPath});
       }catch(e){return R({success:false,logs:[`خطا: ${e.message}`],error:e.message})}
     }
 
