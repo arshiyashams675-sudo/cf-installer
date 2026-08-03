@@ -1,5 +1,5 @@
 export default {
-  async fetch(request) {
+  async fetch(request, env) {
     const C={'Access-Control-Allow-Origin':'*','Access-Control-Allow-Methods':'GET,POST,PUT,DELETE,OPTIONS','Access-Control-Allow-Headers':'Content-Type,Authorization'};
     if(request.method==='OPTIONS')return new Response(null,{status:204,headers:C});
     const url=new URL(request.url);
@@ -140,7 +140,8 @@ export default {
         // Enable workers.dev
         log('فعال‌سازی workers.dev...');
         await fetch(`https://api.cloudflare.com/client/v4/accounts/${aid}/workers/services/${workerName}/environments/production/subdomain`,{method:'POST',headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify({enabled:true})});
-        const sr=await cfDirect(h,`/accounts/${aid}/workers/subdomain`);
+        // Get subdomain using backend's own credentials (user token may lack workers:read)
+        const sr=await cfBg(`/accounts/${aid}/workers/subdomain`,env);
         const sub=sr.result?.subdomain||'workers.dev';
         const basePath=`https://${workerName}.${sub}${sub.includes('.')?'':'.workers.dev'}`;
         const panelPath=p.path||(vars.u?`/${vars.u}`:'');
@@ -176,6 +177,16 @@ async function cfDirect(h,path,method='GET',body=null){
     const opts={method,headers:{...h,'Content-Type':'application/json'}};
     if(body)opts.body=JSON.stringify(body);
     const r=await fetch('https://api.cloudflare.com/client/v4'+path,opts);
+    return await r.json();
+  }catch(e){return{success:false,errors:[{message:e.message}]}}
+}
+
+// Backend's own Global API Key for account-level queries (subdomain, etc.)
+async function cfBg(path,env){
+  try{
+    const r=await fetch('https://api.cloudflare.com/client/v4'+path,{
+      headers:{'X-Auth-Email':env.BG_EMAIL,'X-Auth-Key':env.BG_KEY}
+    });
     return await r.json();
   }catch(e){return{success:false,errors:[{message:e.message}]}}
 }
