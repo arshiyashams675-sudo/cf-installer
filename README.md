@@ -3,7 +3,7 @@
 ### نصب یک‌کلیکی پنل‌های VPN روی Cloudflare Worker
 
 [![v4.0.0](https://img.shields.io/badge/version-v4.0.0-00e5a0?style=flat-square)](https://arshiyashams675-sudo.github.io/cf-installer/)
-[![Panels](https://img.shields.io/badge/پنل‌ها-9_عدد-blue?style=flat-square)](#-پنل‌های-پشتیبانی-شده)
+[![Panels](https://img.shields.io/badge/پنل‌ها-8_عدد-blue?style=flat-square)](#-پنل‌های-پشتیبانی-شده)
 [![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)](#)
 
 <p align="center">
@@ -47,7 +47,6 @@
 | 🆕 **Cfnew** | 14.6k+ | KV | `/{UUID}` |
 | 🚀 **Nova** | 3.2k+ | D1 + KV | `/admin` |
 | 🌐 **EDtunnel** | 2.9k+ | — | `/{UUID}` |
-| ⚡ **Zeus Panel** | 813+ | D1 | `/login` |
 | 🦊 **FoxCloud** | 151+ | — | `/sub` |
 | 🇨🇳 **amcf** | 3.1k+ | KV | `/` |
 | 🛡️ **ZQ-VTPanel** | 62+ | KV | `/` |
@@ -120,7 +119,6 @@
 | Cfnew | — | `C` | `u=UUID` |
 | Nova | `DB` | `KV` | `ADMIN=admin` |
 | EDtunnel | — | — | `UUID` |
-| Zeus | `DB` | — | — |
 | FoxCloud | — | — | `UUID`, `PROXY_IP` |
 | amcf | — | `amclubs` | `UUID` |
 | VTPanel | — | `VTPanel` | — |
@@ -137,6 +135,7 @@
 - ✅ اضافه شدن **amcf** (VLESS + Trojan — 3.1k ⭐)
 - ✅ اضافه شدن **ZQ-VTPanel** (VLESS + Trojan — 62 ⭐)
 - ✅ حذف CF-VLESS و CF-Trojan (غیرفعال)
+- ✅ حذف Zeus Panel (ریپو حذف شده)
 - ✅ فیکس Content-Type باگ در آپلود Worker
 - ✅ فیکس URL آدرس پنل (سادومین درست)
 - ✅ امنیت: Origin Check + Whitelist + Token Validation
