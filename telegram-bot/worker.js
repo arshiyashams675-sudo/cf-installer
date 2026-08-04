@@ -158,6 +158,40 @@ export default {
         return json({ ok: true });
       }
 
+      if (data === 'delete_worker') {
+        const session = await env.SESSIONS.get('session:' + userId, { type: 'json' });
+        if (!session || !session.workerName) {
+          await answerCallback(tg, cq.id, '⚠️ Workerای موجود نیست', true);
+          return json({ ok: true });
+        }
+        // Confirm with inline keyboard
+        const confirmKb = { inline_keyboard: [
+          [{ text: '✅ بله حذف شود', callback_data: 'confirm_delete' }, { text: '❌ انصراف', callback_data: 'cancel' }]
+        ]};
+        await send(tg, chatId,
+          '⚠️ *حذف Worker*\n\nآیا مطمئن هستید?\n\n📛 `'+session.workerName+'`\n\n⚠️ این عمل قابل بازگشت نیست!',
+          'Markdown', confirmKb
+        );
+        return json({ ok: true });
+      }
+
+      if (data === 'confirm_delete') {
+        const session = await env.SESSIONS.get('session:' + userId, { type: 'json' });
+        if (!session || !session.workerName || !session.token) {
+          await send(tg, chatId, '⚠️ جلسه منقضی شده. /start بزنید.');
+          return json({ ok: true });
+        }
+        await editMessageText(cq, '⏳ در حال حذف Worker...');
+        const r = await cfApi(session.token, `/accounts/${session.accountId}/workers/scripts/${session.workerName}`, 'DELETE');
+        if (r.success) {
+          await env.SESSIONS.delete('session:' + userId);
+          await send(tg, chatId, '✅ Worker `'+session.workerName+'` حذف شد.', 'Markdown');
+        } else {
+          await send(tg, chatId, '❌ خطا در حذف:\n`'+(r.errors?.[0]?.message||'unknown')+'`', 'Markdown');
+        }
+        return json({ ok: true });
+      }
+
       if (panels[data]) {
         const session = await env.SESSIONS.get('session:' + userId, { type: 'json' });
         if (!session || !session.token) {
@@ -229,6 +263,9 @@ export default {
           } else if (data === 'vtpanel') {
             msg += '🔗 *آدرس پنل:* `'+result.panelURL+'`\n';
             msg += '🔑 *رمز:* `admin`\n';
+          } else if (data === 'v2ray') {
+            msg += '🔗 *پنل ادمین:* `'+result.panelURL+'`\n';
+            msg += '📑 *صفحه اشتراک:* `'+result.panelURL+'/s/subscribe`\n';
           } else {
             msg += '🔗 *آدرس:* `'+result.panelURL+'`\n';
           }
@@ -257,12 +294,13 @@ const PANELS = {
   fox: { name: 'FoxCloud', repo: 'code3-dev/foxcloud', file: 'worker.js', release: 'v1.0.0', vars: { UUID: () => crypto.randomUUID(), PROXY_IP: '172.66.45.9:443' }, path: '/sub' },
   amcf: { name: 'am-cf', repo: 'amclubs/am-cf-tunnel', file: '_worker.js', kv: ['amclubs'], vars: {}, path: '/' },
   vtpanel: { name: 'VTPanel', repo: 'bayueqi/ZQ-VTPanel', file: '_worker.js', kv: ['VTPanel'], vars: {}, path: '/' },
+  v2ray: { name: 'v2ray-worker', repo: 'vfarid/v2ray-worker', file: 'worker.js', release: 'v2.4', kv: ['settings'], vars: {}, path: '/' },
 };
 
 function buildPanelKeyboard() {
   const icons = {
     edge: '⚡', cfnew: '🆕', nova: '🚀', nahan: '🌙',
-    edgtun: '🌐', fox: '🦊', amcf: '🇨🇳', vtpanel: '🛡️'
+    edgtun: '🌐', fox: '🦊', amcf: '🇨🇳', vtpanel: '🛡️', v2ray: '🔧'
   };
   const rows = [];
   const keys = Object.keys(PANELS);
@@ -284,7 +322,7 @@ function buildResultKeyboard(url) {
   return {
     inline_keyboard: [
       [{ text: '📊 تست اتصال', callback_data: 'test_connection' }, { text: '🔗 باز کردن پنل', url: url }],
-      [{ text: '🔄 انتخاب مجدد', callback_data: 'back_to_panels' }]
+      [{ text: '🗑️ حذف Worker', callback_data: 'delete_worker' }, { text: '🔄 انتخاب مجدد', callback_data: 'back_to_panels' }]
     ]
   };
 }

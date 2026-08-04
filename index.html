@@ -333,6 +333,7 @@ body::after{
 .panel-card[data-p="fox"]::before{background:linear-gradient(135deg,rgba(245,158,11,.08),rgba(168,85,247,.05))}
 .panel-card[data-p="amcf"]::before{background:linear-gradient(135deg,rgba(59,130,246,.08),rgba(239,68,68,.05))}
 .panel-card[data-p="vtpanel"]::before{background:linear-gradient(135deg,rgba(239,68,68,.08),rgba(168,85,247,.05))}
+.panel-card[data-p="v2ray"]::before{background:linear-gradient(135deg,rgba(0,184,255,.08),rgba(0,229,160,.05))}
 
 .panel-card:hover{
   border-color:var(--border3);
@@ -706,6 +707,7 @@ const PANELS={
   fox:{name:'FoxCloud',icon:'🦊',desc:'VLESS سبک و سریع — 151 ⭐',key:'fox',proto:['VLESS'],tip:'VLESS سبک و سریع — صفحه اشتراک — UUID خودکار'},
   amcf:{name:'am-cf-tunnel',icon:'🇨🇳',desc:'VLESS + Trojan با Subscription — 3.1k ⭐',key:'amcf',proto:['VLESS','Trojan','DOMAIN'],tip:'VLESS + Trojan — Subscription — KV Storage — نیاز به دامنه'},
   vtpanel:{name:'ZQ-VTPanel',icon:'🛡️',desc:'پنل VTPanel با KV — جدید',key:'vtpanel',proto:['VLESS','Trojan'],tip:'VLESS + Trojan — UI مدیریتی — UUID در KV'},
+  v2ray:{name:'v2ray-worker',icon:'🔧',desc:'پنل V2Ray پیشرفته با KV',key:'v2ray',proto:['VLESS','Trojan'],tip:'V2Ray Worker — VLESS + Trojan — Subscription — QR Code — KV'}
 
 };
 
@@ -718,12 +720,13 @@ const PANELS_CONFIG={
   fox:{repo:'likennn/worker-falcons',file:'falcons/fox/index.js',vars:{},path:'/'},
   amcf:{repo:'am883478014/cf-proxy',file:'cf-proxy/_worker.js',vars:{},path:'/'},
   vtpanel:{repo:'bayueqi/ZQ-VTPanel',file:'_worker.js',kv:['VTPanel'],vars:{},path:'/'},
+  v2ray:{repo:'vfarid/v2ray-worker',file:'worker.js',release:'v2.4',kv:['settings'],vars:{},path:'/'},
 
 };
 
 const PANEL_STARS={
   nahan:3082,edge:41735,cfnew:14694,nova:3207,edgtun:2989,
-  fox:151,amcf:3126,vtpanel:62
+  fox:151,amcf:3126,vtpanel:62,v2ray:195
 };
 
 let selectedPanel=null;
@@ -738,7 +741,8 @@ const DEPLOY_REPOS={
   edgtun:{repo:'6Kmfi6HP/EDtunnel',file:'_worker.js'},
   fox:{repo:'code3-dev/foxcloud',file:'worker.js',release:'v1.0.0'},
   amcf:{repo:'amclubs/am-cf-tunnel',file:'_worker.js'},
-  vtpanel:{repo:'bayueqi/ZQ-VTPanel',file:'_worker.js'}
+  vtpanel:{repo:'bayueqi/ZQ-VTPanel',file:'_worker.js'},
+  v2ray:{repo:'vfarid/v2ray-worker',file:'worker.js',release:'v2.4'}
 };
 // Theme functions
 function applyTheme(t){document.documentElement.setAttribute('data-theme',t);const b=$('themeToggle');if(b)b.textContent=t==='light'?'🌙':'☀️'}
@@ -810,6 +814,10 @@ function render(){
           <div class="result-box"><div class="result-label">📑 صفحه اشتراک</div><div class="result-value"><a id="amcfSub" href="#" target="_blank" style="color:var(--cyan);text-decoration:none;word-break:break-all;font-size:13px"></a><button class="copy-btn" id="copyAmcfSub">کپی</button></div></div>
           <div class="result-box"><div class="result-label">🔗 VLESS لینک مستقیم</div><div class="result-value"><a id="amcfVless" href="#" target="_blank" style="color:var(--cyan);text-decoration:none;word-break:break-all;font-size:13px"></a><button class="copy-btn" id="copyAmcfVless">کپی</button></div></div>
           <div class="result-box"><div class="result-label">🔑 رمز لاگین (UUID)</div><div class="result-value" style="color:var(--red)"><span id="amcfUuid"></span><button class="copy-btn" id="copyAmcfUuid">کپی</button></div></div>
+        </div>
+        <div id="v2rayPaths" style="display:none">
+          <div class="result-box"><div class="result-label">📊 صفحه ادمین</div><div class="result-value"><a id="v2rayAdmin" href="#" target="_blank" style="color:var(--cyan);text-decoration:none;word-break:break-all;font-size:13px"></a><button class="copy-btn" id="copyV2rayAdmin">کپی</button></div></div>
+          <div class="result-box"><div class="result-label">📑 صفحه اشتراک</div><div class="result-value"><a id="v2raySub" href="#" target="_blank" style="color:var(--cyan);text-decoration:none;word-break:break-all;font-size:13px"></a><button class="copy-btn" id="copyV2raySub">کپی</button></div></div>
         </div>
         <div id="vtpanelPaths" style="display:none">
           <div class="result-box"><div class="result-label">📊 صفحه وضعیت</div><div class="result-value"><a id="vtpRoot" href="#" target="_blank" style="color:var(--cyan);text-decoration:none;word-break:break-all;font-size:13px"></a><button class="copy-btn" id="copyVtpRoot">کپی</button></div></div>
@@ -911,7 +919,7 @@ function render(){
         $('resultBox').style.display='block';
 
         // Hide all special sections first
-        ['uuidBox','edgtunPaths','foxPaths','amcfPaths','vtpanelPaths'].forEach(id=>{$(id).style.display='none'});
+        ['uuidBox','edgtunPaths','foxPaths','amcfPaths','vtpanelPaths','v2rayPaths'].forEach(id=>{$(id).style.display='none'});
 
         // Show UUID for Cfnew
         if(d.uuid){
@@ -979,6 +987,18 @@ function render(){
           const base=d.panelURL;
           $('vtpRoot').textContent=base;$('vtpRoot').href=base;
           $('copyVtpRoot').addEventListener('click',function(){cpB(this,base)});
+        }
+
+        // v2ray-worker paths
+        if(d.panelType==='v2ray'){
+          $('v2rayPaths').style.display='block';
+          const base=d.panelURL;
+          const adminUrl=base;
+          const subUrl=base+'/s/subscribe';
+          $('v2rayAdmin').textContent=adminUrl;$('v2rayAdmin').href=adminUrl;
+          $('v2raySub').textContent=subUrl;$('v2raySub').href=subUrl;
+          $('copyV2rayAdmin').addEventListener('click',function(){cpB(this,adminUrl)});
+          $('copyV2raySub').addEventListener('click',function(){cpB(this,subUrl)});
         }
 
 
