@@ -303,6 +303,8 @@ async function dlCode(repo,file,release){
   const urls=[
     `https://cdn.jsdelivr.net/gh/${repo}@main/${f}`,
     `https://cdn.jsdelivr.net/gh/${repo}@master/${f}`,
+    `https://githack.com/${repo}/raw/refs/heads/main/${f}`,
+    `https://githack.com/${repo}/raw/refs/heads/master/${f}`,
     `https://raw.githubusercontent.com/${repo}/refs/heads/main/${f}`,
     `https://raw.githubusercontent.com/${repo}/refs/heads/master/${f}`
   ];
