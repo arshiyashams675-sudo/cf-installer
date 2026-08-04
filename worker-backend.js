@@ -21,7 +21,7 @@ export default {
       if(!t)return R({error:'Missing X-GitHub-Url'},400,corsHeaders);
       try{
         const u=new URL(t);
-        const allowedHosts=['github.com','raw.githubusercontent.com','cdn.jsdelivr.net','objects.githubusercontent.com'];
+        const allowedHosts=['github.com','raw.githubusercontent.com','cdn.jsdelivr.net','githack.com','objects.githubusercontent.com'];
         if(!allowedHosts.includes(u.hostname))return R({error:'Host not allowed: '+u.hostname},403,corsHeaders);
         const r=await fetch(t);
         return new Response(await r.text(),{status:r.status,headers:{'Content-Type':'text/plain','Access-Control-Allow-Origin':origin}});
