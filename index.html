@@ -612,6 +612,55 @@ body::after{
 }
 .theme-toggle:hover{transform:scale(1.1);box-shadow:var(--shadow-lg);border-color:var(--cyan)}
 
+/* Connection Test */
+.test-result{
+  padding:14px 18px;
+  border-radius:12px;
+  font-size:.85rem;
+  margin-top:16px;
+  display:none;
+  align-items:center;
+  gap:10px;
+  line-height:1.5;
+  backdrop-filter:blur(8px);
+  animation:fadeIn .3s ease;
+  transition:all .3s;
+}
+.test-result.show{display:flex}
+.test-result.testing{
+  background:rgba(0,184,255,.06);
+  border:1px solid rgba(0,184,255,.12);
+  color:var(--cyan2);
+}
+.test-result.active{
+  background:rgba(0,230,118,.06);
+  border:1px solid rgba(0,230,118,.12);
+  color:var(--green);
+}
+.test-result.inactive{
+  background:rgba(255,68,102,.06);
+  border:1px solid rgba(255,68,102,.12);
+  color:var(--red);
+}
+.test-result.error{
+  background:rgba(255,170,0,.06);
+  border:1px solid rgba(255,170,0,.12);
+  color:var(--yellow);
+}
+.test-time{
+  font-family:var(--font-mono);
+  font-size:.78rem;
+  opacity:.7;
+  margin-right:auto;
+  direction:ltr;
+}
+[data-theme="light"] .test-result.testing{background:rgba(0,150,214,.05);border-color:rgba(0,150,214,.1);color:#0070a0}
+[data-theme="light"] .test-result.active{background:rgba(0,168,84,.05);border-color:rgba(0,168,84,.1);color:#006030}
+[data-theme="light"] .test-result.inactive{background:rgba(229,57,53,.05);border-color:rgba(229,57,53,.1);color:#b71c1c}
+[data-theme="light"] .test-result.error{background:rgba(212,145,10,.05);border-color:rgba(212,145,10,.1);color:#8a5c00}
+[data-theme="light"] .btn-test{background:rgba(0,0,0,.03);color:var(--text);border-color:var(--border2)}
+[data-theme="light"] .btn-test:hover{border-color:var(--cyan2);color:var(--cyan2);background:rgba(0,150,214,.05)}
+
 /* Delete Button */
 .btn-danger{
   background:rgba(255,68,102,.1);color:var(--red);border:1px solid rgba(255,68,102,.2);
@@ -767,7 +816,8 @@ function render(){
         </div>
 
 
-        <div class="btn-group"><a id="openPanel" href="#" target="_blank" class="btn btn-primary">باز کردن پنل</a><button class="btn btn-secondary" id="updateBtn">🔄 بروزرسانی</button><button class="btn btn-danger" id="deleteBtn">🗑️ حذف Worker</button><button class="btn btn-secondary" onclick="render()">نصب جدید</button></div>
+        <div class="btn-group"><button class="btn btn-secondary btn-sm" id="testBtn" onclick="testConnection()">📊 تست اتصال</button><a id="openPanel" href="#" target="_blank" class="btn btn-primary">باز کردن پنل</a><button class="btn btn-secondary" id="updateBtn">🔄 بروزرسانی</button><button class="btn btn-danger" id="deleteBtn">🗑️ حذف Worker</button><button class="btn btn-secondary" onclick="render()">نصب جدید</button></div>
+        <div class="test-result" id="testResult"></div>
       </div>
     </div>
   `;
@@ -1054,6 +1104,38 @@ function attachManageButtons(){
   const db=$('deleteBtn'),ub=$('updateBtn');
   if(db)db.addEventListener('click',deleteWorker);
   if(ub)ub.addEventListener('click',updateWorker);
+}
+
+// Connection Test
+function testConnection(){
+  const url=deployState.panelURL;
+  if(!url){toast('⚠️ آدرس Worker موجود نیست');return}
+  const el=$('testResult');
+  if(!el)return;
+  el.className='test-result show testing';
+  el.innerHTML='<span class="spinner"></span> 🔄 در حال تست...';
+  const t0=performance.now();
+  fetch(url,{redirect:'follow',mode:'no-cors'}).then(()=>{
+    return fetch(url,{redirect:'follow'}).then(r=>{
+      const ms=Math.round(performance.now()-t0);
+      if(r.ok||r.status===302){
+        el.className='test-result show active';
+        el.innerHTML='🟢 Worker فعاله ✅<span class="test-time">'+ms+'ms</span>';
+      }else{
+        el.className='test-result show inactive';
+        el.innerHTML='🔴 Worker غیرفعاله ❌<span class="test-time">HTTP '+esc(String(r.status))+'</span>';
+      }
+    });
+  }).catch(()=>{
+    const ms=Math.round(performance.now()-t0);
+    if(ms<8000){
+      el.className='test-result show active';
+      el.innerHTML='🟢 Worker فعاله ✅<span class="test-time">'+ms+'ms</span>';
+    }else{
+      el.className='test-result show error';
+      el.innerHTML='⚠️ خطا در اتصال<span class="test-time">'+ms+'ms</span>';
+    }
+  });
 }
 attachManageButtons();
 </script>
