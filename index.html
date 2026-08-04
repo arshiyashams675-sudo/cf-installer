@@ -692,8 +692,8 @@ const DEPLOY_REPOS={
 // Theme functions
 function applyTheme(t){document.documentElement.setAttribute('data-theme',t);const b=$('themeToggle');if(b)b.textContent=t==='light'?'🌙':'☀️'}
 function toggleTheme(){const c=document.documentElement.getAttribute('data-theme')||'dark';const n=c==='dark'?'light':'dark';localStorage.setItem('cf-installer-theme',n);applyTheme(n)}
-applyTheme(localStorage.getItem('cf-installer-theme')||'dark');
 const $=id=>document.getElementById(id);
+applyTheme(localStorage.getItem('cf-installer-theme')||'dark');
 function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
 function esc(s){return s?String(s).replace(/[&<>\"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[m])):''}
 function cpB(b,t){navigator.clipboard.writeText(t).then(()=>{const o=b.textContent;b.textContent='کپی شد!';b.classList.add('copied');setTimeout(()=>{b.textContent=o;b.classList.remove('copied')},1500)})}
