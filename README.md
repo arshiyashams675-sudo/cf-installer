@@ -2,7 +2,7 @@
 
 ### نصب یک‌کلیکی پنل‌های VPN روی Cloudflare Worker
 
-[![v4.2.1](https://img.shields.io/badge/version-v4.2.2-00e5a0?style=flat-square)](https://arshiyashams675-sudo.github.io/cf-installer/)
+[![v4.2.2](https://img.shields.io/badge/version-v4.2.2-00e5a0?style=flat-square)](https://arshiyashams675-sudo.github.io/cf-installer/)
 [![Panels](https://img.shields.io/badge/پنل‌ها-8_عدد-blue?style=flat-square)](#-پنل‌های-پشتیبانی-شده)
 [![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)](#)
 
