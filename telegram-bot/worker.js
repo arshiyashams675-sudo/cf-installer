@@ -467,9 +467,9 @@ async function deployWorker(session, panelDef, panelKey, env, onProgress) {
   });
 
   await prog('⏳ صبر برای فعال‌سازی...', 90);
-  await new Promise(r => setTimeout(r, 5000));
+  await new Promise(r => setTimeout(r, 3000));
 
-  // Get subdomain (multi-strategy)
+  // Get subdomain
   let sub = '';
   const acctR = await cfApi(token, `/accounts/${aid}`);
   sub = acctR.result?.settings?.subdomain;
@@ -477,39 +477,15 @@ async function deployWorker(session, panelDef, panelKey, env, onProgress) {
     const sr = await cfApi(token, `/accounts/${aid}/workers/subdomain`);
     sub = sr.result?.subdomain;
   }
-  if (!sub || sub === 'workers.dev') {
-    const userR = await cfApi(token, '/user');
-    sub = userR.result?.subdomain || '';
-  }
+
+  // Fetch-based: follow redirect to get real subdomain
   if (!sub || sub === 'workers.dev') {
     try {
-      const svcR = await cfApi(token, `/accounts/${aid}/workers/services`);
-      if (svcR.success && svcR.result?.length) {
-        for (const svc of svcR.result) {
-          if (svc.service?.subdomain) { sub = svc.service.subdomain; break; }
-          if (svc.subdomain) { sub = svc.subdomain; break; }
-        }
-      }
+      const checkR = await fetch(`https://${workerName}.workers.dev`, { redirect: 'follow' });
+      const finalUrl = new URL(checkR.url);
+      const match = finalUrl.hostname.match(/\.([a-z0-9]+)\.workers\.dev$/);
+      if (match) sub = match[1];
     } catch {}
-  }
-  if (!sub || sub === 'workers.dev') {
-    try {
-      const checkR = await fetch(`https://${workerName}.workers.dev`, { redirect: 'manual' });
-      const loc = checkR.headers.get('Location') || '';
-      if (loc) {
-        const m = loc.match(/\/\/[^.]+\.([a-z0-9]+)\.workers\.dev/i);
-        if (m && m[1] !== 'workers') sub = m[1];
-      }
-    } catch {}
-  }
-  if (!sub || sub === 'workers.dev') {
-    const acctName = (session.accountName || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-    if (acctName && acctName.length > 1 && acctName !== 'workers') {
-      try {
-        const testR = await fetch(`https://${workerName}.${acctName}.workers.dev`);
-        if (testR.ok || testR.status === 302) sub = acctName;
-      } catch {}
-    }
   }
   if (!sub || sub === 'workers.dev') sub = 'workers.dev';
 
