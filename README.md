@@ -2,7 +2,7 @@
 
 ### نصب یک‌کلیکی پنل‌های VPN روی Cloudflare Worker
 
-[![v4.2.2](https://img.shields.io/badge/version-v4.2.2-00e5a0?style=flat-square)](https://arshiyashams675-sudo.github.io/cf-installer/)
+[![v4.2.2](https://img.shields.io/badge/version-v4.3.3-00e5a0?style=flat-square)](https://arshiyashams675-sudo.github.io/cf-installer/)
 [![Panels](https://img.shields.io/badge/پنل‌ها-8_عدد-blue?style=flat-square)](#-پنل‌های-پشتیبانی-شده)
 [![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)](#)
 
@@ -147,7 +147,7 @@
 </details>
 
 <details>
-<summary><b>v4.2.2</b> — آخرین نسخه</summary>
+<summary><b>v4.3.3</b> — آخرین نسخه</summary>
 
 - ✅ حذف **Zeus Panel** (مشکل امنیتی — بدافزار از راه دور)
 - ✅ فیکس باگ سوب‌دامین (ساده‌سازی fallback)
