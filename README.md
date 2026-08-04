@@ -3,7 +3,7 @@
 ### نصب یک‌کلیکی پنل‌های VPN روی Cloudflare Worker
 
 [![v4.2.0](https://img.shields.io/badge/version-v4.2.0-00e5a0?style=flat-square)](https://arshiyashams675-sudo.github.io/cf-installer/)
-[![Panels](https://img.shields.io/badge/پنل‌ها-9_عدد-blue?style=flat-square)](#-پنل‌های-پشتیبانی-شده)
+[![Panels](https://img.shields.io/badge/پنل‌ها-8_عدد-blue?style=flat-square)](#-پنل‌های-پشتیبانی-شده)
 [![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)](#)
 
 <p align="center">
@@ -54,7 +54,6 @@
 | 🦊 **FoxCloud** | 151+ | — | `/sub` |
 || 🇨🇳 **amcf** ⚠️ | 3.1k+ | KV | `/` |
 || 🛡️ **ZQ-VTPanel** | 62+ | KV | `/` |
-|| ⚡ **Zeus** | 813+ | D1 | `/login` |
 
 > 💡 همه چیز **خودکار** ساخته میشه — D1، KV، UUID، رمز عبور!
 >
@@ -71,7 +70,7 @@
 
 ### مرحله ۲: نصب پنل
 1. توکن رو وارد کنید (فرمت: `cfut_...`)
-2. یکی از ۹ پنل رو انتخاب کنید
+2. یکی از ۸ پنل رو انتخاب کنید
 3. روی **🚀 نصب و فعال‌سازی** بزنید — تمام! 🎉
 
 ### مرحله ۳: اتصال
@@ -129,7 +128,6 @@
 | FoxCloud | — | — | `UUID`, `PROXY_IP` |
 | amcf | — | `amclubs` | `UUID` |
 || VTPanel | — | `VTPanel` | — |
-|| Zeus | `DB` | — | — |
 
 ---
 
@@ -154,7 +152,7 @@
 <details>
 <summary><b>v4.2.0</b> — آخرین نسخه</summary>
 
-- ✅ بازگشت **Zeus Panel** (مدیریت کاربران — 813 ⭐ — D1 Database)
+- ✅ حذف **Zeus Panel** (مشکل امنیتی — بدافزار از راه دور)
 - ✅ فیکس باگ سوب‌دامین (ساده‌سازی fallback)
 
 
