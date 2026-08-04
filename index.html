@@ -6,7 +6,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<title>CF Installer v4.0.0</title>
+<title>CF Installer v4.1.0</title>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0a0a0f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -557,6 +557,69 @@ body::after{
 .tooltip{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:var(--bg4);color:var(--text);border:1px solid var(--border2);border-radius:8px;padding:8px 12px;font-size:12px;line-height:1.5;white-space:nowrap;opacity:0;visibility:hidden;transition:all .2s;z-index:100;pointer-events:none;max-width:250px;white-space:normal;text-align:center}
 .tooltip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);border:6px solid transparent;border-top-color:var(--bg4)}
 .panel-card:hover .tooltip,.panel-card:active .tooltip{opacity:1;visibility:visible}
+
+/* ===== LIGHT THEME ===== */
+[data-theme="light"]{
+  --bg:#f5f6fa;--bg2:#ffffff;--bg3:#eef0f5;--bg4:#e2e5ed;
+  --text:#1a1a2e;--text2:#555570;--text3:#8888a0;
+  --cyan:#00b882;--cyan2:#0096d6;--cyan-bg:rgba(0,184,130,.1);
+  --green:#00a854;--green-bg:rgba(0,168,84,.08);
+  --red:#e53935;--red-bg:rgba(229,57,53,.08);
+  --yellow:#d4910a;--yellow-bg:rgba(212,145,10,.08);
+  --border:rgba(0,0,0,.06);--border2:rgba(0,0,0,.1);--border3:rgba(0,0,0,.15);
+  --shadow:0 4px 24px rgba(0,0,0,.06);--shadow-lg:0 12px 48px rgba(0,0,0,.1);
+  --glow:0 0 40px rgba(0,184,130,.04);
+}
+[data-theme="light"] body::before{background:radial-gradient(ellipse 80% 50% at 50% -20%,rgba(0,184,130,.05),rgba(0,150,214,.03),transparent)}
+[data-theme="light"] body::after{background:radial-gradient(ellipse 80% 50% at 50% 120%,rgba(0,150,214,.03),transparent)}
+[data-theme="light"] *{scrollbar-color:rgba(0,0,0,.12) transparent}
+[data-theme="light"] ::-webkit-scrollbar-thumb{background:rgba(0,0,0,.12)}
+[data-theme="light"] ::-webkit-scrollbar-thumb:hover{background:rgba(0,0,0,.2)}
+[data-theme="light"] .card::before{background:linear-gradient(90deg,transparent,rgba(0,0,0,.04),transparent)}
+[data-theme="light"] .form-input{background:rgba(0,0,0,.02);color:var(--text)}
+[data-theme="light"] .form-input:focus{background:rgba(0,0,0,.03);box-shadow:0 0 0 3px rgba(0,184,130,.1),inset 0 1px 2px rgba(0,0,0,.05)}
+[data-theme="light"] .btn-secondary{background:rgba(0,0,0,.03);color:var(--text);border-color:var(--border2)}
+[data-theme="light"] .btn-secondary:hover{border-color:var(--cyan);color:var(--cyan);background:rgba(0,184,130,.05)}
+[data-theme="light"] .panel-card{background:rgba(0,0,0,.01)}
+[data-theme="light"] .panel-card:hover{box-shadow:0 8px 32px rgba(0,0,0,.08)}
+[data-theme="light"] .panel-icon-wrap{background:rgba(0,0,0,.03);border-color:var(--border)}
+[data-theme="light"] .toast{background:rgba(255,255,255,.95);color:var(--text);border-color:var(--border2)}
+[data-theme="light"] .deploy-log{background:rgba(0,0,0,.03);color:var(--text2)}
+[data-theme="light"] .result-box{background:rgba(0,0,0,.01)}
+[data-theme="light"] .result-box:hover{background:rgba(0,0,0,.02)}
+[data-theme="light"] .copy-btn{background:rgba(0,0,0,.03);border-color:var(--border2);color:var(--text2)}
+[data-theme="light"] .copy-btn:hover{color:var(--cyan);border-color:rgba(0,184,130,.3);background:rgba(0,184,130,.06)}
+[data-theme="light"] .copy-btn.copied{color:var(--green);border-color:rgba(0,168,84,.3);background:rgba(0,168,84,.06)}
+[data-theme="light"] .alert-info{background:rgba(0,184,130,.06);border-color:rgba(0,184,130,.1);color:#008060}
+[data-theme="light"] .alert-success{background:rgba(0,168,84,.05);border-color:rgba(0,168,84,.1);color:#007040}
+[data-theme="light"] .alert-error{background:rgba(229,57,53,.05);border-color:rgba(229,57,53,.1);color:#c62828}
+[data-theme="light"] .alert-warn{background:rgba(212,145,10,.05);border-color:rgba(212,145,10,.1);color:#a06800}
+[data-theme="light"] .tooltip{background:var(--bg3);color:var(--text);border-color:var(--border2)}
+[data-theme="light"] .tooltip::after{border-top-color:var(--bg3)}
+[data-theme="light"] .footer-star{background:rgba(0,0,0,.02);border-color:var(--border)}
+[data-theme="light"] .logo-ver{background:rgba(0,0,0,.03);border-color:var(--border)}
+[data-theme="light"] .progress-step .step-circle{background:var(--bg3);border-color:var(--border2)}
+[data-theme="light"] .progress-steps::before{background:var(--border2)}
+[data-theme="light"] .divider{background:linear-gradient(90deg,transparent,rgba(0,0,0,.08),transparent)}
+
+/* Theme Toggle */
+.theme-toggle{
+  position:fixed;top:16px;left:16px;width:44px;height:44px;
+  border-radius:50%;background:var(--bg2);border:1px solid var(--border2);
+  cursor:pointer;font-size:1.2rem;display:flex;align-items:center;justify-content:center;
+  z-index:50;transition:all .3s cubic-bezier(.4,0,.2,1);box-shadow:var(--shadow);
+}
+.theme-toggle:hover{transform:scale(1.1);box-shadow:var(--shadow-lg);border-color:var(--cyan)}
+
+/* Delete Button */
+.btn-danger{
+  background:rgba(255,68,102,.1);color:var(--red);border:1px solid rgba(255,68,102,.2);
+}
+.btn-danger:hover{
+  background:var(--red);color:#fff;border-color:var(--red);
+  transform:translateY(-2px);box-shadow:0 4px 20px rgba(255,68,102,.3);
+}
+.btn-danger:active{transform:translateY(0)}
 </style>
 </head>
 <body>
@@ -564,7 +627,7 @@ body::after{
   <header class="header">
     <div class="logo">CF INSTALLER</div>
     <div class="logo-sub">نصب‌کننده خودکار پنل‌های Cloudflare Worker</div>
-    <div class="logo-ver">v4.0.0</div>
+    <div class="logo-ver">v4.1.0</div>
   </header>
   <div id="content"></div>
 </div>
@@ -578,6 +641,7 @@ body::after{
 </div>
 
 <div class="toast" id="toast"></div>
+<button class="theme-toggle" id="themeToggle" aria-label="تغییر تم">🌙</button>
 
 <script>
 const BACKEND='https://cf-installer-backend.cf-installer.workers.dev';
@@ -612,6 +676,23 @@ const PANEL_STARS={
 };
 
 let selectedPanel=null;
+// Deploy state (for delete/update after install)
+let deployState={token:'',accountId:'',workerName:'',panelType:'',panelURL:'',panelPath:'',uuid:null};
+// Backend repos (mirrors backend config for update feature)
+const DEPLOY_REPOS={
+  nahan:{repo:'itsyebekhe/nahan',file:'_worker.js'},
+  edge:{repo:'cmliu/edgetunnel',file:'_worker.js'},
+  cfnew:{repo:'byjoey/cfnew',file:'\u660e\u6587\u6e90\u5417'},
+  nova:{repo:'IRNova/Nova-Proxy',file:'worker.js'},
+  edgtun:{repo:'6Kmfi6HP/EDtunnel',file:'_worker.js'},
+  fox:{repo:'code3-dev/foxcloud',file:'worker.js',release:'v1.0.0'},
+  amcf:{repo:'amclubs/am-cf-tunnel',file:'_worker.js'},
+  vtpanel:{repo:'bayueqi/ZQ-VTPanel',file:'_worker.js'}
+};
+// Theme functions
+function applyTheme(t){document.documentElement.setAttribute('data-theme',t);const b=$('themeToggle');if(b)b.textContent=t==='light'?'🌙':'☀️'}
+function toggleTheme(){const c=document.documentElement.getAttribute('data-theme')||'dark';const n=c==='dark'?'light':'dark';localStorage.setItem('cf-installer-theme',n);applyTheme(n)}
+applyTheme(localStorage.getItem('cf-installer-theme')||'dark');
 const $=id=>document.getElementById(id);
 function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
 function esc(s){return s?String(s).replace(/[&<>\"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[m])):''}
@@ -685,7 +766,7 @@ function render(){
         </div>
 
 
-        <div class="btn-group"><a id="openPanel" href="#" target="_blank" class="btn btn-primary">باز کردن پنل</a><button class="btn btn-secondary" onclick="render()">نصب جدید</button></div>
+        <div class="btn-group"><a id="openPanel" href="#" target="_blank" class="btn btn-primary">باز کردن پنل</a><button class="btn btn-secondary" id="updateBtn">🔄 بروزرسانی</button><button class="btn btn-danger" id="deleteBtn">🗑️ حذف Worker</button><button class="btn btn-secondary" onclick="render()">نصب جدید</button></div>
       </div>
     </div>
   `;
@@ -725,6 +806,7 @@ function render(){
         $('tokenResult').innerHTML='<div class="alert alert-success" style="margin-top:12px">✅ توکن معتبر است!</div>';
         $('panelCard').style.display='block';
         toast('✅ توکن معتبر!');
+        if(d.accountId)deployState.accountId=d.accountId;
       } else {
         $('tokenResult').innerHTML=`<div class="alert alert-error" style="margin-top:12px">❌ ${esc(d.error||'خطا')}</div>`;
       }
@@ -852,6 +934,13 @@ function render(){
         $('copyPath').addEventListener('click',function(){cpB(this,d.panelPath||'/')});
         toast('✅ نصب کامل شد!');
         $('tokenIn').value='';
+        // Save deploy state for delete/update
+        deployState.token=token;
+        deployState.workerName=d.workerName;
+        deployState.panelType=d.panelType;
+        deployState.panelURL=d.panelURL;
+        deployState.panelPath=d.panelPath;
+        deployState.uuid=d.uuid||null;
       } else {
         $('deployLog').innerHTML+=`<br><span class="log-err">❌ ${esc(d.error||'خطا')}</span>`;
         toast('❌ نصب ناموفق');
@@ -862,6 +951,7 @@ function render(){
     }
     $('deployBtn').disabled=false;$('deployBtn').textContent='🚀 نصب و فعال‌سازی';
   });
+  attachManageButtons();
 }
 
 // Show variable inputs for panels that need them
@@ -884,9 +974,86 @@ function updatePanelVars(panel){
   pv.classList.add('show');
 }
 
+
+// Delete Worker
+async function deleteWorker(){
+  if(!deployState.workerName||!deployState.token){toast('⚠️ ابتدا یک Worker نصب کنید');return}
+  if(!confirm('⚠️ آیا مطمئن هستید که می\u200cخواهید Worker "\u200f'+deployState.workerName+'\u200f" را حذف کنید?\n\nاین عمل قابل بازگشت نیست!'))return;
+  toast('⏳ در حال حذف...');
+  try{
+    const r=await fetch(BACKEND+'/cf',{method:'POST',headers:{'Authorization':'Bearer '+deployState.token,'Content-Type':'application/json','X-CF-Path':'/accounts/'+deployState.accountId+'/workers/scripts/'+deployState.workerName,'X-CF-Method':'DELETE'}});
+    const d=await r.json();
+    if(d.success){
+      toast('✅ Worker حذف شد!');
+      deployState={token:'',accountId:deployState.accountId,workerName:'',panelType:'',panelURL:'',panelPath:'',uuid:null};
+      render();
+    }else{
+      toast('❌ خطا: '+(d.errors?.[0]?.message||'حذف ناموفق'));
+    }
+  }catch(e){toast('❌ خطا: '+e.message)}
+}
+
+// Update Worker
+async function updateWorker(){
+  if(!deployState.workerName||!deployState.token){toast('⚠️ ابتدا یک Worker نصب کنید');return}
+  if(!confirm('🔄 آیا مطمئن هستید که می\u200cخواهید Worker را بروزرسانی کنید?\n\nکد جدید دانلود و Worker آپدیت می\u200cشود.'))return;
+  const repoCfg=DEPLOY_REPOS[deployState.panelType];
+  if(!repoCfg){toast('❌ پنل ناشناخته');return}
+  const dc=$('deployCard'),dl=$('deployLog'),rb=$('resultBox');
+  dc.style.display='block';rb.style.display='none';
+  dl.innerHTML='<span class="log-info">▸ شروع بروزرسانی...</span>';setStep(1);
+  try{
+    // Step 1: Download new source
+    dl.innerHTML+='<br><span class="log-info">▸ دانلود کد جدید...</span>';setStep(2);
+    const branch=repoCfg.release||'main';
+    const srcUrl='https://raw.githubusercontent.com/'+repoCfg.repo+'/'+branch+'/'+repoCfg.file;
+    const srcR=await fetch(BACKEND+'/github',{method:'POST',headers:{'Content-Type':'application/json','X-GitHub-Url':srcUrl}});
+    const srcText=await srcR.text();
+    if(!srcR.ok||srcText.includes('Not Found')||srcText.includes('404'))throw new Error('کد منبع یافت نشد');
+    dl.innerHTML+='<br><span class="log-ok">✅ کد دانلود شد: '+(srcText.length/1024).toFixed(0)+'KB</span>';
+    // Step 2: Get current worker metadata
+    dl.innerHTML+='<br><span class="log-info">▸ دریافت متادیتای فعلی...</span>';
+    const metaR=await fetch(BACKEND+'/cf',{method:'POST',headers:{'Authorization':'Bearer '+deployState.token,'Content-Type':'application/json','X-CF-Path':'/accounts/'+deployState.accountId+'/workers/scripts/'+deployState.workerName,'X-CF-Method':'GET'}});
+    const metaD=await metaR.json();
+    let bindings=[];
+    if(metaD.success&&metaD.result){
+      bindings=metaD.result.bindings||[];
+      dl.innerHTML+='<br><span class="log-ok">✅ متادیتا: '+bindings.length+' binding</span>';
+    }else{
+      throw new Error('خطا در دریافت متادیتا: '+(metaD.errors?.[0]?.message||'unknown'));
+    }
+    // Step 3: Upload new code with existing bindings
+    dl.innerHTML+='<br><span class="log-info">▸ آپدیت Worker...</span>';setStep(3);
+    const metadata={main_module:'worker.js',compatibility_date:'2024-09-22',compatibility_flags:['nodejs_compat'],bindings:bindings};
+    const fd=new FormData();
+    fd.append('metadata',new Blob([JSON.stringify(metadata)],{type:'application/json'}));
+    fd.append('worker.js',new Blob([srcText],{type:'application/javascript+module'}),'worker.js');
+    const putR=await fetch(BACKEND+'/cf',{method:'POST',headers:{'Authorization':'Bearer '+deployState.token,'X-CF-Path':'/accounts/'+deployState.accountId+'/workers/scripts/'+deployState.workerName,'X-CF-Method':'PUT'},body:fd});
+    const putD=await putR.json();
+    if(!putD.success)throw new Error('خطا در آپدیت: '+(putD.errors?.[0]?.message||'unknown'));
+    dl.innerHTML+='<br><span class="log-ok">✅ Worker بروزرسانی شد!</span>';
+    [1,2,3].forEach(i=>{const e=$('step'+i);if(e){e.classList.remove('active');e.classList.add('done')}});
+    toast('✅ بروزرسانی کامل شد!');
+    rb.style.display='block';
+  }catch(e){
+    dl.innerHTML+='<br><span class="log-err">❌ خطا: '+esc(e.message)+'</span>';
+    toast('❌ بروزرسانی ناموفق');
+    rb.style.display='block';
+  }
+}
+
 render();
 renderFooter();
 if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
+// Theme toggle event
+$('themeToggle').addEventListener('click',toggleTheme);
+// Delete/Update event listeners (re-attach on each render)
+function attachManageButtons(){
+  const db=$('deleteBtn'),ub=$('updateBtn');
+  if(db)db.addEventListener('click',deleteWorker);
+  if(ub)ub.addEventListener('click',updateWorker);
+}
+attachManageButtons();
 </script>
 </body>
 </html>
