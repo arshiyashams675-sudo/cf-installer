@@ -886,6 +886,7 @@ function updatePanelVars(panel){
 
 render();
 renderFooter();
+if('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
 </script>
 </body>
 </html>

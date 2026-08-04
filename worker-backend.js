@@ -157,8 +157,21 @@ export default {
         log('فعال‌سازی workers.dev...');
         await fetch(`https://api.cloudflare.com/client/v4/accounts/${aid}/workers/services/${workerName}/environments/production/subdomain`,{method:'POST',headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify({enabled:true})});
         // Get subdomain using user's token (needs workers_settings:read)
+        let sub='';
         const sr=await cfDirect(h,`/accounts/${aid}/workers/subdomain`);
-        const sub=sr.result?.subdomain||'workers.dev';
+        if(sr.result?.subdomain&&sr.result.subdomain!=='workers.dev'){sub=sr.result.subdomain}
+        // Fallback: get subdomain from account details
+        if(!sub){
+          log('تلاش برای دریافت سوب‌دامین از اکانت...');
+          const acctR=await cfDirect(h,`/accounts/${aid}`);
+          if(acctR.result?.subdomain&&acctR.result.subdomain!=='workers.dev'){sub=acctR.result.subdomain}
+        }
+        // Fallback 2: get subdomain from worker service
+        if(!sub){
+          const svcR=await cfDirect(h,`/accounts/${aid}/workers/services/${workerName}/environments/production`);
+          if(svcR.result?.subdomain&&svcR.result.subdomain!=='workers.dev'){sub=svcR.result.subdomain}
+        }
+        if(!sub)sub='workers.dev';
         const basePath=`https://${workerName}.${sub}${sub.includes('.')?'':'.workers.dev'}`;
         const panelPath=p.path||(vars.u?`/${vars.u}`:'');
         const panelURL=basePath+panelPath;
