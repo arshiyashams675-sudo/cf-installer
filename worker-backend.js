@@ -155,15 +155,74 @@ export default {
 
         // Enable workers.dev
         log('فعال‌سازی workers.dev...');
-        await fetch(`https://api.cloudflare.com/client/v4/accounts/${aid}/workers/services/${workerName}/environments/production/subdomain`,{method:'POST',headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify({enabled:true})});
-        // Get subdomain — try account settings first, then workers subdomain API
+        const enableR=await fetch(`https://api.cloudflare.com/client/v4/accounts/${aid}/workers/services/${workerName}/environments/production/subdomain`,{method:'POST',headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify({enabled:true})});
+        const enableData=await enableR.json().catch(()=>({}));
+
+        // Wait for workers.dev propagation
+        log('صبر برای فعال‌سازی workers.dev...');
+        await new Promise(r=>setTimeout(r,5000));
+
+        // === Subdomain detection (multi-strategy) ===
         let sub='';
+
+        // Strategy 1: Account settings API
         const acctR=await cfDirect(h,`/accounts/${aid}`);
         sub=acctR.result?.settings?.subdomain;
+
+        // Strategy 2: Workers subdomain API
         if(!sub||sub==='workers.dev'){
           const sr=await cfDirect(h,`/accounts/${aid}/workers/subdomain`);
           sub=sr.result?.subdomain;
         }
+
+        // Strategy 3: Check the enable response itself for subdomain info
+        if(!sub||sub==='workers.dev'){
+          sub=enableData?.result?.subdomain||'';
+        }
+
+        // Strategy 4: Workers services API (different endpoint, might return subdomain)
+        if(!sub||sub==='workers.dev'){
+          try{
+            const svcR=await cfDirect(h,`/accounts/${aid}/workers/services`);
+            if(svcR.success&&svcR.result?.length){
+              // Services may contain subdomain info in their routes or service metadata
+              for(const svc of svcR.result){
+                if(svc.service?.subdomain){sub=svc.service.subdomain;break}
+                if(svc.subdomain){sub=svc.subdomain;break}
+              }
+            }
+          }catch(e){}
+        }
+
+        // Strategy 5: Fetch-based detection — hit the actual worker URL
+        if(!sub||sub==='workers.dev'){
+          log('تشخیص سوب‌دامین از طریق URL...');
+          try{
+            // Try fetching the worker and check for redirect
+            const checkR=await fetch(`https://${workerName}.workers.dev`,{redirect:'manual'});
+            const loc=checkR.headers.get('Location')||'';
+            if(loc){
+              // Extract subdomain from redirect URL like https://worker.jdbkk.workers.dev/...
+              const m=loc.match(/\/\/[^.]+\.([a-z0-9]+)\.workers\.dev/i);
+              if(m&&m[1]!=='workers')sub=m[1];
+            }
+            // If no redirect, try common subdomain from account name
+            if(!sub||sub==='workers.dev'){
+              // Try fetching with the account name as potential subdomain
+              const acctName=(acc.name||'').toLowerCase().replace(/[^a-z0-9]/g,'');
+              if(acctName&&acctName.length>1&&acctName!=='workers'){
+                try{
+                  const testR=await fetch(`https://${workerName}.${acctName}.workers.dev`,{redirect:'manual'});
+                  if(testR.status===200||testR.status===302){
+                    sub=acctName;
+                    log(`سوب‌دامین از نام حساب تشخیص داده شد: ${sub}`);
+                  }
+                }catch(e){}
+              }
+            }
+          }catch(e){}
+        }
+
         if(!sub||sub==='workers.dev')sub='workers.dev';
         const basePath=`https://${workerName}.${sub}${sub.includes('.')?'':'.workers.dev'}`;
         const panelPath=p.path||(vars.u?`/${vars.u}`:'');
