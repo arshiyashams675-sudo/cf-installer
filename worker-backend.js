@@ -98,7 +98,7 @@ export default {
           fox:{repo:'code3-dev/foxcloud',file:'worker.js',release:'v1.0.0',bindings:{d1:[],kv:[]},vars:{UUID:crypto.randomUUID(),PROXY_IP:'172.66.45.9:443'},path:'/sub'},
           amcf:{repo:'amclubs/am-cf-tunnel',file:'_worker.js',bindings:{d1:[],kv:['amclubs']},vars:{UUID:crypto.randomUUID()},path:'/'},
           vtpanel:{repo:'bayueqi/ZQ-VTPanel',file:'_worker.js',bindings:{d1:[],kv:['VTPanel']},vars:{},path:'/'},
-          zeus:{repo:'IR-NETLIFY/zeus',file:'zeus.js',bindings:{d1:['DB'],kv:[]},vars:{},path:'/login'},
+          zeus:{repo:'arshiyashams675-sudo/cf-installer',file:'zeus.js',bindings:{d1:['DB'],kv:[]},vars:{},path:'/login'},
         };
         const vtpanelUUID=crypto.randomUUID();
         const p=panels[panelType];
