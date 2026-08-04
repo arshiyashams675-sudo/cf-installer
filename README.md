@@ -2,8 +2,8 @@
 
 ### نصب یک‌کلیکی پنل‌های VPN روی Cloudflare Worker
 
-[![v4.2.2](https://img.shields.io/badge/version-v4.3.3-00e5a0?style=flat-square)](https://arshiyashams675-sudo.github.io/cf-installer/)
-[![Panels](https://img.shields.io/badge/پنل‌ها-8_عدد-blue?style=flat-square)](#-پنل‌های-پشتیبانی-شده)
+[![v4.3.3](https://img.shields.io/badge/version-v4.3.3-00e5a0?style=flat-square)](https://arshiyashams675-sudo.github.io/cf-installer/)
+[![Panels](https://img.shields.io/badge/پنل‌ها-9_عدد-blue?style=flat-square)](#-پنل‌های-پشتیبانی-شده)
 [![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)](#)
 
 <p align="center">
@@ -54,6 +54,7 @@
 | 🦊 FoxCloud | 151+ | — | /sub |
 | 🇨🇳 amcf ⚠️ | 3.1k+ | KV | / |
 | 🛡️ ZQ-VTPanel | 62+ | KV | / |
+| 🔧 v2ray-worker | 195+ | KV | / |
 
 > 💡 همه چیز **خودکار** ساخته میشه — D1، KV، UUID، رمز عبور!
 >
@@ -154,6 +155,7 @@
 - ✅ اضافه شدن **GitHack CDN** (سریع‌تر برای ایران — فیلتر نیست)
 - ✅ اضافه شدن **📊 تست اتصال** (بررسی فعال بودن Worker با زمان پاسخ)
 - ✅ اضافه شدن `githack.com` به whitelist پروکسی GitHub
+- ✅ اضافه شدن پنل **v2ray-worker** (V2Ray — VLESS + Trojan — Subscription — KV)
 
 </details>
 
