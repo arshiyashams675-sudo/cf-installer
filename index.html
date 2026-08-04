@@ -6,7 +6,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<title>CF Installer v4.1.0</title>
+<title>CF Installer v4.2.0</title>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0a0a0f">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -333,6 +333,7 @@ body::after{
 .panel-card[data-p="fox"]::before{background:linear-gradient(135deg,rgba(245,158,11,.08),rgba(168,85,247,.05))}
 .panel-card[data-p="amcf"]::before{background:linear-gradient(135deg,rgba(59,130,246,.08),rgba(239,68,68,.05))}
 .panel-card[data-p="vtpanel"]::before{background:linear-gradient(135deg,rgba(239,68,68,.08),rgba(168,85,247,.05))}
+.panel-card[data-p="zeus"]::before{background:linear-gradient(135deg,rgba(245,158,11,.08),rgba(239,68,68,.05))}
 
 .panel-card:hover{
   border-color:var(--border3);
@@ -628,7 +629,7 @@ body::after{
   <header class="header">
     <div class="logo">CF INSTALLER</div>
     <div class="logo-sub">نصب‌کننده خودکار پنل‌های Cloudflare Worker</div>
-    <div class="logo-ver">v4.1.0</div>
+    <div class="logo-ver">v4.2.0</div>
   </header>
   <div id="content"></div>
 </div>
@@ -656,6 +657,7 @@ const PANELS={
   fox:{name:'FoxCloud',icon:'🦊',desc:'VLESS سبک و سریع — 151 ⭐',key:'fox',proto:['VLESS'],tip:'VLESS سبک و سریع — صفحه اشتراک — UUID خودکار'},
   amcf:{name:'am-cf-tunnel',icon:'🇨🇳',desc:'VLESS + Trojan با Subscription — 3.1k ⭐',key:'amcf',proto:['VLESS','Trojan','DOMAIN'],tip:'VLESS + Trojan — Subscription — KV Storage — نیاز به دامنه'},
   vtpanel:{name:'ZQ-VTPanel',icon:'🛡️',desc:'پنل VTPanel با KV — جدید',key:'vtpanel',proto:['VLESS','Trojan'],tip:'VLESS + Trojan — UI مدیریتی — UUID در KV'},
+  zeus:{name:'Zeus Panel',icon:'⚡',desc:'پنل مدیریت کاربران — 813 ⭐',key:'zeus',proto:['VLESS','Trojan'],tip:'مدیریت کاربران — D1 Database — آپدیت خودکار'},
 
 };
 
@@ -668,12 +670,13 @@ const PANELS_CONFIG={
   fox:{repo:'likennn/worker-falcons',file:'falcons/fox/index.js',vars:{},path:'/'},
   amcf:{repo:'am883478014/cf-proxy',file:'cf-proxy/_worker.js',vars:{},path:'/'},
   vtpanel:{repo:'bayueqi/ZQ-VTPanel',file:'_worker.js',kv:['VTPanel'],vars:{},path:'/'},
+  zeus:{repo:'IR-NETLIFY/zeus',file:'zeus.js',vars:{},path:'/login'},
 
 };
 
 const PANEL_STARS={
   nahan:3082,edge:41735,cfnew:14694,nova:3207,edgtun:2989,
-  fox:151,amcf:3126,vtpanel:62
+  fox:151,amcf:3126,vtpanel:62,zeus:813
 };
 
 let selectedPanel=null;
@@ -688,7 +691,8 @@ const DEPLOY_REPOS={
   edgtun:{repo:'6Kmfi6HP/EDtunnel',file:'_worker.js'},
   fox:{repo:'code3-dev/foxcloud',file:'worker.js',release:'v1.0.0'},
   amcf:{repo:'amclubs/am-cf-tunnel',file:'_worker.js'},
-  vtpanel:{repo:'bayueqi/ZQ-VTPanel',file:'_worker.js'}
+  vtpanel:{repo:'bayueqi/ZQ-VTPanel',file:'_worker.js'},
+  zeus:{repo:'IR-NETLIFY/zeus',file:'zeus.js'}
 };
 // Theme functions
 function applyTheme(t){document.documentElement.setAttribute('data-theme',t);const b=$('themeToggle');if(b)b.textContent=t==='light'?'🌙':'☀️'}
@@ -767,6 +771,10 @@ function render(){
         </div>
 
 
+        <div id="zeusPaths" style="display:none">
+          <div class="result-box"><div class="result-label">📊 صفحه مدیریت</div><div class="result-value"><a id="zeusLogin" href="#" target="_blank" style="color:var(--cyan);text-decoration:none;word-break:break-all;font-size:13px"></a><button class="copy-btn" id="copyZeusLogin">کپی</button></div></div>
+          <div class="result-box"><div class="result-label">📑 صفحه ساب</div><div class="result-value"><a id="zeusSub" href="#" target="_blank" style="color:var(--cyan);text-decoration:none;word-break:break-all;font-size:13px"></a><button class="copy-btn" id="copyZeusSub">کپی</button></div></div>
+        </div>
         <div class="btn-group"><a id="openPanel" href="#" target="_blank" class="btn btn-primary">باز کردن پنل</a><button class="btn btn-secondary" id="updateBtn">🔄 بروزرسانی</button><button class="btn btn-danger" id="deleteBtn">🗑️ حذف Worker</button><button class="btn btn-secondary" onclick="render()">نصب جدید</button></div>
       </div>
     </div>
@@ -860,7 +868,7 @@ function render(){
         $('resultBox').style.display='block';
 
         // Hide all special sections first
-        ['uuidBox','edgtunPaths','foxPaths','amcfPaths','vtpanelPaths'].forEach(id=>{$(id).style.display='none'});
+        ['uuidBox','edgtunPaths','foxPaths','amcfPaths','vtpanelPaths','zeusPaths'].forEach(id=>{$(id).style.display='none'});
 
         // Show UUID for Cfnew
         if(d.uuid){
@@ -928,6 +936,18 @@ function render(){
           const base=d.panelURL;
           $('vtpRoot').textContent=base;$('vtpRoot').href=base;
           $('copyVtpRoot').addEventListener('click',function(){cpB(this,base)});
+        }
+
+        // Zeus Panel paths
+        if(d.panelType==='zeus'){
+          $('zeusPaths').style.display='block';
+          const base=d.panelURL;
+          const zeusLogin=base+'/login';
+          const zeusSub=base+'/sub/'+(d.uuid||'');
+          $('zeusLogin').textContent=zeusLogin;$('zeusLogin').href=zeusLogin;
+          $('zeusSub').textContent=zeusSub;$('zeusSub').href=zeusSub;
+          $('copyZeusLogin').addEventListener('click',function(){cpB(this,zeusLogin)});
+          $('copyZeusSub').addEventListener('click',function(){cpB(this,zeusSub)});
         }
 
         $('copyUrl').addEventListener('click',function(){cpB(this,d.panelURL)});
