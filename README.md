@@ -51,9 +51,9 @@
 | 🆕 **Cfnew** | 14.6k+ | KV | `/{UUID}` |
 | 🚀 **Nova** | 3.2k+ | D1 + KV | `/admin` |
 | 🌐 **EDtunnel** | 2.9k+ | — | `/{UUID}` |
-|| 🦊 **FoxCloud** | 151+ | — | `/sub` |
-|| 🇨🇳 **amcf** ⚠️ | 3.1k+ | KV | `/` |
-|| 🛡️ **ZQ-VTPanel** | 62+ | KV | `/` |
+| 🦊 FoxCloud | 151+ | — | /sub |
+| 🇨🇳 amcf ⚠️ | 3.1k+ | KV | / |
+| 🛡️ ZQ-VTPanel | 62+ | KV | / |
 
 > 💡 همه چیز **خودکار** ساخته میشه — D1، KV، UUID، رمز عبور!
 >
