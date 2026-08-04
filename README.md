@@ -51,7 +51,7 @@
 | 🆕 **Cfnew** | 14.6k+ | KV | `/{UUID}` |
 | 🚀 **Nova** | 3.2k+ | D1 + KV | `/admin` |
 | 🌐 **EDtunnel** | 2.9k+ | — | `/{UUID}` |
-| 🦊 **FoxCloud** | 151+ | — | `/sub` |
+|| 🦊 **FoxCloud** | 151+ | — | `/sub` |
 || 🇨🇳 **amcf** ⚠️ | 3.1k+ | KV | `/` |
 || 🛡️ **ZQ-VTPanel** | 62+ | KV | `/` |
 
@@ -126,7 +126,7 @@
 | Nova | `DB` | `KV` | `ADMIN=admin` |
 | EDtunnel | — | — | `UUID` |
 | FoxCloud | — | — | `UUID`, `PROXY_IP` |
-| amcf | — | `amclubs` | `UUID` |
+|| amcf | — | `amclubs` | `UUID` |
 || VTPanel | — | `VTPanel` | — |
 
 ---
@@ -134,10 +134,7 @@
 ## 📝 تغییرات
 
 <details>
-</details>
-
-<details>
-<summary><b>v4.1.0</b> — آخرین نسخه</summary>
+<summary><b>v4.1.0</b></summary>
 
 - ✅ دکمه **🗑️ حذف Worker** — حذف با تأیید امنیتی از طریق CF API
 - ✅ دکمه **🔄 بروزرسانی** — دانلود کد جدید و آپدیت Worker با حفظ D1/KV
