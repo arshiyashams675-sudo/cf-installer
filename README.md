@@ -2,7 +2,7 @@
 
 ### نصب یک‌کلیکی پنل‌های VPN روی Cloudflare Worker
 
-[![v4.0.0](https://img.shields.io/badge/version-v4.0.0-00e5a0?style=flat-square)](https://arshiyashams675-sudo.github.io/cf-installer/)
+[![v4.1.0](https://img.shields.io/badge/version-v4.1.0-00e5a0?style=flat-square)](https://arshiyashams675-sudo.github.io/cf-installer/)
 [![Panels](https://img.shields.io/badge/پنل‌ها-8_عدد-blue?style=flat-square)](#-پنل‌های-پشتیبانی-شده)
 [![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)](#)
 
@@ -35,6 +35,10 @@
 - 🏷️ **برچسب پروتکل** — VLESS و Trojan روی هر پنل
 - ❓ **راهنمای سریع** — توضیح مختصر با لمس/هاور
 - 📱 **PWA** — قابل نصب روی صفحه اصلی گوشی
+- 🗑️ **حذف Worker** — دکمه حذف بعد از نصب با تأیید امنیتی
+- 🔄 **بروزرسانی** — آپدیت کد Worker با حفظ تنظیمات
+- 🌙/☀️ **حالت تاریک/روشن** — تم قابل سوئیچ با ذخیره انتخاب
+- 🏷️ **برچسب نیاز به دامنه** — نمایش نیازمندی دامنه روی پنل‌ها
 
 ---
 
@@ -48,10 +52,12 @@
 | 🚀 **Nova** | 3.2k+ | D1 + KV | `/admin` |
 | 🌐 **EDtunnel** | 2.9k+ | — | `/{UUID}` |
 | 🦊 **FoxCloud** | 151+ | — | `/sub` |
-| 🇨🇳 **amcf** | 3.1k+ | KV | `/` |
+|| 🇨🇳 **amcf** ⚠️ | 3.1k+ | KV | `/` |
 | 🛡️ **ZQ-VTPanel** | 62+ | KV | `/` |
 
 > 💡 همه چیز **خودکار** ساخته میشه — D1، KV، UUID، رمز عبور!
+>
+> ⚠️ **amcf** نیاز به دامنه اختصاصی دارد
 
 ---
 
@@ -128,7 +134,23 @@
 ## 📝 تغییرات
 
 <details>
-<summary><b>v4.0.0</b> — آخرین نسخه</summary>
+</details>
+
+<details>
+<summary><b>v4.1.0</b> — آخرین نسخه</summary>
+
+- ✅ دکمه **🗑️ حذف Worker** — حذف با تأیید امنیتی از طریق CF API
+- ✅ دکمه **🔄 بروزرسانی** — دانلود کد جدید و آپدیت Worker با حفظ D1/KV
+- ✅ **حالت تاریک/روشن** — سوئیچ تم با ذخیره در localStorage
+- ✅ **برچسب نیاز به دامنه** روی am-cf-tunnel
+- ✅ فیکس باگ سوب‌دامین — fallback ۳ سطحی برای دریافت آدرس صحیح
+- ✅ ثبت Service Worker برای PWA
+- ✅ فیکس تعداد پنل‌ها (۹ → ۸)
+
+</details>
+
+<details>
+<summary><b>v4.0.0</b></summary>
 
 - ✅ ریدیزاین کامل UI (مدرن + تاریک)
 - ✅ اضافه شدن **FoxCloud** (VLESS سبک — 151 ⭐)
