@@ -163,45 +163,17 @@ export default {
         log('صبر برای فعال‌سازی workers.dev...');
         await new Promise(r=>setTimeout(r,10000));
 
-        // === Subdomain detection ===
+        // Get subdomain from API
         let sub='';
-
-        // Strategy 1: API endpoints
-        const acctR=await cfDirect(h,`/accounts/${aid}`);
-        sub=acctR.result?.settings?.subdomain;
-        if(!sub||sub==='workers.dev'){
-          const sr=await cfDirect(h,`/accounts/${aid}/workers/subdomain`);
-          sub=sr.result?.subdomain;
-        }
-
-        // Strategy 2: Fetch redirect (retry up to 3 times)
-        if(!sub||sub==='workers.dev'){
-          log('تشخیص سوب‌دامین از طریق URL...');
-          for(let attempt=0;attempt<3;attempt++){
-            try{
-              await new Promise(r=>setTimeout(r,3000));
-              const checkR=await fetch(`https://${workerName}.workers.dev`,{redirect:'follow'});
-              const finalUrl=new URL(checkR.url);
-              const match=finalUrl.hostname.match(/\.([a-z0-9]+)\.workers\.dev$/);
-              if(match){sub=match[1];break}
-            }catch(e){}
-          }
-        }
-
-        // Strategy 3: Workers services API
-        if(!sub||sub==='workers.dev'){
-          try{
-            const svcR=await cfDirect(h,`/accounts/${aid}/workers/services`);
-            if(svcR.success&&svcR.result?.length){
-              const svc=svcR.result.find(s=>s.service?.name===workerName);
-              if(svc?.subdomain)sub=svc.subdomain;
-            }
-          }catch(e){}
-        }
-
-        if(!sub||sub==='workers.dev'){
+        const sr=await cfDirect(h,`/accounts/${aid}/workers/subdomain`);
+        if(sr.success&&sr.result?.subdomain&&sr.result.subdomain!=='workers.dev'){
+          sub=sr.result.subdomain;
+        }else{
+          // Subdomain not found - tell user to get it from dashboard
+          log('⚠️ سوب‌دامین شناسایی نشد');
+          log('📋 لطفاً آدرس Worker رو از داشبورد کپی کنید:');
+          log(`🔗 https://dash.cloudflare.com/${aid}/workers-and-pages`);
           sub='workers.dev';
-          log('⚠️ سوب‌دامین شناسایی نشد — لطفاً آدرس واقعی Worker رو از داشبورد کپی کنید');
         }
         const basePath=`https://${workerName}.${sub}${sub.includes('.')?'':'.workers.dev'}`;
         const panelPath=p.path||(vars.u?`/${vars.u}`:'');
