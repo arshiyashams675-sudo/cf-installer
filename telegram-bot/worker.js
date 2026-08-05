@@ -482,7 +482,8 @@ async function deployWorker(session, panelDef, panelKey, env, onProgress) {
   }
 
   const basePath = `https://${workerName}.${sub}${sub.includes('.') ? '' : '.workers.dev'}`;
-  const panelPath = p.path || (vars.u ? '/' + vars.u : '');
+  const uuid = vars.u || vars.UUID;
+  const panelPath = p.path || (uuid ? '/' + uuid : '');
   const panelURL = basePath + panelPath;
 
   await prog('✅ نصب کامل شد!', 100);
