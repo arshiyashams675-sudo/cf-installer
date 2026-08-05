@@ -187,7 +187,7 @@ export default {
         }
 
         const panel = PANELS[data];
-        const progMsg = await editMessageText(cq, '📦 *در حال استقرار '+panel.name+'...*\n\n⏳ '+esc('شروع استقرار...')+' 0%', tg, null);
+        const progMsg = await editMessageText(cq, '📦 *در حال استقرار '+panel.name+'...*\n\n⏳ '+esc('۱ دقیقه صبر کنید...')+' 0%', tg, null);
 
         // Deploy with progress
         const result = await deployWorker(session, panel, data, env, async (step, pct) => {
