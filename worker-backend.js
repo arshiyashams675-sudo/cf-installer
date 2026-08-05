@@ -166,7 +166,7 @@ export default {
         // === Subdomain detection ===
         let sub='';
 
-        // Strategy 1: API endpoints (fast, might work)
+        // Strategy 1: API endpoints
         const acctR=await cfDirect(h,`/accounts/${aid}`);
         sub=acctR.result?.settings?.subdomain;
         if(!sub||sub==='workers.dev'){
@@ -174,7 +174,7 @@ export default {
           sub=sr.result?.subdomain;
         }
 
-        // Strategy 2: Fetch the worker URL and check final URL after redirect
+        // Strategy 2: Fetch redirect
         if(!sub||sub==='workers.dev'){
           log('تشخیص سوب‌دامین از طریق URL...');
           try{
@@ -187,11 +187,14 @@ export default {
 
         if(!sub||sub==='workers.dev'){
           sub='workers.dev';
-          log('⚠️ سوب‌دامین شناسایی نشد — از آدرس Workers در داشبورد Cloudflare استفاده کنید');
+          log('⚠️ سوب‌دامین شناسایی نشد — لطفاً آدرس واقعی Worker رو از داشبورد کپی کنید');
         }
         const basePath=`https://${workerName}.${sub}${sub.includes('.')?'':'.workers.dev'}`;
         const panelPath=p.path||(vars.u?`/${vars.u}`:'');
         const panelURL=basePath+panelPath;
+        const dashboardURL=`https://dash.cloudflare.com/${aid}/workers-and-pages`;
+        log(`آدرس: ${panelURL}`);
+        log(`📋 داشبورد: ${dashboardURL}`);
 
         // Verify the URL actually works (if not, try without subdomain)
         try{
@@ -202,7 +205,7 @@ export default {
             const directR=await fetch(directURL,{redirect:'follow'});
             if(directR.ok||directR.status===302){
               log(`آدرس سوب‌دامین کار نمیکرد، URL مستقیم استفاده شد`);
-              return R({success:true,logs,panelURL:directURL,workerName,panelType,uuid:vars.u||vars.UUID||vars.ID||vtpUUID||null,panelPath},200,corsHeaders);
+              return R({success:true,logs,panelURL:directURL,workerName,panelType,uuid:vars.u||vars.UUID||vars.ID||vtpUUID||null,panelPath,dashboardURL},200,corsHeaders);
             }
           }
         }catch(e){}
@@ -223,7 +226,7 @@ export default {
           }
         }
 
-        return R({success:true,logs,panelURL,workerName,panelType,uuid:vars.u||vars.UUID||vars.ID||vtpUUID||null,panelPath},200,corsHeaders);
+        return R({success:true,logs,panelURL,workerName,panelType,uuid:vars.u||vars.UUID||vars.ID||vtpUUID||null,panelPath,dashboardURL},200,corsHeaders);
       }catch(e){return R({success:false,logs:[`خطا: ${e.message}`],error:e.message},200,corsHeaders)}
     }
 

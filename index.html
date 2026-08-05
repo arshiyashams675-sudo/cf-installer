@@ -917,6 +917,10 @@ function render(){
         $('resPath').textContent=d.panelPath||'/';
         $('openPanel').href=d.panelURL;
         $('resultBox').style.display='block';
+        // Dashboard link
+        if(d.dashboardURL){
+          $('openPanel').insertAdjacentHTML('afterend','<a id="dashLink" href="'+esc(d.dashboardURL)+'" target="_blank" class="btn btn-secondary btn-sm" style="text-decoration:none">📋 داشبورد CF</a>');
+        }
 
         // Hide all special sections first
         ['uuidBox','edgtunPaths','foxPaths','amcfPaths','vtpanelPaths','v2rayPaths'].forEach(id=>{$(id).style.display='none'});

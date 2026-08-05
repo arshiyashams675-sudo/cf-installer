@@ -270,6 +270,10 @@ export default {
             msg += '🔗 *آدرس:* `'+result.panelURL+'`\n';
           }
 
+          // Dashboard link
+          const dashUrl='https://dash.cloudflare.com/'+session.accountId+'/workers-and-pages';
+          msg += '\n📋 *داشبورد:* `'+dashUrl+'`\n';
+
           // If subdomain detection failed, add verification note
           if (result.panelURL.includes('.workers.dev') && !result.panelURL.match(/\.[a-z0-9]+\.workers\.dev/)) {
             msg += '\n⚠️ *آدرس ممکنه نادرست باشه!*\nآدرس صحیح رو از صفحه Workers در داشبورد Cloudflare کپی کنید.';
