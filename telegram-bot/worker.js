@@ -109,20 +109,6 @@ export default {
 
       await answerCallback(tg, cq.id);
 
-      // Panel selection
-      const panels = {
-        edge: { name: 'EdgeTunnel', repo: 'cmliu/edgetunnel', file: '_worker.js', kv: ['KV'], desc: 'محبوب‌ترین — VLESS/Trojan — 41k⭐' },
-        cfnew: { name: 'Cfnew', repo: 'byjoey/cfnew', file: '明文源吗', kv: ['C'], desc: 'مدرن — VLESS — KV' },
-        nova: { name: 'Nova Proxy', repo: 'IRNova/Nova-Proxy', file: 'worker.js', d1: ['DB'], kv: ['KV'], desc: 'پیشرفته — D1+KV' },
-        nahan: { name: 'Nahan', repo: 'itsyebekhe/nahan', file: '_worker.js', d1: ['IOT_DB'], desc: 'سبک — VLESS — D1' },
-        edgtun: { name: 'EDtunnel', repo: '6Kmfi6HP/EDtunnel', file: '_worker.js', desc: 'VLESS ساده — UUID خودکار' },
-        fox: { name: 'FoxCloud', repo: 'code3-dev/foxcloud', file: 'worker.js', release: 'v1.0.0', desc: 'VLESS سبک — 151⭐' },
-        amcf: { name: 'am-cf', repo: 'amclubs/am-cf-tunnel', file: '_worker.js', kv: ['amclubs'], desc: 'VLESS+Trojan — 3.1k⭐' },
-        vtpanel: { name: 'VTPanel', repo: 'bayueqi/ZQ-VTPanel', file: '_worker.js', kv: ['VTPanel'], desc: 'VLESS+Trojan — جدید' },
-        v2ray: { name: 'v2ray-worker', repo: 'vfarid/v2ray-worker', file: 'worker.js', release: 'v2.4', kv: ['settings'], desc: 'V2Ray — VLESS+Trojan' },
-        cancel: null
-      };
-
       if (data === 'cancel') {
         await send(tg, chatId, '❌ لغو شد.');
         return json({ ok: true });
@@ -193,14 +179,14 @@ export default {
         return json({ ok: true });
       }
 
-      if (panels[data]) {
+      if (PANELS[data]) {
         const session = await env.SESSIONS.get('session:' + userId, { type: 'json' });
         if (!session || !session.token) {
           await send(tg, chatId, '⚠️ جلسه منقضی شده. /start بزنید.');
           return json({ ok: true });
         }
 
-        const panel = panels[data];
+        const panel = PANELS[data];
         const progMsg = await editMessageText(cq, '📦 *در حال استقرار '+panel.name+'...*\n\n⏳ '+esc('شروع استقرار...')+' 0%', tg, null);
 
         // Deploy with progress
@@ -300,7 +286,7 @@ export default {
 
 const PANELS = {
   edge: { name: 'EdgeTunnel', repo: 'cmliu/edgetunnel', file: '_worker.js', kv: ['KV'], vars: { ADMIN: 'admin' }, path: '/admin' },
-  cfnew: { name: 'Cfnew', repo: 'byjoey/cfnew', file: '明文源吗', kv: ['C'], vars: { u: () => crypto.randomUUID() }, path: '' },
+  cfnew: { name: 'Cfnew', repo: 'byjoey/cfnew', file: 'worker.js', kv: ['C'], vars: { u: () => crypto.randomUUID() }, path: '' },
   nova: { name: 'Nova Proxy', repo: 'IRNova/Nova-Proxy', file: 'worker.js', d1: ['DB'], kv: ['KV'], vars: { ADMIN: 'admin' }, path: '/admin' },
   nahan: { name: 'Nahan', repo: 'itsyebekhe/nahan', file: '_worker.js', d1: ['IOT_DB'], vars: {}, path: '/sync/dash' },
   edgtun: { name: 'EDtunnel', repo: '6Kmfi6HP/EDtunnel', file: '_worker.js', vars: { UUID: () => crypto.randomUUID() }, path: '' },
@@ -407,7 +393,9 @@ async function downloadCode(repo, file, release) {
   return null;
 }
 
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
 async function deployWorker(session, panelDef, panelKey, env, onProgress) {
+  const logs=[];function log(m){logs.push(m)}
   const token = session.token;
   const aid = session.accountId;
   const rnd = Math.random().toString(36).slice(2, 8) + Math.floor(Math.random() * 1000);
@@ -488,8 +476,9 @@ async function deployWorker(session, panelDef, panelKey, env, onProgress) {
   if (sr.success && sr.result?.subdomain && sr.result.subdomain !== 'workers.dev') {
     sub = sr.result.subdomain;
   } else {
-    log('⚠️ سوب‌دامین شناسایی نشد');
     sub = 'workers.dev';
+    log('⚠️ سوب‌دامین شناسایی نشد — لطفاً آدرس واقعی رو از داشبورد کپی کنید');
+    log(`📋 https://dash.cloudflare.com/${aid}/workers-and-pages`);
   }
 
   const basePath = `https://${workerName}.${sub}${sub.includes('.') ? '' : '.workers.dev'}`;
