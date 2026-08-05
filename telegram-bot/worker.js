@@ -180,7 +180,8 @@ export default {
       }
 
       if (PANELS[data]) {
-        const session = await env.SESSIONS.get('session:' + userId, { type: 'json' });
+        try {
+          const session = await env.SESSIONS.get('session:' + userId, { type: 'json' });
         if (!session || !session.token) {
           await send(tg, chatId, '⚠️ جلسه منقضی شده. /start بزنید.');
           return json({ ok: true });
@@ -275,6 +276,12 @@ export default {
             [[{ text: '🔄 انتخاب مجدد', callback_data: 'back_to_panels' }]]);
         }
         return json({ ok: true });
+        } catch (err) {
+          console.log('Deploy error:', err.message);
+          await send(tg, chatId, '❌ خطای پیش‌بینی نشده:\n`'+esc(String(err))+'`', 'Markdown',
+            [[{ text: '🔄 انتخاب مجدد', callback_data: 'back_to_panels' }]]);
+          return json({ ok: true });
+        }
       }
     }
 
