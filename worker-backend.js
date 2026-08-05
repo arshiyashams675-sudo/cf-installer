@@ -161,7 +161,7 @@ export default {
 
         // Wait for workers.dev propagation
         log('صبر برای فعال‌سازی workers.dev...');
-        await new Promise(r=>setTimeout(r,10000));
+        await new Promise(r=>setTimeout(r,3000));
 
         // Get subdomain from API
         let sub='';
@@ -182,19 +182,7 @@ export default {
         log(`آدرس: ${panelURL}`);
         log(`📋 داشبورد: ${dashboardURL}`);
 
-        // Verify the URL actually works (if not, try without subdomain)
-        try{
-          const verifyR=await fetch(panelURL,{redirect:'follow'});
-          if(!verifyR.ok&&verifyR.status!==302){
-            // Subdomain URL doesn't work, try direct workers.dev
-            const directURL=`https://${workerName}.workers.dev${panelPath}`;
-            const directR=await fetch(directURL,{redirect:'follow'});
-            if(directR.ok||directR.status===302){
-              log(`آدرس سوب‌دامین کار نمیکرد، URL مستقیم استفاده شد`);
-              return R({success:true,logs,panelURL:directURL,workerName,panelType,uuid:vars.u||vars.UUID||vars.ID||vtpUUID||null,panelPath,dashboardURL},200,corsHeaders);
-            }
-          }
-        }catch(e){}
+
 
         log(`آدرس: ${panelURL}`);
 
