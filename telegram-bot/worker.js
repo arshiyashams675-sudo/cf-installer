@@ -286,7 +286,7 @@ export default {
 
 const PANELS = {
   edge: { name: 'EdgeTunnel', repo: 'cmliu/edgetunnel', file: '_worker.js', kv: ['KV'], vars: { ADMIN: 'admin' }, path: '/admin' },
-  cfnew: { name: 'Cfnew', repo: 'byjoey/cfnew', file: 'worker.js', kv: ['C'], vars: { u: () => crypto.randomUUID() }, path: '' },
+  cfnew: { name: 'Cfnew', repo: 'byjoey/cfnew', file: '明文源吗', kv: ['C'], vars: { u: () => crypto.randomUUID() }, path: '' },
   nova: { name: 'Nova Proxy', repo: 'IRNova/Nova-Proxy', file: 'worker.js', d1: ['DB'], kv: ['KV'], vars: { ADMIN: 'admin' }, path: '/admin' },
   nahan: { name: 'Nahan', repo: 'itsyebekhe/nahan', file: '_worker.js', d1: ['IOT_DB'], vars: {}, path: '/sync/dash' },
   edgtun: { name: 'EDtunnel', repo: '6Kmfi6HP/EDtunnel', file: '_worker.js', vars: { UUID: () => crypto.randomUUID() }, path: '' },
