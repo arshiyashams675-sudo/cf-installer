@@ -161,15 +161,20 @@ export default {
 
         // Wait for workers.dev propagation
         log('صبر برای فعال‌سازی workers.dev...');
-        await new Promise(r=>setTimeout(r,3000));
+        await new Promise(r=>setTimeout(r,10000));
 
-        // Get subdomain from API
+        // Get subdomain from API (retry up to 3 times)
         let sub='';
-        const sr=await cfDirect(h,`/accounts/${aid}/workers/subdomain`);
-        if(sr.success&&sr.result?.subdomain&&sr.result.subdomain!=='workers.dev'){
-          sub=sr.result.subdomain;
-        }else{
-          // Subdomain not found - tell user to get it from dashboard
+        for(let i=0; i<3; i++){
+          const sr=await cfDirect(h,`/accounts/${aid}/workers/subdomain`);
+          if(sr.success&&sr.result?.subdomain&&sr.result.subdomain!=='workers.dev'){
+            sub=sr.result.subdomain;
+            break;
+          }
+          if(i<2) await new Promise(r=>setTimeout(r,3000));
+        }
+
+        if(!sub||sub==='workers.dev'){
           log('⚠️ سوب‌دامین شناسایی نشد');
           log('📋 لطفاً آدرس Worker رو از داشبورد کپی کنید:');
           log(`🔗 https://dash.cloudflare.com/${aid}/workers-and-pages`);
