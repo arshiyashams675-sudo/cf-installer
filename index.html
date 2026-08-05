@@ -793,7 +793,7 @@ function render(){
       <div id="deployLog" class="deploy-log"></div>
       <div id="resultBox" style="display:none">
         <hr class="divider">
-        <div class="result-box"><div class="result-label">آدرس پنل</div><div class="result-value"><a id="resUrl" href="#" target="_blank" style="color:var(--cyan);text-decoration:none"></a><button class="copy-btn" id="copyUrl">کپی</button></div></div>
+        <div class="result-box"><div class="result-label">آدرس پنل</div><div class="result-value"><input type="text" class="form-input" id="resUrlInput" style="font-size:13px;padding:8px 12px;min-height:auto;direction:ltr;text-align:left" value=""><button class="copy-btn" id="copyUrl">کپی</button></div></div>
         <div class="result-box"><div class="result-label">نام Worker</div><div class="result-value"><span id="resName"></span><button class="copy-btn" id="copyName">کپی</button></div></div>
         <div class="result-box"><div class="result-label">مسیر پنل</div><div class="result-value" style="color:var(--yellow)"><span id="resPath"></span><button class="copy-btn" id="copyPath">کپی</button></div></div>
         <div class="result-box" id="uuidBox" style="display:none"><div class="result-label">UUID (Cfnew)</div><div class="result-value"><span id="resUuid"></span><button class="copy-btn" id="copyUuid">کپی</button></div></div>
@@ -912,10 +912,12 @@ function render(){
       
       if(d.success){
         [1,2,3].forEach(i=>{const e=$('step'+i);if(e){e.classList.remove('active');e.classList.add('done')}});$('deployLog').innerHTML+='<br><span class="log-ok">✅ نصب با موفقیت انجام شد!</span><br><span class="log-info">⏳ چند دقیقه صبر کنید تا ورکر فعال شود</span>';
-        $('resUrl').textContent=d.panelURL;$('resUrl').href=d.panelURL;
+        $('resUrlInput').value=d.panelURL;
         $('resName').textContent=d.workerName;
         $('resPath').textContent=d.panelPath||'/';
         $('openPanel').href=d.panelURL;
+        // Also update openPanel when input changes
+        $('resUrlInput').addEventListener('input',function(){$('openPanel').href=this.value})
         $('resultBox').style.display='block';
         // Dashboard link
         if(d.dashboardURL){
@@ -1006,7 +1008,7 @@ function render(){
         }
 
 
-        $('copyUrl').addEventListener('click',function(){cpB(this,d.panelURL)});
+        $('copyUrl').addEventListener('click',function(){cpB(this,$('resUrlInput').value)});
         $('copyName').addEventListener('click',function(){cpB(this,d.workerName)});
         $('copyPath').addEventListener('click',function(){cpB(this,d.panelPath||'/')});
         toast('✅ نصب کامل شد!');
@@ -1133,7 +1135,7 @@ function attachManageButtons(){
 
 // Connection Test
 function testConnection(){
-  const url=deployState.panelURL;
+  const url=$('resUrlInput')?.value||deployState.panelURL;
   if(!url){toast('⚠️ آدرس Worker موجود نیست');return}
   const el=$('testResult');
   if(!el)return;
