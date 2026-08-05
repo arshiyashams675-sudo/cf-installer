@@ -174,15 +174,18 @@ export default {
           sub=sr.result?.subdomain;
         }
 
-        // Strategy 2: Fetch redirect
+        // Strategy 2: Fetch redirect (retry up to 3 times)
         if(!sub||sub==='workers.dev'){
           log('تشخیص سوب‌دامین از طریق URL...');
-          try{
-            const checkR=await fetch(`https://${workerName}.workers.dev`,{redirect:'follow'});
-            const finalUrl=new URL(checkR.url);
-            const match=finalUrl.hostname.match(/\.([a-z0-9]+)\.workers\.dev$/);
-            if(match)sub=match[1];
-          }catch(e){}
+          for(let attempt=0;attempt<3;attempt++){
+            try{
+              await new Promise(r=>setTimeout(r,3000));
+              const checkR=await fetch(`https://${workerName}.workers.dev`,{redirect:'follow'});
+              const finalUrl=new URL(checkR.url);
+              const match=finalUrl.hostname.match(/\.([a-z0-9]+)\.workers\.dev$/);
+              if(match){sub=match[1];break}
+            }catch(e){}
+          }
         }
 
         // Strategy 3: Workers services API
