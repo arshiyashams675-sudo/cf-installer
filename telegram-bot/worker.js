@@ -412,8 +412,11 @@ async function deployWorker(session, panelDef, panelKey, env, onProgress) {
   }
 
   await prog('📥 دانلود کد منبع...', 10);
-  const code = await downloadCode(p.repo, p.file, p.release);
+  let code = await downloadCode(p.repo, p.file, p.release);
   if (!code) return { success: false, error: 'کد منبع یافت نشد' };
+  if (panelKey === 'cfnew') {
+    code = code.replace(/351c9981-04b6-4103-aa4b-864aa9c91469/g, crypto.randomUUID());
+  }
   await prog('✅ کد دانلود شد', 25);
 
   // Create D1 databases
