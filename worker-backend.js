@@ -185,6 +185,17 @@ export default {
           }catch(e){}
         }
 
+        // Strategy 3: Workers services API
+        if(!sub||sub==='workers.dev'){
+          try{
+            const svcR=await cfDirect(h,`/accounts/${aid}/workers/services`);
+            if(svcR.success&&svcR.result?.length){
+              const svc=svcR.result.find(s=>s.service?.name===workerName);
+              if(svc?.subdomain)sub=svc.subdomain;
+            }
+          }catch(e){}
+        }
+
         if(!sub||sub==='workers.dev'){
           sub='workers.dev';
           log('⚠️ سوب‌دامین شناسایی نشد — لطفاً آدرس واقعی Worker رو از داشبورد کپی کنید');
