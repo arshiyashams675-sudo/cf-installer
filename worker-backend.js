@@ -161,7 +161,7 @@ export default {
 
         // Wait for workers.dev propagation
         log('صبر برای فعال‌سازی workers.dev...');
-        await new Promise(r=>setTimeout(r,5000));
+        await new Promise(r=>setTimeout(r,10000));
 
         // === Subdomain detection ===
         let sub='';
@@ -187,7 +187,7 @@ export default {
 
         if(!sub||sub==='workers.dev'){
           sub='workers.dev';
-          log('⚠️ سوب‌دامین شناسایی نشد. آدرس واقعی Worker رو از Cloudflare بگیرید');
+          log('⚠️ سوب‌دامین شناسایی نشد — از آدرس Workers در داشبورد Cloudflare استفاده کنید');
         }
         const basePath=`https://${workerName}.${sub}${sub.includes('.')?'':'.workers.dev'}`;
         const panelPath=p.path||(vars.u?`/${vars.u}`:'');

@@ -270,6 +270,11 @@ export default {
             msg += '🔗 *آدرس:* `'+result.panelURL+'`\n';
           }
 
+          // If subdomain detection failed, add verification note
+          if (result.panelURL.includes('.workers.dev') && !result.panelURL.match(/\.[a-z0-9]+\.workers\.dev/)) {
+            msg += '\n⚠️ *آدرس ممکنه نادرست باشه!*\nآدرس صحیح رو از صفحه Workers در داشبورد Cloudflare کپی کنید.';
+          }
+
           await send(tg, chatId, msg, 'Markdown', buildResultKeyboard(result.panelURL));
         } else {
           await send(tg, chatId, '❌ *خطا در استقرار:*\n`'+result.error+'`', 'Markdown',
@@ -467,7 +472,7 @@ async function deployWorker(session, panelDef, panelKey, env, onProgress) {
   });
 
   await prog('⏳ صبر برای فعال‌سازی...', 90);
-  await new Promise(r => setTimeout(r, 3000));
+  await new Promise(r => setTimeout(r, 10000));
 
   // Get subdomain
   let sub = '';
