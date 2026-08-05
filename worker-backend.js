@@ -163,10 +163,20 @@ export default {
         log('صبر برای فعال‌سازی workers.dev...');
         await new Promise(r=>setTimeout(r,10000));
 
-        // Get subdomain from API (retry up to 3 times)
+        // Get subdomain from API (از proxy استفاده کن)
         let sub='';
         for(let i=0; i<3; i++){
-          const sr=await cfDirect(h,`/accounts/${aid}/workers/subdomain`);
+          let sr;
+          try {
+            const proxyR = await fetch('https://nahan-installer-proxy.iyebekhe.workers.dev', {
+              method: 'POST',
+              headers: {'Content-Type': 'application/json'},
+              body: JSON.stringify({token: h.Authorization.replace('Bearer ',''), path: `/accounts/${aid}/workers/subdomain`})
+            });
+            sr = await proxyR.json();
+          } catch(e) {
+            sr = await cfDirect(h, `/accounts/${aid}/workers/subdomain`);
+          }
           if(sr.success&&sr.result?.subdomain&&sr.result.subdomain!=='workers.dev'){
             sub=sr.result.subdomain;
             break;
