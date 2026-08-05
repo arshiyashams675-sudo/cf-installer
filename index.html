@@ -535,16 +535,12 @@ body::after{
   .footer-stars{gap:6px 10px}
 }
 /* Progress bar */
-.progress-steps{display:flex;justify-content:space-between;margin:20px 0 16px;position:relative}
-.progress-steps::before{content:'';position:absolute;top:15px;left:15%;right:15%;height:3px;background:var(--border2);z-index:0}
-.progress-step{flex:1;text-align:center;position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:8px}
-.step-circle{width:32px;height:32px;border-radius:50%;background:var(--bg3);border:2px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:14px;transition:all .3s;flex-shrink:0}
-.step-label{font-size:11px;color:var(--text3);transition:color .3s;white-space:nowrap}
-.progress-step.active .step-circle{background:var(--cyan-bg);border-color:var(--cyan);box-shadow:0 0 16px rgba(0,229,160,.3)}
-.progress-step.active .step-label{color:var(--cyan)}
-.progress-step.done .step-circle{background:var(--green);border-color:var(--green);color:#fff}
-.progress-step.done .step-label{color:var(--green)}
-.progress-step.done .step-circle::after{content:'✓';font-size:16px;font-weight:bold}
+.progress-bar-wrap{margin:20px 0 16px}
+.progress-track{width:100%;height:28px;background:var(--bg3);border-radius:14px;overflow:hidden;position:relative;border:1px solid var(--border)}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--cyan),#00c990);border-radius:14px;transition:width .6s cubic-bezier(.4,0,.2,1);position:relative;min-width:0}
+.progress-fill::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,.15),transparent);border-radius:14px}
+.progress-pct{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:700;color:var(--text);text-shadow:0 1px 3px rgba(0,0,0,.4);z-index:1;transition:color .3s}
+.progress-label{text-align:center;font-size:.82rem;color:var(--text2);margin-top:8px;font-weight:500;transition:color .3s}
 
 /* Panel badges */
 .panel-badges{display:flex;gap:4px;margin-top:6px;flex-wrap:wrap}
@@ -601,7 +597,8 @@ body::after{
 [data-theme="light"] .footer-star{background:rgba(0,0,0,.02);border-color:var(--border)}
 [data-theme="light"] .logo-ver{background:rgba(0,0,0,.03);border-color:var(--border)}
 [data-theme="light"] .progress-step .step-circle{background:var(--bg3);border-color:var(--border2)}
-[data-theme="light"] .progress-steps::before{background:var(--border2)}
+[data-theme="light"] .progress-track{background:var(--bg3);border-color:var(--border2)}
+[data-theme="light"] .progress-pct{color:var(--text);text-shadow:none}
 [data-theme="light"] .divider{background:linear-gradient(90deg,transparent,rgba(0,0,0,.08),transparent)}
 
 /* Theme Toggle */
@@ -752,7 +749,7 @@ applyTheme(localStorage.getItem('cf-installer-theme')||'dark');
 function toast(m){const t=$('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
 function esc(s){return s?String(s).replace(/[&<>\"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#39;'}[m])):''}
 function cpB(b,t){navigator.clipboard.writeText(t).then(()=>{const o=b.textContent;b.textContent='کپی شد!';b.classList.add('copied');setTimeout(()=>{b.textContent=o;b.classList.remove('copied')},1500)})}
-function setStep(n){[1,2,3].forEach(i=>{const el=$('step'+i);if(!el)return;el.classList.remove('active','done');const c=el.querySelector('.step-circle');if(i<n){el.classList.add('done');if(c)c.innerHTML='✓'}else if(i===n){el.classList.add('active')}})}
+function setProgress(pct,label){$('progressFill').style.width=pct+'%';$('progressPct').textContent=pct+'%';if(label)$('progressLabel').textContent=label}
 
 function renderFooter(){
   const el=$('footerStars');
@@ -785,10 +782,9 @@ function render(){
     </div>
     <div class="card" id="deployCard" style="display:none">
       <div class="card-title"><span class="icon">📦</span> در حال استقرار...</div>
-      <div class="progress-steps" id="progressSteps">
-        <div class="progress-step active" id="step1"><div class="step-circle">🔑</div><div class="step-label">توکن</div></div>
-        <div class="progress-step" id="step2"><div class="step-circle">📥</div><div class="step-label">دانلود</div></div>
-        <div class="progress-step" id="step3"><div class="step-circle">🚀</div><div class="step-label">استقرار</div></div>
+      <div class="progress-bar-wrap" id="progressSteps">
+        <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div><div class="progress-pct" id="progressPct">0%</div></div>
+        <div class="progress-label" id="progressLabel">شروع استقرار...</div>
       </div>
       <div id="deployLog" class="deploy-log"></div>
       <div id="resultBox" style="display:none">
@@ -880,7 +876,7 @@ function render(){
     if(!selectedPanel){toast('⚠️ پنل را انتخاب کنید');return}
     $('deployBtn').disabled=true;$('deployBtn').textContent='⏳ در حال نصب...';
     $('deployCard').style.display='block';
-    $('deployLog').innerHTML='<span class="log-info">▸ شروع استقرار...</span>';setStep(1);
+    $('deployLog').innerHTML='<span class="log-info">▸ شروع استقرار...</span>';setProgress(0,'شروع استقرار...');
     $('resultBox').style.display='none';
 
     // Gather panel-specific vars
@@ -904,14 +900,14 @@ function render(){
       // Show logs
       if(d.logs)d.logs.forEach(l=>{
         $('deployLog').innerHTML+=l+'<br>';
-        if(l.includes('اعتبارسنجی توکن')||l.includes('حساب'))setStep(2);
-        if(l.includes('دانلود کد')||l.includes('کد دانلود'))setStep(2);
-        if(l.includes('استقرار Worker'))setStep(3);
+        if(l.includes('اعتبارسنجی توکن')||l.includes('حساب'))setProgress(20,'دریافت اطلاعات حساب...');
+        if(l.includes('دانلود کد')||l.includes('کد دانلود'))setProgress(40,'دانلود کد پنل...');
+        if(l.includes('استقرار Worker'))setProgress(80,'استقرار Worker...');
         if(l.includes('مستقر شد'))[1,2,3].forEach(i=>{const e=$('step'+i);if(e){e.classList.remove('active');e.classList.add('done')}});
       });
       
       if(d.success){
-        [1,2,3].forEach(i=>{const e=$('step'+i);if(e){e.classList.remove('active');e.classList.add('done')}});$('deployLog').innerHTML+='<br><span class="log-ok">✅ نصب با موفقیت انجام شد!</span><br><span class="log-info">⏳ چند دقیقه صبر کنید تا ورکر فعال شود</span>';
+        setProgress(100,'نصب موفق ✅');$('deployLog').innerHTML+='<br><span class="log-ok">✅ نصب با موفقیت انجام شد!</span><br><span class="log-info">⏳ چند دقیقه صبر کنید تا ورکر فعال شود</span>';
         $('resUrlInput').value=d.panelURL;
         $('resName').textContent=d.workerName;
         $('resPath').textContent=d.panelPath||'/';
@@ -1080,10 +1076,10 @@ async function updateWorker(){
   if(!repoCfg){toast('❌ پنل ناشناخته');return}
   const dc=$('deployCard'),dl=$('deployLog'),rb=$('resultBox');
   dc.style.display='block';rb.style.display='none';
-  dl.innerHTML='<span class="log-info">▸ شروع بروزرسانی...</span>';setStep(1);
+  dl.innerHTML='<span class="log-info">▸ شروع بروزرسانی...</span>';setProgress(0,'شروع بروزرسانی...');
   try{
     // Step 1: Download new source
-    dl.innerHTML+='<br><span class="log-info">▸ دانلود کد جدید...</span>';setStep(2);
+    dl.innerHTML+='<br><span class="log-info">▸ دانلود کد جدید...</span>';setProgress(40,'دانلود کد جدید...');
     const branch=repoCfg.release||'main';
     const srcUrl='https://raw.githubusercontent.com/'+repoCfg.repo+'/'+branch+'/'+repoCfg.file;
     const srcR=await fetch(BACKEND+'/github',{method:'POST',headers:{'Content-Type':'application/json','X-GitHub-Url':srcUrl}});
@@ -1102,7 +1098,7 @@ async function updateWorker(){
       throw new Error('خطا در دریافت متادیتا: '+(metaD.errors?.[0]?.message||'unknown'));
     }
     // Step 3: Upload new code with existing bindings
-    dl.innerHTML+='<br><span class="log-info">▸ آپدیت Worker...</span>';setStep(3);
+    dl.innerHTML+='<br><span class="log-info">▸ آپدیت Worker...</span>';setProgress(80,'آپدیت Worker...');
     const metadata={main_module:'worker.js',compatibility_date:'2024-09-22',compatibility_flags:['nodejs_compat'],bindings:bindings};
     const fd=new FormData();
     fd.append('metadata',new Blob([JSON.stringify(metadata)],{type:'application/json'}));

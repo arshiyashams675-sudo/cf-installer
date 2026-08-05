@@ -476,27 +476,16 @@ async function deployWorker(session, panelDef, panelKey, env, onProgress) {
   });
 
   await prog('⏳ صبر برای فعال‌سازی...', 90);
-  await new Promise(r => setTimeout(r, 10000));
+  await new Promise(r => setTimeout(r, 3000));
 
-  // Get subdomain
+  // Get subdomain from API
   let sub = '';
-  const acctR = await cfApi(token, `/accounts/${aid}`);
-  sub = acctR.result?.settings?.subdomain;
-  if (!sub || sub === 'workers.dev') {
-    const sr = await cfApi(token, `/accounts/${aid}/workers/subdomain`);
-    sub = sr.result?.subdomain;
+  const sr = await cfApi(token, `/accounts/${aid}/workers/subdomain`);
+  if (sr.success && sr.result?.subdomain && sr.result.subdomain !== 'workers.dev') {
+    sub = sr.result.subdomain;
+  } else {
+    sub = 'workers.dev';
   }
-
-  // Fetch-based: follow redirect to get real subdomain
-  if (!sub || sub === 'workers.dev') {
-    try {
-      const checkR = await fetch(`https://${workerName}.workers.dev`, { redirect: 'follow' });
-      const finalUrl = new URL(checkR.url);
-      const match = finalUrl.hostname.match(/\.([a-z0-9]+)\.workers\.dev$/);
-      if (match) sub = match[1];
-    } catch {}
-  }
-  if (!sub || sub === 'workers.dev') sub = 'workers.dev';
 
   const basePath = `https://${workerName}.${sub}${sub.includes('.') ? '' : '.workers.dev'}`;
   const panelPath = p.path || (vars.u ? '/' + vars.u : '');
