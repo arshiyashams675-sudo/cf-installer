@@ -195,7 +195,7 @@ export default {
           const empty = 20 - filled;
           const bar = '█'.repeat(filled) + '░'.repeat(empty);
           try {
-            await editMessageText(cq, '📦 *در حال استقرار '+panel.name+'...*\n\n[`'+bar+`] *`+pct+`%*\n`+esc(step), tg, null);
+            await editMessageText(cq, '📦 *در حال استقرار '+panel.name+'...*\n\n'+bar+' *'+pct+'%*\n'+esc(step), tg, null);
           } catch {}
         });
         
