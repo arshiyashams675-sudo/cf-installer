@@ -119,6 +119,7 @@ export default {
         fox: { name: 'FoxCloud', repo: 'code3-dev/foxcloud', file: 'worker.js', release: 'v1.0.0', desc: 'VLESS سبک — 151⭐' },
         amcf: { name: 'am-cf', repo: 'amclubs/am-cf-tunnel', file: '_worker.js', kv: ['amclubs'], desc: 'VLESS+Trojan — 3.1k⭐' },
         vtpanel: { name: 'VTPanel', repo: 'bayueqi/ZQ-VTPanel', file: '_worker.js', kv: ['VTPanel'], desc: 'VLESS+Trojan — جدید' },
+        v2ray: { name: 'v2ray-worker', repo: 'vfarid/v2ray-worker', file: 'worker.js', release: 'v2.4', kv: ['settings'], desc: 'V2Ray — VLESS+Trojan' },
         cancel: null
       };
 
@@ -133,7 +134,7 @@ export default {
           await send(tg, chatId, '⚠️ جلسه منقضی شده. /start بزنید.');
           return json({ ok: true });
         }
-        await editMessageText(cq, 'یک پنل انتخاب کنید:', buildPanelKeyboard());
+        await editMessageText(cq, 'یک پنل انتخاب کنید:', tg, buildPanelKeyboard());
         return json({ ok: true });
       }
 
@@ -181,7 +182,7 @@ export default {
           await send(tg, chatId, '⚠️ جلسه منقضی شده. /start بزنید.');
           return json({ ok: true });
         }
-        await editMessageText(cq, '⏳ در حال حذف Worker...');
+        await editMessageText(cq, '⏳ در حال حذف Worker...', tg);
         const r = await cfApi(session.token, `/accounts/${session.accountId}/workers/scripts/${session.workerName}`, 'DELETE');
         if (r.success) {
           await env.SESSIONS.delete('session:' + userId);
@@ -200,12 +201,15 @@ export default {
         }
 
         const panel = panels[data];
-        const progMsg = await editMessageText(cq, '📦 *در حال استقرار '+panel.name+'...*\n\n⏳ '+esc('شروع استقرار...')+' 0%', null);
+        const progMsg = await editMessageText(cq, '📦 *در حال استقرار '+panel.name+'...*\n\n⏳ '+esc('شروع استقرار...')+' 0%', tg, null);
 
         // Deploy with progress
         const result = await deployWorker(session, panel, data, env, async (step, pct) => {
+          const filled = Math.round(pct / 5);
+          const empty = 20 - filled;
+          const bar = '█'.repeat(filled) + '░'.repeat(empty);
           try {
-            await editMessageText(cq, '📦 *در حال استقرار '+panel.name+'...*\n\n⏳ '+esc(step)+' '+pct+'%', null);
+            await editMessageText(cq, '📦 *در حال استقرار '+panel.name+'...*\n\n[`'+bar+`] *`+pct+`%*\n`+esc(step), tg, null);
           } catch {}
         });
         
@@ -347,14 +351,14 @@ async function send(tg, chatId, text, parseMode, replyMarkup) {
   });
 }
 
-async function editMessageText(cq, text, replyMarkup) {
+async function editMessageText(cq, text, tgToken, replyMarkup) {
   const body = {
     chat_id: cq.message.chat.id,
     message_id: cq.message.message_id,
     text: text
   };
   if (replyMarkup) body.reply_markup = replyMarkup;
-  await fetch('https://api.telegram.org/bot' + cq._tgToken + '/editMessageText', {
+  await fetch('https://api.telegram.org/bot' + tgToken + '/editMessageText', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body)
@@ -484,6 +488,7 @@ async function deployWorker(session, panelDef, panelKey, env, onProgress) {
   if (sr.success && sr.result?.subdomain && sr.result.subdomain !== 'workers.dev') {
     sub = sr.result.subdomain;
   } else {
+    log('⚠️ سوب‌دامین شناسایی نشد');
     sub = 'workers.dev';
   }
 
