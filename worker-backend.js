@@ -194,7 +194,11 @@ export default {
           log(`🔗 https://dash.cloudflare.com/${aid}/workers-and-pages`);
           sub='workers.dev';
         }
-        const basePath=`https://${workerName}.${sub}${sub.includes('.')?'':'.workers.dev'}`;
+        // اگه subdomain شامل .workers.dev باشه، حذفش کن
+        if(sub&&sub.endsWith('.workers.dev')){
+          sub=sub.replace('.workers.dev','');
+        }
+        const basePath=`https://${workerName}.${sub}.workers.dev`;
         const panelPath=p.path||(vars.u?`/${vars.u}`:'');
         const panelURL=basePath+panelPath;
         const dashboardURL=`https://dash.cloudflare.com/${aid}/workers-and-pages`;
