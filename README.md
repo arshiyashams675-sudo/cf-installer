@@ -169,7 +169,7 @@
 </details>
 
 <details>
-<summary><b>v4.5.0</b> — آخرین نسخه</summary>
+<summary><b>v4.5.1</b> — آخرین نسخه</summary>
 
 - ✅ فیکس نام فایل cfnew (`明文源吗` به جای `worker.js`)
 - ✅ جایگزینی UUID سخت‌کد شده cfnew هنگام دیپلوی
