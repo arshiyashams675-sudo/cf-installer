@@ -898,13 +898,22 @@ function render(){
       const d=await r.json();
       
       // Show logs
-      if(d.logs)d.logs.forEach(l=>{
-        $('deployLog').innerHTML+=l+'<br>';
-        if(l.includes('اعتبارسنجی توکن')||l.includes('حساب'))setProgress(20,'دریافت اطلاعات حساب...');
-        if(l.includes('دانلود کد')||l.includes('کد دانلود'))setProgress(40,'دانلود کد پنل...');
-        if(l.includes('استقرار Worker'))setProgress(80,'استقرار Worker...');
-        if(l.includes('مستقر شد'))[1,2,3].forEach(i=>{const e=$('step'+i);if(e){e.classList.remove('active');e.classList.add('done')}});
-      });
+      if(d.logs){
+        let i=0;
+        const showNextLog=()=>{
+          if(i<d.logs.length){
+            const l=d.logs[i];
+            $('deployLog').innerHTML+=l+'<br>';
+            if(l.includes('اعتبارسنجی توکن')||l.includes('حساب'))setProgress(20,'دریافت اطلاعات حساب...');
+            if(l.includes('دانلود کد')||l.includes('کد دانلود'))setProgress(40,'دانلود کد پنل...');
+            if(l.includes('استقرار Worker'))setProgress(80,'استقرار Worker...');
+            if(l.includes('مستقر شد')){setProgress(100,'نصب موفق ✅');[1,2,3].forEach(j=>{const e=$('step'+j);if(e){e.classList.remove('active');e.classList.add('done')}})}
+            i++;
+            setTimeout(showNextLog,400);
+          }
+        };
+        showNextLog();
+      }
       
       if(d.success){
         setProgress(100,'نصب موفق ✅');$('deployLog').innerHTML+='<br><span class="log-ok">✅ نصب با موفقیت انجام شد!</span><br><span class="log-info">⏳ چند دقیقه صبر کنید تا ورکر فعال شود</span>';
