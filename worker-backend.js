@@ -186,10 +186,6 @@ export default {
         log(`آدرس: ${panelURL}`);
         log(`📋 داشبورد: ${dashboardURL}`);
 
-
-
-        log(`آدرس: ${panelURL}`);
-
         // For VTPanel: write UUID to KV
         let vtpUUID=null;
         if(panelType==='vtpanel'){
