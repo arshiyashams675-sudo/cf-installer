@@ -90,15 +90,15 @@ export default {
         // Download source
         log('دانلود کد منبع...');
         const panels={
-          nahan:{repo:'itsyebekhe/nahan',file:'_worker.js',bindings:{d1:['IOT_DB'],kv:[]},vars:{},path:'/sync/dash'},
-          edge:{repo:'cmliu/edgetunnel',file:'_worker.js',bindings:{d1:[],kv:['KV']},vars:{ADMIN:'admin'},path:'/admin'},
-          cfnew:{repo:'byjoey/cfnew',file:'明文源吗',bindings:{d1:[],kv:['C']},vars:{u:crypto.randomUUID()},path:''},
-          nova:{repo:'IRNova/Nova-Proxy',file:'worker.js',bindings:{d1:['DB'],kv:['KV']},vars:{ADMIN:'admin'},path:'/admin'},
-          edgtun:{repo:'6Kmfi6HP/EDtunnel',file:'_worker.js',bindings:{d1:[],kv:[]},vars:{UUID:crypto.randomUUID()},path:''},
-          fox:{repo:'code3-dev/foxcloud',file:'worker.js',release:'v1.0.0',bindings:{d1:[],kv:[]},vars:{UUID:crypto.randomUUID(),PROXY_IP:'172.66.45.9:443'},path:'/sub'},
-          amcf:{repo:'amclubs/am-cf-tunnel',file:'_worker.js',bindings:{d1:[],kv:['amclubs']},vars:{UUID:crypto.randomUUID()},path:'/'},
-          vtpanel:{repo:'bayueqi/ZQ-VTPanel',file:'_worker.js',bindings:{d1:[],kv:['VTPanel']},vars:{},path:'/'},
-          v2ray:{repo:'vfarid/v2ray-worker',file:'worker.js',release:'v2.4',bindings:{d1:[],kv:['settings']},vars:{},path:'/'},
+          nahan:{repo:'itsyebekhe/nahan',file:'_worker.js',bindings:{d1:['IOT_DB'],kv:[]},vars:{PANEL_TYPE:'nahan'},path:'/sync/dash'},
+          edge:{repo:'cmliu/edgetunnel',file:'_worker.js',bindings:{d1:[],kv:['KV']},vars:{ADMIN:'admin',PANEL_TYPE:'edge'},path:'/admin'},
+          cfnew:{repo:'byjoey/cfnew',file:'明文源吗',bindings:{d1:[],kv:['C']},vars:{u:crypto.randomUUID(),PANEL_TYPE:'cfnew'},path:''},
+          nova:{repo:'IRNova/Nova-Proxy',file:'worker.js',bindings:{d1:['DB'],kv:['KV']},vars:{ADMIN:'admin',PANEL_TYPE:'nova'},path:'/admin'},
+          edgtun:{repo:'6Kmfi6HP/EDtunnel',file:'_worker.js',bindings:{d1:[],kv:[]},vars:{UUID:crypto.randomUUID(),PANEL_TYPE:'edgtun'},path:''},
+          fox:{repo:'code3-dev/foxcloud',file:'worker.js',release:'v1.0.0',bindings:{d1:[],kv:[]},vars:{UUID:crypto.randomUUID(),PROXY_IP:'172.66.45.9:443',PANEL_TYPE:'fox'},path:'/sub'},
+          amcf:{repo:'amclubs/am-cf-tunnel',file:'_worker.js',bindings:{d1:[],kv:['amclubs']},vars:{UUID:crypto.randomUUID(),PANEL_TYPE:'amcf'},path:'/'},
+          vtpanel:{repo:'bayueqi/ZQ-VTPanel',file:'_worker.js',bindings:{d1:[],kv:['VTPanel']},vars:{PANEL_TYPE:'vtpanel'},path:'/'},
+          v2ray:{repo:'vfarid/v2ray-worker',file:'worker.js',release:'v2.4',bindings:{d1:[],kv:['settings']},vars:{PANEL_TYPE:'v2ray'},path:'/'},
         };
         const vtpanelUUID=crypto.randomUUID();
         const p=panels[panelType];
@@ -217,6 +217,38 @@ export default {
 
         return R({success:true,logs,panelURL,workerName,panelType,uuid:vars.u||vars.UUID||vars.ID||vtpUUID||null,panelPath,dashboardURL},200,corsHeaders);
       }catch(e){return R({success:false,logs:[`خطا: ${e.message}`],error:e.message},200,corsHeaders)}
+    }
+
+    // List workers endpoint
+    if(url.pathname==='/list-workers' && request.method==='POST'){
+      try{
+        const body=await request.json();
+        const {token}=body;
+        if(!token||!token.startsWith('cfut_'))return R({success:false,error:'توکن نامعتبر'},400,corsHeaders);
+        const h={'Authorization':'Bearer '+token};
+        // Get account ID
+        const vr=await cfDirect(h,'/user/tokens/verify');
+        if(!vr.success)return R({success:false,error:'توکن نامعتبر'},200,corsHeaders);
+        const ar=await cfDirect(h,'/accounts');
+        if(!ar.success||!ar.result.length)return R({success:false,error:'حسابی یافت نشد'},200,corsHeaders);
+        const aid=ar.result[0].id;
+        // List all workers
+        const wr=await cfDirect(h,`/accounts/${aid}/workers/scripts`);
+        if(!wr.success)return R({success:false,error:'خطا در دریافت لیست Workerها'},200,corsHeaders);
+        const workers=[];
+        for(const w of wr.result){
+          let panelType='';
+          try{
+            const br=await cfDirect(h,`/accounts/${aid}/workers/scripts/${w.id}/bindings`);
+            if(br.success&&br.result){
+              const pt=br.result.find(b=>b.name==='PANEL_TYPE');
+              if(pt)panelType=pt.text||pt.value||'';
+            }
+          }catch(e){}
+          workers.push({name:w.id,modified_on:w.modified_on,panelType});
+        }
+        return R({success:true,workers},200,corsHeaders);
+      }catch(e){return R({success:false,error:e.message},200,corsHeaders)}
     }
 
     return R({error:'Not found',path:url.pathname},404,corsHeaders);
