@@ -92,7 +92,7 @@
 
 ### مرحله ۲: نصب پنل
 1. توکن رو وارد کنید (فرمت: `cfut_...`)
-2. یکی از ۸ پنل رو انتخاب کنید
+2. یکی از ۹ پنل رو انتخاب کنید
 3. روی **🚀 نصب و فعال‌سازی** بزنید — تمام! 🎉
 
 ### مرحله ۳: اتصال
@@ -148,25 +148,13 @@
 | Nova | `DB` | `KV` | `ADMIN=admin` |
 | EDtunnel | — | — | `UUID` |
 | FoxCloud | — | — | `UUID`, `PROXY_IP` |
-|| amcf | — | `amclubs` | `UUID` |
-|| VTPanel | — | `VTPanel` | — |
+| amcf | — | `amclubs` | `UUID` |
+| VTPanel | — | `VTPanel` | — |
+| v2ray-worker | — | `settings` | — |
 
 ---
 
 ## 📝 تغییرات
-
-<details>
-<summary><b>v4.1.0</b></summary>
-
-- ✅ دکمه **🗑️ حذف Worker** — حذف با تأیید امنیتی از طریق CF API
-- ✅ دکمه **🔄 بروزرسانی** — دانلود کد جدید و آپدیت Worker با حفظ D1/KV
-- ✅ **حالت تاریک/روشن** — سوئیچ تم با ذخیره در localStorage
-- ✅ **برچسب نیاز به دامنه** روی am-cf-tunnel
-- ✅ فیکس باگ سوب‌دامین — fallback ۳ سطحی برای دریافت آدرس صحیح
-- ✅ ثبت Service Worker برای PWA
-- ✅ فیکس تعداد پنل‌ها (۹ → ۸)
-
-</details>
 
 <details>
 <summary><b>v4.6.0</b> — آخرین نسخه</summary>
@@ -177,6 +165,10 @@
 - ✅ پیام "۱ دقیقه صبر کنید" هنگام انتخاب پنل
 - ✅ تشخیص سوب‌دامین با proxy + ۳ بار retry (۱۰ ثانیه صبر)
 - ✅ نمایش "در حال استقرار" با progress bar بدون backtick اضافی
+- ✅ فیکس Progress Bar (showNextLog با تأخیر 400ms)
+- ✅ لیست Workerهای فعال (loadWorkers + deleteWorker)
+- ✅ endpoint /list-workers
+- ✅ PANEL_TYPE برای هر ۹ پنل
 
 </details>
 
