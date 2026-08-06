@@ -223,13 +223,24 @@ export default {
         const workers=[];
         for(const w of wr.result){
           let panelType='';
+          // اول از variables بخون
           try{
-            const br=await cfDirect(h,`/accounts/${aid}/workers/scripts/${w.id}/bindings`);
-            if(br.success&&br.result){
-              const pt=br.result.find(b=>b.name==='PANEL_TYPE');
-              if(pt)panelType=pt.text||pt.value||'';
+            const vbr=await cfDirect(h,`/accounts/${aid}/workers/scripts/${w.id}/variables`);
+            if(vbr.success&&vbr.result){
+              const pt=vbr.result.find(v=>v.name==='PANEL_TYPE');
+              if(pt)panelType=pt.value||pt.text||'';
             }
           }catch(e){}
+          // اگه پیدا نشد، از bindings بخون (fallback)
+          if(!panelType){
+            try{
+              const br=await cfDirect(h,`/accounts/${aid}/workers/scripts/${w.id}/bindings`);
+              if(br.success&&br.result){
+                const pt=br.result.find(b=>b.name==='PANEL_TYPE');
+                if(pt)panelType=pt.text||pt.value||'';
+              }
+            }catch(e){}
+          }
           workers.push({name:w.id,modified_on:w.modified_on,panelType});
         }
         return R({success:true,workers},200,corsHeaders);
