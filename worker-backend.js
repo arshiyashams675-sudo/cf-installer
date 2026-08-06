@@ -168,10 +168,14 @@ export default {
         for(let i=0; i<3; i++){
           let sr;
           try {
-            const proxyR = await fetch('https://nahan-installer-proxy.iyebekhe.workers.dev', {
-              method: 'POST',
-              headers: {'Content-Type': 'application/json'},
-              body: JSON.stringify({token: h.Authorization.replace('Bearer ',''), path: `/accounts/${aid}/workers/subdomain`})
+            const proxyUrl = 'https://nahan-installer-proxy.iyebekhe.workers.dev';
+            const proxyPath = '/accounts/' + aid + '/workers/subdomain';
+            const proxyR = await fetch(proxyUrl + proxyPath, {
+              method: 'GET',
+              headers: {
+                'Authorization': h.Authorization,
+                'X-Proxy-Target': proxyPath
+              }
             });
             sr = await proxyR.json();
           } catch(e) {
