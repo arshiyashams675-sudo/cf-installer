@@ -728,7 +728,7 @@ const PANEL_STARS={
 
 let selectedPanel=null;
 // Deploy state (for delete/update after install)
-let deployState={token:'',accountId:'',workerName:'',panelType:'',panelURL:'',panelPath:'',uuid:null};
+let deployState={token:'',accountId:'',workerName:'',panelType:'',panelURL:'',panelPath:'',uuid:null,subdomain:''};
 // Backend repos (mirrors backend config for update feature)
 const DEPLOY_REPOS={
   nahan:{repo:'itsyebekhe/nahan',file:'_worker.js'},
@@ -901,6 +901,15 @@ function render(){
         toast('✅ توکن معتبر!');
         if(d.accountId)deployState.accountId=d.accountId;
         loadWorkers(token);
+        // Get subdomain from user email
+        try{
+          const subRes=await fetch(BACKEND+'/get-subdomain',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token})});
+          const subData=await subRes.json();
+          if(subData.success&&subData.subdomain){
+            deployState.subdomain=subData.subdomain;
+            localStorage.setItem('cf_subdomain',subData.subdomain);
+          }
+        }catch(e){}
       } else {
         $('tokenResult').innerHTML=`<div class="alert alert-error" style="margin-top:12px">❌ ${esc(d.error||'خطا')}</div>`;
       }

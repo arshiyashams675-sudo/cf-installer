@@ -163,40 +163,21 @@ export default {
         log('صبر برای فعال‌سازی workers.dev...');
         await new Promise(r=>setTimeout(r,10000));
 
-        // Get subdomain from API (از proxy استفاده کن)
+        // Get subdomain from user email (username before @)
         let sub='';
-        for(let i=0; i<3; i++){
-          let sr;
-          try {
-            const proxyUrl = 'https://nahan-installer-proxy.iyebekhe.workers.dev';
-            const proxyPath = '/accounts/' + aid + '/workers/subdomain';
-            const proxyR = await fetch(proxyUrl + proxyPath, {
-              method: 'GET',
-              headers: {
-                'Authorization': h.Authorization,
-                'X-Proxy-Target': proxyPath
-              }
-            });
-            sr = await proxyR.json();
-          } catch(e) {
-            sr = await cfDirect(h, `/accounts/${aid}/workers/subdomain`);
+        try{
+          const userR=await cfDirect(h,'/user');
+          if(userR.success&&userR.result?.email){
+            sub=userR.result.email.split('@')[0];
+            log(`ساب‌دامین: ${sub}`);
           }
-          if(sr.success&&sr.result?.subdomain&&sr.result.subdomain!=='workers.dev'){
-            sub=sr.result.subdomain;
-            break;
-          }
-          if(i<2) await new Promise(r=>setTimeout(r,3000));
-        }
+        }catch(e){}
 
-        if(!sub||sub==='workers.dev'){
+        if(!sub){
           log('⚠️ سوب‌دامین شناسایی نشد');
           log('📋 لطفاً آدرس Worker رو از داشبورد کپی کنید:');
           log(`🔗 https://dash.cloudflare.com/${aid}/workers-and-pages`);
           sub='workers.dev';
-        }
-        // اگه subdomain شامل .workers.dev باشه، حذفش کن
-        if(sub&&sub.endsWith('.workers.dev')){
-          sub=sub.replace('.workers.dev','');
         }
         const basePath=`https://${workerName}.${sub}.workers.dev`;
         const panelPath=p.path||(vars.u?`/${vars.u}`:'');
@@ -257,6 +238,22 @@ export default {
         }
         return R({success:true,workers},200,corsHeaders);
       }catch(e){return R({success:false,error:e.message},200,corsHeaders)}
+    }
+
+    // Get subdomain endpoint
+    if(url.pathname==='/get-subdomain' && request.method==='POST'){
+      try{
+        const body=await request.json();
+        const {token}=body;
+        if(!token||!token.startsWith('cfut_'))return R({success:false},200,corsHeaders);
+        const h={'Authorization':'Bearer '+token};
+        const userR=await cfDirect(h,'/user');
+        if(userR.success&&userR.result?.email){
+          const sub=userR.result.email.split('@')[0];
+          return R({success:true,subdomain:sub},200,corsHeaders);
+        }
+        return R({success:false},200,corsHeaders);
+      }catch(e){return R({success:false},200,corsHeaders)}
     }
 
     return R({error:'Not found',path:url.pathname},404,corsHeaders);
