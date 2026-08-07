@@ -204,54 +204,6 @@ export default {
       }catch(e){return R({success:false,logs:[`خطا: ${e.message}`],error:e.message},200,corsHeaders)}
     }
 
-    // List workers endpoint
-    if(url.pathname==='/list-workers' && request.method==='POST'){
-      try{
-        const body=await request.json();
-        const {token}=body;
-        if(!token||!token.startsWith('cfut_'))return R({success:false,error:'توکن نامعتبر'},400,corsHeaders);
-        const h={'Authorization':'Bearer '+token};
-        // Get account ID
-        const vr=await cfDirect(h,'/user/tokens/verify');
-        if(!vr.success)return R({success:false,error:'توکن نامعتبر'},200,corsHeaders);
-        const ar=await cfDirect(h,'/accounts');
-        if(!ar.success||!ar.result.length)return R({success:false,error:'حسابی یافت نشد'},200,corsHeaders);
-        const aid=ar.result[0].id;
-        // List all workers
-        const wr=await cfDirect(h,`/accounts/${aid}/workers/scripts`);
-        if(!wr.success)return R({success:false,error:'خطا در دریافت لیست Workerها'},200,corsHeaders);
-        const workers=[];
-        for(const w of wr.result){
-          let panelType='unknown';
-          // روش ۱: از کد Worker بخون
-          try{
-            const cr=await cfDirect(h,`/accounts/${aid}/workers/scripts/${w.id}/content`);
-            if(cr.success&&cr.result){
-              const code=cr.result;
-              const match=code.match(/PANEL_TYPE['":\s]+['"]([^'"]+)['"]/);
-              if(match)panelType=match[1];
-            }
-          }catch(e){}
-          // روش ۲: از env vars بخون
-          if(panelType==='unknown'){
-            try{
-              const er=await cfDirect(h,`/accounts/${aid}/workers/scripts/${w.id}/bindings`);
-              if(er.success&&er.result){
-                for(const b of er.result){
-                  if(b.name==='PANEL_TYPE'){
-                    panelType=b.value||b.text||'unknown';
-                    break;
-                  }
-                }
-              }
-            }catch(e){}
-          }
-          workers.push({name:w.id,modified_on:w.modified_on,panelType});
-        }
-        return R({success:true,workers},200,corsHeaders);
-      }catch(e){return R({success:false,error:e.message},200,corsHeaders)}
-    }
-
     // Get subdomain endpoint
     if(url.pathname==='/get-subdomain' && request.method==='POST'){
       try{

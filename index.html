@@ -751,39 +751,6 @@ function esc(s){return s?String(s).replace(/[&<>\"']/g,m=>({'&':'&amp;','<':'&lt
 function cpB(b,t){navigator.clipboard.writeText(t).then(()=>{const o=b.textContent;b.textContent='کپی شد!';b.classList.add('copied');setTimeout(()=>{b.textContent=o;b.classList.remove('copied')},1500)})}
 function setProgress(pct,label){$('progressFill').style.width=pct+'%';$('progressPct').textContent=pct+'%';if(label)$('progressLabel').textContent=label}
 
-async function loadWorkers(token){
-  try{
-    const r=await fetch(BACKEND+'/list-workers',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token})});
-    const d=await r.json();
-    if(d.success&&d.workers.length){
-      $('workersCard').style.display='';
-      const icons={nahan:'🌙',edge:'⚡',nova:'🚀',cfnew:'🆕',edgtun:'⚡',fox:'🦊',amcf:'🔗',vtpanel:'📊',v2ray:'🔧'};
-      let html='';
-      d.workers.forEach(w=>{
-        const date=new Date(w.modified_on).toLocaleDateString('fa-IR');
-        const icon=icons[w.panelType]||'⚙️';
-        const type=w.panelType||'ناشناخته';
-        html+='<div style="display:flex;justify-content:space-between;align-items:center;padding:12px;margin:8px 0;background:var(--bg2);border-radius:12px;border:1px solid var(--border)">';
-        html+='<div><strong>'+icon+' '+w.name+'</strong><br><span style="font-size:.8rem;color:var(--text2)">📅 '+date+' · 📋 '+type+'</span></div>';
-        html+='<div style="display:flex;gap:8px">';
-        html+='<a href="https://'+w.name+'.workers.dev" target="_blank" style="text-decoration:none;padding:6px 12px;background:var(--accent);color:#fff;border-radius:8px;font-size:.85rem">🔗</a>';
-        html+='<button onclick="deleteWorker(\''+w.name+'\')" style="padding:6px 12px;background:#ff4757;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:.85rem">🗑️</button>';
-        html+='</div></div>';
-      });
-      $('workersList').innerHTML=html;
-    }
-  }catch(e){}
-}
-
-async function deleteWorker(name){
-  if(!confirm('مطمئنی Worker «'+name+'» حذف بشه؟'))return;
-  const token=currentToken;
-  const r=await fetch(BACKEND+'/deploy',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token,action:'delete',workerName:name,accountId:currentAccountId})});
-  const d=await r.json();
-  if(d.success){alert('✅ حذف شد');loadWorkers(token)}
-  else{alert('❌ خطا: '+(d.error||'ناشناخته'))}
-}
-
 function renderFooter(){
   const el=$('footerStars');
   el.innerHTML=Object.entries(PANEL_STARS).map(([k,s])=>{
@@ -812,10 +779,6 @@ function render(){
       <div id="panelVars" class="panel-vars"></div>
       <div class="alert alert-info">💡 اسم Worker به صورت خودکار و رندوم ساخته میشود</div>
       <button class="btn btn-primary" id="deployBtn" disabled>🚀 نصب و فعال‌سازی</button>
-    </div>
-    <div class="card" id="workersCard" style="display:none">
-      <div class="card-title"><span class="icon">📋</span> Workerهای فعال</div>
-      <div id="workersList"></div>
     </div>
     <div class="card" id="deployCard" style="display:none">
       <div class="card-title"><span class="icon">📦</span> در حال استقرار...</div>
@@ -900,7 +863,6 @@ function render(){
         $('panelCard').style.display='block';
         toast('✅ توکن معتبر!');
         if(d.accountId)deployState.accountId=d.accountId;
-        loadWorkers(token);
         // Get subdomain from user email
         try{
           const subRes=await fetch(BACKEND+'/get-subdomain',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token})});
@@ -971,7 +933,6 @@ function render(){
         // Also update openPanel when input changes
         $('resUrlInput').addEventListener('input',function(){$('openPanel').href=this.value})
         $('resultBox').style.display='block';
-        loadWorkers(token);
         // Dashboard link
         if(d.dashboardURL){
           $('openPanel').insertAdjacentHTML('afterend','<a id="dashLink" href="'+esc(d.dashboardURL)+'" target="_blank" class="btn btn-secondary btn-sm" style="text-decoration:none">📋 داشبورد CF</a>');
