@@ -652,6 +652,12 @@ body::after{
   margin-right:auto;
   direction:ltr;
 }
+.speed-result{
+  display:none;align-items:center;gap:10px;
+  padding:14px 18px;border-radius:12px;margin-top:12px;
+  font-size:.9rem;font-weight:600;
+  border:1px solid var(--border);background:var(--bg2);
+}
 [data-theme="light"] .test-result.testing{background:rgba(0,150,214,.05);border-color:rgba(0,150,214,.1);color:#0070a0}
 [data-theme="light"] .test-result.active{background:rgba(0,168,84,.05);border-color:rgba(0,168,84,.1);color:#006030}
 [data-theme="light"] .test-result.inactive{background:rgba(229,57,53,.05);border-color:rgba(229,57,53,.1);color:#b71c1c}
@@ -865,7 +871,7 @@ function render(){
         </div>
 
 
-        <div class="btn-group"><button class="btn btn-secondary btn-sm" id="testBtn" onclick="testConnection()">📊 تست اتصال</button><a id="openPanel" href="#" target="_blank" class="btn btn-primary">باز کردن پنل</a><button class="btn btn-secondary" id="updateBtn">🔄 بروزرسانی</button><button class="btn btn-danger" id="deleteBtn">🗑️ حذف Worker</button><button class="btn btn-secondary" onclick="render()">نصب جدید</button></div>
+        <div class="btn-group"><button class="btn btn-secondary btn-sm" id="testBtn" onclick="testConnection()">📊 تست اتصال</button><button class="btn btn-secondary btn-sm" onclick="speedTest()" id="speedBtn">⚡ تست سرعت</button><a id="openPanel" href="#" target="_blank" class="btn btn-primary">باز کردن پنل</a><button class="btn btn-secondary" id="updateBtn">🔄 بروزرسانی</button><button class="btn btn-danger" id="deleteBtn">🗑️ حذف Worker</button><button class="btn btn-secondary" onclick="render()">نصب جدید</button></div>
         <div class="test-result" id="testResult"></div>
       </div>
     </div>
@@ -1222,6 +1228,43 @@ function testConnection(){
     }
   });
 }
+
+// Speed Test
+async function speedTest(){
+  const url=$('resUrlInput')?.value||deployState.panelURL;
+  if(!url){toast('⚠️ آدرس Worker موجود نیست');return}
+  const el=$('testResult');if(!el)return;
+  el.className='test-result show testing';
+  el.innerHTML='<span class="spinner"></span> ⚡ در حال تست سرعت...';
+
+  const times=[];
+  const rounds=5;
+
+  for(let i=0;i<rounds;i++){
+    try{
+      const t0=performance.now();
+      await fetch(url,{redirect:'follow',cache:'no-store'});
+      const ms=Math.round(performance.now()-t0);
+      times.push(ms);
+    }catch(e){times.push(9999)}
+    await new Promise(r=>setTimeout(r,300));
+  }
+
+  const filtered=times.slice(1);
+  const avg=Math.round(filtered.reduce((a,b)=>a+b,0)/filtered.length);
+  const min=Math.min(...filtered);
+  const max=Math.max(...filtered);
+
+  let score,emoji;
+  if(avg<200){score='عالی ⭐⭐⭐';emoji='🚀'}
+  else if(avg<500){score='خوب ⭐⭐';emoji='⚡'}
+  else if(avg<1500){score='متوسط ⭐';emoji='🐌'}
+  else{score='کند 💩';emoji='🐢'}
+
+  el.className='test-result show active';
+  el.innerHTML=emoji+' سرعت: '+avg+'ms ('+score+')<br><span class="test-time" style="font-size:12px;opacity:.7">min: '+min+'ms · max: '+max+'ms · '+rounds+' نمونه</span>';
+}
+
 attachManageButtons();
 </script>
 </body>
