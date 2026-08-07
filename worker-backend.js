@@ -223,9 +223,9 @@ export default {
         const workers=[];
         for(const w of wr.result){
           let panelType='';
-          // اول از variables بخون
+          // اول از secrets بخون
           try{
-            const vbr=await cfDirect(h,`/accounts/${aid}/workers/scripts/${w.id}/variables`);
+            const vbr=await cfDirect(h,`/accounts/${aid}/workers/scripts/${w.id}/secrets`);
             if(vbr.success&&vbr.result){
               const pt=vbr.result.find(v=>v.name==='PANEL_TYPE');
               if(pt)panelType=pt.value||pt.text||'';
@@ -240,6 +240,20 @@ export default {
                 if(pt)panelType=pt.text||pt.value||'';
               }
             }catch(e){}
+          }
+          // اگه هر دو خالی بود، از نام Worker حدس بزن
+          if(!panelType){
+            const name=w.id.toLowerCase();
+            if(name.includes('nahan'))panelType='nahan';
+            else if(name.includes('edge'))panelType='edge';
+            else if(name.includes('nova'))panelType='nova';
+            else if(name.includes('cfnew'))panelType='cfnew';
+            else if(name.includes('edgtun')||name.includes('ed'))panelType='edgtun';
+            else if(name.includes('fox'))panelType='fox';
+            else if(name.includes('amcf')||name.includes('am-cf'))panelType='amcf';
+            else if(name.includes('vtpanel')||name.includes('zt'))panelType='vtpanel';
+            else if(name.includes('v2ray'))panelType='v2ray';
+            else panelType='unknown';
           }
           workers.push({name:w.id,modified_on:w.modified_on,panelType});
         }
