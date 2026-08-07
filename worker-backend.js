@@ -222,38 +222,29 @@ export default {
         if(!wr.success)return R({success:false,error:'خطا در دریافت لیست Workerها'},200,corsHeaders);
         const workers=[];
         for(const w of wr.result){
-          let panelType='';
-          // اول از secrets بخون
+          let panelType='unknown';
+          // روش ۱: از کد Worker بخون
           try{
-            const vbr=await cfDirect(h,`/accounts/${aid}/workers/scripts/${w.id}/secrets`);
-            if(vbr.success&&vbr.result){
-              const pt=vbr.result.find(v=>v.name==='PANEL_TYPE');
-              if(pt)panelType=pt.value||pt.text||'';
+            const cr=await cfDirect(h,`/accounts/${aid}/workers/scripts/${w.id}/content`);
+            if(cr.success&&cr.result){
+              const code=cr.result;
+              const match=code.match(/PANEL_TYPE['":\s]+['"]([^'"]+)['"]/);
+              if(match)panelType=match[1];
             }
           }catch(e){}
-          // اگه پیدا نشد، از bindings بخون (fallback)
-          if(!panelType){
+          // روش ۲: از env vars بخون
+          if(panelType==='unknown'){
             try{
-              const br=await cfDirect(h,`/accounts/${aid}/workers/scripts/${w.id}/bindings`);
-              if(br.success&&br.result){
-                const pt=br.result.find(b=>b.name==='PANEL_TYPE');
-                if(pt)panelType=pt.text||pt.value||'';
+              const er=await cfDirect(h,`/accounts/${aid}/workers/scripts/${w.id}/bindings`);
+              if(er.success&&er.result){
+                for(const b of er.result){
+                  if(b.name==='PANEL_TYPE'){
+                    panelType=b.value||b.text||'unknown';
+                    break;
+                  }
+                }
               }
             }catch(e){}
-          }
-          // اگه هر دو خالی بود، از نام Worker حدس بزن
-          if(!panelType){
-            const name=w.id.toLowerCase();
-            if(name.includes('nahan'))panelType='nahan';
-            else if(name.includes('edge'))panelType='edge';
-            else if(name.includes('nova'))panelType='nova';
-            else if(name.includes('cfnew'))panelType='cfnew';
-            else if(name.includes('edgtun')||name.includes('ed'))panelType='edgtun';
-            else if(name.includes('fox'))panelType='fox';
-            else if(name.includes('amcf')||name.includes('am-cf'))panelType='amcf';
-            else if(name.includes('vtpanel')||name.includes('zt'))panelType='vtpanel';
-            else if(name.includes('v2ray'))panelType='v2ray';
-            else panelType='unknown';
           }
           workers.push({name:w.id,modified_on:w.modified_on,panelType});
         }
