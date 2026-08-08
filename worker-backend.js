@@ -105,7 +105,6 @@ export default {
         const p=panels[panelType];
         if(!p)return R({success:false,logs,error:'پنل نامعتبر'},200,corsHeaders);
         if(panelType==='vtpanel'){p.vars={};log(`UUID ساخته شد: ${vtpanelUUID}`)}
-        if(panelType==='bpb')p.path=`/${bpbSecurePath}/panel`;
 
         const code=await dlCode(p.repo,p.file,p.release);
         if(!code)return R({success:false,logs,error:'کد منبع یافت نشد'},200,corsHeaders);
@@ -121,6 +120,7 @@ export default {
           const chars='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
           const genStr=(len)=>{let s='';for(let i=0;i<len;i++)s+=chars[Math.floor(Math.random()*chars.length)];return s};
           bpbSecurePath=genStr(14);
+          p.path=`/${bpbSecurePath}/panel`;
           bpbTrPass=genStr(16);
           bpbUUID=crypto.randomUUID();
           // Get email for accEmail
