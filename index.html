@@ -1242,10 +1242,10 @@ async function speedTest(){
   for(let i=0;i<rounds;i++){
     try{
       const t0=performance.now();
-      await fetch(url,{redirect:'follow',cache:'no-store'});
+      await fetch(url,{redirect:'follow',cache:'no-store',mode:'no-cors'});
       const ms=Math.round(performance.now()-t0);
       times.push(ms);
-    }catch(e){times.push(9999)}
+    }catch(e){const ms=Math.round(performance.now()-t0);times.push(ms||9999)}
     await new Promise(r=>setTimeout(r,300));
   }
 
