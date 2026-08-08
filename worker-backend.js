@@ -99,15 +99,53 @@ export default {
           amcf:{repo:'amclubs/am-cf-tunnel',file:'_worker.js',bindings:{d1:[],kv:['amclubs']},vars:{UUID:crypto.randomUUID(),PANEL_TYPE:'amcf'},path:'/'},
           vtpanel:{repo:'bayueqi/ZQ-VTPanel',file:'_worker.js',bindings:{d1:[],kv:['VTPanel']},vars:{PANEL_TYPE:'vtpanel'},path:'/'},
           v2ray:{repo:'vfarid/v2ray-worker',file:'worker.js',release:'v2.4',bindings:{d1:[],kv:['settings']},vars:{PANEL_TYPE:'v2ray'},path:'/'},
+          bpb:{repo:'bia-pain-bache/BPB-Worker-Panel',file:'worker.js',release:'v5.1.1',bindings:{d1:[],kv:['KV']},vars:{},path:''},
         };
         const vtpanelUUID=crypto.randomUUID();
         const p=panels[panelType];
         if(!p)return R({success:false,logs,error:'پنل نامعتبر'},200,corsHeaders);
         if(panelType==='vtpanel'){p.vars={};log(`UUID ساخته شد: ${vtpanelUUID}`)}
+        if(panelType==='bpb')p.path=`/${bpbSecurePath}/panel`;
 
         const code=await dlCode(p.repo,p.file,p.release);
         if(!code)return R({success:false,logs,error:'کد منبع یافت نشد'},200,corsHeaders);
         log(`کد دانلود شد: ${(code.length/1024).toFixed(0)}KB`);
+
+        // BPB Panel: build EMBEDED_SETTINGS and prepend to code
+        let bpbSecurePath='';
+        let bpbTrPass='';
+        let bpbUUID='';
+        let finalCode=code;
+        if(panelType==='bpb'){
+          log('ساخت تنظیمات BPB...');
+          const chars='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
+          const genStr=(len)=>{let s='';for(let i=0;i<len;i++)s+=chars[Math.floor(Math.random()*chars.length)];return s};
+          bpbSecurePath=genStr(14);
+          bpbTrPass=genStr(16);
+          bpbUUID=crypto.randomUUID();
+          // Get email for accEmail
+          let accEmail='';
+          try{const ur=await cfDirect(h,'/user');if(ur.success)accEmail=ur.result?.email||''}catch(e){}
+          const emailUser=accEmail.split('@')[0]||'user';
+          const mainDomain=`${workerName}.${emailUser}.workers.dev`;
+          const embeddedSettings=`const EMBEDED_SETTINGS = ${JSON.stringify({
+            accID:aid,
+            accEmail:accEmail,
+            apiToken:token,
+            vlUUID:bpbUUID,
+            trPass:bpbTrPass,
+            securePath:bpbSecurePath,
+            proxyIpMode:'proxyip',
+            proxyIPs:[],
+            prefixes:[],
+            fallback:'',
+            dohUrl:'',
+            mainDomain:mainDomain
+          })};\n`;
+          finalCode=embeddedSettings+code;
+          log(`securePath: ${bpbSecurePath}`);
+          log('تنظیمات BPB ساخته شد ✅');
+        }
 
         // Create bindings
         const bindings=[];
@@ -146,7 +184,7 @@ export default {
         const mdJson=JSON.stringify(md);
         const parts=[
           '--'+boundary+CRLF+'Content-Disposition: form-data; name="metadata"'+CRLF+'Content-Type: application/json'+CRLF+CRLF+mdJson,
-          '--'+boundary+CRLF+'Content-Disposition: form-data; name="worker.js"; filename="worker.js"'+CRLF+'Content-Type: application/javascript+module'+CRLF+CRLF+code,
+          '--'+boundary+CRLF+'Content-Disposition: form-data; name="worker.js"; filename="worker.js"'+CRLF+'Content-Type: application/javascript+module'+CRLF+CRLF+finalCode,
           '--'+boundary+'--'
         ].join(CRLF);
         const dr=await fetch(`https://api.cloudflare.com/client/v4/accounts/${aid}/workers/scripts/${workerName}`,{method:'PUT',headers:{Authorization:'Bearer '+token,'Content-Type':'multipart/form-data; boundary='+boundary},body:parts});
@@ -200,7 +238,7 @@ export default {
           }
         }
 
-        return R({success:true,logs,panelURL,workerName,panelType,uuid:vars.u||vars.UUID||vars.ID||vtpUUID||null,panelPath,dashboardURL},200,corsHeaders);
+        return R({success:true,logs,panelURL,workerName,panelType,uuid:vars.u||vars.UUID||vars.ID||vtpUUID||bpbUUID||null,panelPath,dashboardURL,securePath:bpbSecurePath||null,trPass:bpbTrPass||null},200,corsHeaders);
       }catch(e){return R({success:false,logs:[`خطا: ${e.message}`],error:e.message},200,corsHeaders)}
     }
 

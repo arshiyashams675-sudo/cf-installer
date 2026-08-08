@@ -3,7 +3,7 @@
 ### نصب یک‌کلیکی پنل‌های VPN روی Cloudflare Worker
 
 [![v4.6.2](https://img.shields.io/badge/version-v4.6.2-00e5a0?style=flat-square)](https://arshiyashams675-sudo.github.io/cf-installer/)
-[![Panels](https://img.shields.io/badge/پنل‌ها-9_عدد-blue?style=flat-square)](#-پنل‌های-پشتیبانی-شده)
+[![Panels](https://img.shields.io/badge/پنل‌ها-10_عدد-blue?style=flat-square)](#-پنل‌های-پشتیبانی-شده)
 [![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)](#)
 
 <p align="center">
@@ -55,6 +55,7 @@
 | 🇨🇳 amcf ⚠️ | 3.1k+ | KV | / |
 | 🛡️ ZQ-VTPanel | 62+ | KV | / |
 | 🔧 v2ray-worker | 195+ | KV | / |
+| 💦 BPB Panel | 12k+ | KV | `/{securePath}/panel` |
 
 > 💡 همه چیز **خودکار** ساخته میشه — D1، KV، UUID، رمز عبور!
 >
@@ -151,6 +152,7 @@
 | amcf | — | `amclubs` | `UUID` |
 | VTPanel | — | `VTPanel` | — |
 | v2ray-worker | — | `settings` | — |
+| BPB Panel | — | `KV` | — |
 
 ---
 
