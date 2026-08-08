@@ -164,6 +164,7 @@
 - ✅ فیکس `panelPath` برای پنل‌های UUID‌دار (cfnew + edgtun)
 - ✅ پیام "۱ دقیقه صبر کنید" هنگام انتخاب پنل
 - ✅ تشخیص سوب‌دامین با proxy + ۳ بار retry (۱۰ ثانیه صبر)
+- ✅ کاهش زمان انتظار workers.dev از ۱۰ ثانیه به ۲ ثانیه
 - ✅ نمایش "در حال استقرار" با progress bar بدون backtick اضافی
 - ✅ فیکس Progress Bar (showNextLog با تأخیر 400ms)
 - ✅ لیست Workerهای فعال (loadWorkers + deleteWorker)
