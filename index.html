@@ -1175,7 +1175,6 @@ async function updateWorker(){
     const putD=await putR.json();
     if(!putD.success)throw new Error('خطا در آپدیت: '+(putD.errors?.[0]?.message||'unknown'));
     dl.innerHTML+='<br><span class="log-ok">✅ Worker بروزرسانی شد!</span>';
-    [1,2,3].forEach(i=>{const e=$('step'+i);if(e){e.classList.remove('active');e.classList.add('done')}});
     toast('✅ بروزرسانی کامل شد!');
     rb.style.display='block';
   }catch(e){
