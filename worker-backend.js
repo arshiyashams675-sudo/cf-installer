@@ -161,7 +161,7 @@ export default {
 
         // Wait for workers.dev propagation
         log('صبر برای فعال‌سازی workers.dev...');
-        await new Promise(r=>setTimeout(r,10000));
+        await new Promise(r=>setTimeout(r,2000));
 
         // Get subdomain from user email (username before @)
         let sub='';
